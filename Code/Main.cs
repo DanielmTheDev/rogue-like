@@ -1,9 +1,8 @@
 using Godot;
-using RogueLike.Grid;
-using RogueLike.Player;
-using RogueLike.Rendering;
+using RogueLike.Code.Grid;
+using RogueLike.Code.Player;
 
-namespace RogueLike;
+namespace RogueLike.Code;
 
 /// <summary>
 /// Main scene controller. Creates the grid, renders the tilemap,

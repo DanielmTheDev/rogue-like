@@ -19,6 +19,8 @@
 - **Small Methods:** No method should exceed 20 lines of code. If it does, refactor into sub-methods.
 - **Extensibility:** Use `interface` and `abstract` classes for systems that will have multiple variations (e.g., `IDamageable`, `IAbility`).
 - **Naming:** Follow standard C# PascalCase conventions. Private fields should be `_camelCase`.
+- **Namespaces:** Namespaces must mirror the folder structure exactly (e.g., a file in `Code/Grid/` must be in `namespace RogueLike.Grid;`).
+- **Implicit Typing:** Use `var` instead of specific types where the type is obvious from the right side of the assignment (e.g., `var direction = Vector2I.Zero;`).
 - **Node Access:** Prefer `[Export]` variables over `GetNode()` to make scenes resilient to hierarchy changes.
 
 ## 4. Testing & Quality Assurance (gdUnit4Net)

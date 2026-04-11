@@ -1,6 +1,6 @@
 using Godot;
 
-namespace RogueLike.Grid;
+namespace RogueLike.Code.Grid;
 
 /// <summary>
 /// Pure data representation of the dungeon grid.
@@ -48,7 +48,7 @@ public class DungeonGrid
     /// </summary>
     public Vector2 GridToWorld(Vector2I coord)
     {
-        float halfTile = TileSize / 2f;
+        var halfTile = TileSize / 2f;
         return new Vector2(
             coord.X * TileSize + halfTile,
             coord.Y * TileSize + halfTile
@@ -91,9 +91,9 @@ public class DungeonGrid
 
     private void FillWith(CellType type)
     {
-        for (int x = 0; x < Size.X; x++)
+        for (var x = 0; x < Size.X; x++)
         {
-            for (int y = 0; y < Size.Y; y++)
+            for (var y = 0; y < Size.Y; y++)
             {
                 _cells[x, y] = type;
             }

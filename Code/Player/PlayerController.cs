@@ -1,7 +1,7 @@
 using Godot;
-using RogueLike.Grid;
+using RogueLike.Code.Grid;
 
-namespace RogueLike.Player;
+namespace RogueLike.Code.Player;
 
 /// <summary>
 /// Handles player input and grid-based movement.
@@ -46,7 +46,7 @@ public partial class PlayerController : Node2D
         if (@event.IsEcho() || !@event.IsPressed())
             return;
 
-        Vector2I direction = Vector2I.Zero;
+        var direction = Vector2I.Zero;
 
         if (@event.IsActionPressed("move_up"))
             direction = Vector2I.Up;

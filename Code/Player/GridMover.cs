@@ -1,7 +1,7 @@
 using Godot;
-using RogueLike.Grid;
+using RogueLike.Code.Grid;
 
-namespace RogueLike.Player;
+namespace RogueLike.Code.Player;
 
 /// <summary>
 /// Pure movement logic for a grid-based entity.

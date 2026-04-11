@@ -1,7 +1,6 @@
 using Godot;
-using RogueLike.Grid;
 
-namespace RogueLike.Rendering;
+namespace RogueLike.Code.Grid;
 
 /// <summary>
 /// Renders a DungeonGrid as a checkerboard pattern using Godot's TileMapLayer.
@@ -23,16 +22,16 @@ public partial class DungeonTileMap : TileMapLayer
     {
         Clear();
 
-        for (int x = 0; x < gridMap.Size.X; x++)
+        for (var x = 0; x < gridMap.Size.X; x++)
         {
-            for (int y = 0; y < gridMap.Size.Y; y++)
+            for (var y = 0; y < gridMap.Size.Y; y++)
             {
                 var coord = new Vector2I(x, y);
                 var cellType = gridMap.GetCell(coord);
 
                 if (cellType == CellType.Floor)
                 {
-                    bool isLight = (x + y) % 2 == 0;
+                    var isLight = (x + y) % 2 == 0;
                     var atlasCoord = isLight ? LightTile : DarkTile;
                     SetCell(coord, SourceId, atlasCoord);
                 }

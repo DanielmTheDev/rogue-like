@@ -1,10 +1,10 @@
-using Godot;
 using GdUnit4;
+using Godot;
+using RogueLike.Code.Grid;
+using RogueLike.Code.Player;
 using static GdUnit4.Assertions;
-using RogueLike.Grid;
-using RogueLike.Player;
 
-namespace RogueLike.Tests.Player;
+namespace RogueLike.tests.Player;
 
 /// <summary>
 /// Tests for GridMover — the pure movement logic.
