@@ -1,5 +1,6 @@
 using Godot;
 using RogueLike.Code.Grid;
+using RogueLike.Code.TurnContext;
 
 namespace RogueLike.Code.Player;
 
@@ -10,6 +11,7 @@ namespace RogueLike.Code.Player;
 public partial class PlayerController : Node2D
 {
     private GridMover _mover;
+    private TurnManager _turnManager;
 
     /// <summary>
     /// Current position of the player in grid coordinates.
@@ -19,9 +21,10 @@ public partial class PlayerController : Node2D
     /// <summary>
     /// Initializes the player on the grid at the given starting position.
     /// </summary>
-    public void Initialize(DungeonGrid gridMap, Vector2I startPos)
+    public void Initialize(DungeonGrid gridMap, TurnManager turnManager, Vector2I startPos)
     {
         _mover = new GridMover(gridMap, startPos);
+        _turnManager = turnManager;
         SyncPosition();
     }
 
@@ -31,7 +34,7 @@ public partial class PlayerController : Node2D
     /// </summary>
     public bool TryMove(Vector2I direction)
     {
-        if (_mover == null)
+        if (_mover == null || _turnManager == null)
             return false;
 
         if (!_mover.TryMove(direction))
@@ -44,6 +47,9 @@ public partial class PlayerController : Node2D
     public override void _UnhandledInput(InputEvent @event)
     {
         if (@event.IsEcho() || !@event.IsPressed())
+            return;
+
+        if (_turnManager.CurrentState != TurnState.Player)
             return;
 
         var direction = Vector2I.Zero;
@@ -60,7 +66,10 @@ public partial class PlayerController : Node2D
         if (direction == Vector2I.Zero)
             return;
 
-        TryMove(direction);
+        if (TryMove(direction))
+        {
+            _turnManager.EndPlayerTurn();
+        }
     }
 
     private void SyncPosition()

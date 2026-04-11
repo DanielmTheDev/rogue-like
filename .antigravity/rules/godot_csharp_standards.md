@@ -14,6 +14,8 @@
 - **Mandatory Consult:** Before starting any task, the agent MUST read `docs/SYSTEM_DESIGN.md` to ensure the new code aligns with previous architectural decisions.
 - **Goal:** Prevent "Context Drift" where the agent forgets its own previous design patterns.
 
+
+
 ## 3. C# & Godot Engineering Standards
 - **Decoupling:** Use **Signals (Events)** for upward communication (Child -> Parent) and **Dependency Injection** or **Node Exports** for downward communication.
 - **Small Methods:** No method should exceed 20 lines of code. If it does, refactor into sub-methods.

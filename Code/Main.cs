@@ -1,6 +1,7 @@
 using Godot;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
+using RogueLike.Code.TurnContext;
 
 namespace RogueLike.Code;
 
@@ -15,13 +16,23 @@ public partial class Main : Node2D
     private const int TilePixelSize = 32;
 
     private DungeonGrid _gridMap;
+    private TurnManager _turnManager;
 
     public override void _Ready()
     {
         _gridMap = new DungeonGrid(GridWidth, GridHeight, TilePixelSize);
+        
+        _turnManager = new TurnManager();
+        _turnManager.OnTurnChanged += OnTurnChanged;
 
         SetupTileMap();
         SetupPlayer();
+    }
+
+    private void OnTurnChanged(TurnState newState)
+    {
+        // Simple log for verification that the game loop is functioning.
+        GD.Print($"Turn changed to: {newState}");
     }
 
     private void SetupTileMap()
@@ -34,6 +45,6 @@ public partial class Main : Node2D
     {
         var player = GetNode<PlayerController>("Player");
         var center = new Vector2I(GridWidth / 2, GridHeight / 2);
-        player.Initialize(_gridMap, center);
+        player.Initialize(_gridMap, _turnManager, center);
     }
 }
