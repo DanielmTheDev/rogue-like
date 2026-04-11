@@ -43,17 +43,19 @@ public partial class PlayerController : Node2D
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (@event is not InputEventKey { Pressed: true } keyEvent)
+        if (@event.IsEcho() || !@event.IsPressed())
             return;
 
-        var direction = keyEvent.Keycode switch
-        {
-            Key.Up or Key.W    => Vector2I.Up,
-            Key.Down or Key.S  => Vector2I.Down,
-            Key.Left or Key.A  => Vector2I.Left,
-            Key.Right or Key.D => Vector2I.Right,
-            _ => Vector2I.Zero
-        };
+        Vector2I direction = Vector2I.Zero;
+
+        if (@event.IsActionPressed("move_up"))
+            direction = Vector2I.Up;
+        else if (@event.IsActionPressed("move_down"))
+            direction = Vector2I.Down;
+        else if (@event.IsActionPressed("move_left"))
+            direction = Vector2I.Left;
+        else if (@event.IsActionPressed("move_right"))
+            direction = Vector2I.Right;
 
         if (direction == Vector2I.Zero)
             return;
