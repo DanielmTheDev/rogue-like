@@ -1,0 +1,15 @@
+[gd_scene load_steps=5 format=3 uid="uid://bgacm0vsedlkr"]
+
+[ext_resource type="Script" uid="uid://bhemhhtah4hs3" path="res://Code/Main.cs" id="1_main_script"]
+[ext_resource type="Script" uid="uid://bv50eriaqtt0k" path="res://Code/Grid/DungeonTileMap.cs" id="2_tilemap_script"]
+[ext_resource type="TileSet" uid="uid://dwxypcwtmq8qo" path="res://Assets/Tiles/dungeon_tileset.tres" id="3_tileset"]
+[ext_resource type="PackedScene" path="res://Scenes/Player.tscn" id="4_player_scene"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main_script")
+
+[node name="DungeonTileMap" type="TileMapLayer" parent="."]
+tile_set = ExtResource("3_tileset")
+script = ExtResource("2_tilemap_script")
+
+[node name="Player" parent="." instance=ExtResource("4_player_scene")]

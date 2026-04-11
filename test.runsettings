@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <GdUnit4>
+    <GodotArguments>--headless</GodotArguments>
+    <CaptureStdOut>true</CaptureStdOut>
+  </GdUnit4>
+</RunSettings>
