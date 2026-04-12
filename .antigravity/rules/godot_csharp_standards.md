@@ -10,7 +10,8 @@
 
 ## 2. Self-Documenting Life System (Architecture Ledger)
 - **Constraint:** The agent must maintain a file at `docs/SYSTEM_DESIGN.md`.
-- **Action:** Every time a new system (Health, Movement, AI) is added or significantly altered, the agent must update this file.
+- **Action:** Every time a new system (Health, Movement, AI, Map Generation) is added, refactored, or significantly altered, the agent must update this file IMMEDIATELY in the same prompt.
+- **Sync Rule:** It is unacceptable to leave `docs/SYSTEM_DESIGN.md` out of sync with the live code. Update the docs synchronously with the code changes.
 - **Mandatory Consult:** Before starting any task, the agent MUST read `docs/SYSTEM_DESIGN.md` to ensure the new code aligns with previous architectural decisions.
 - **Goal:** Prevent "Context Drift" where the agent forgets its own previous design patterns.
 

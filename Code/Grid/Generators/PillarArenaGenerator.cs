@@ -53,5 +53,15 @@ public static class PillarArenaGenerator
                 }
             }
         }
+
+        // Guarantee player spawn point (center) is open
+        var center = new Vector2I(bounds.X / 2, bounds.Y / 2);
+        for (var dx = -1; dx <= 1; dx++)
+        {
+            for (var dy = -1; dy <= 1; dy++)
+            {
+                grid.SetCell(new Vector2I(center.X + dx, center.Y + dy), CellType.Floor);
+            }
+        }
     }
 }
