@@ -105,24 +105,7 @@ public partial class PlayerController : Node2D, ICombatant
             return;
         }
 
-        var direction = Vector2I.Zero;
-
-        if (@event.IsActionPressed("move_up"))
-            direction = Vector2I.Up;
-        else if (@event.IsActionPressed("move_down"))
-            direction = Vector2I.Down;
-        else if (@event.IsActionPressed("move_left"))
-            direction = Vector2I.Left;
-        else if (@event.IsActionPressed("move_right"))
-            direction = Vector2I.Right;
-        else if (@event.IsActionPressed("move_up_left"))
-            direction = new Vector2I(-1, -1);
-        else if (@event.IsActionPressed("move_up_right"))
-            direction = new Vector2I(1, -1);
-        else if (@event.IsActionPressed("move_down_left"))
-            direction = new Vector2I(-1, 1);
-        else if (@event.IsActionPressed("move_down_right"))
-            direction = new Vector2I(1, 1);
+        var direction = InputMapper.GetDirection(@event);
 
         if (direction == Vector2I.Zero)
             return;
