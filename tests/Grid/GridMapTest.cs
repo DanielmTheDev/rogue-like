@@ -91,7 +91,7 @@ public class DungeonGridTest
     [TestCase]
     public void GetCell_OutOfBounds_ReturnsWall()
     {
-        var grid = new DungeonGrid(10, 8);
+        var grid = new DungeonGrid(10, 8, 32);
 
         AssertObject(grid.GetCell(new Vector2I(-1, 0)))
             .IsEqual(CellType.Wall);
@@ -100,7 +100,7 @@ public class DungeonGridTest
     [TestCase]
     public void SetCell_ThenGetCell_ReturnsCorrectType()
     {
-        var grid = new DungeonGrid(10, 8);
+        var grid = new DungeonGrid(10, 8, 32);
         grid.SetCell(new Vector2I(2, 3), CellType.Wall);
 
         AssertObject(grid.GetCell(new Vector2I(2, 3)))

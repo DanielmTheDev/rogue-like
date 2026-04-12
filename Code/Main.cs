@@ -11,8 +11,8 @@ namespace RogueLike.Code;
 /// </summary>
 public partial class Main : Node2D
 {
-    private const int GridWidth = 20;
-    private const int GridHeight = 15;
+    private const int GridWidth = 50;
+    private const int GridHeight = 50;
     private const int TilePixelSize = 32;
 
     private DungeonGrid _gridMap;
@@ -21,6 +21,7 @@ public partial class Main : Node2D
     public override void _Ready()
     {
         _gridMap = new DungeonGrid(GridWidth, GridHeight, TilePixelSize);
+        Code.Grid.Generators.PillarArenaGenerator.Generate(_gridMap);
         
         _turnManager = new TurnManager();
         _turnManager.OnTurnChanged += OnTurnChanged;

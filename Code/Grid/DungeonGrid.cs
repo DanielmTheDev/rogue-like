@@ -18,6 +18,7 @@ public class DungeonGrid
         Size = new Vector2I(width, height);
         TileSize = tileSize;
         _cells = new CellType[width, height];
+        
         FillWith(CellType.Floor);
     }
 

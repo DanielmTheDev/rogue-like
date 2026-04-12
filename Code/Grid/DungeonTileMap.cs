@@ -12,6 +12,7 @@ public partial class DungeonTileMap : TileMapLayer
     // These reference tiles in the TileSet atlas.
     private static readonly Vector2I LightTile = new(0, 0);
     private static readonly Vector2I DarkTile = new(1, 0);
+    private static readonly Vector2I WallTile = new(2, 0);
 
     private const int SourceId = 0;
 
@@ -35,7 +36,10 @@ public partial class DungeonTileMap : TileMapLayer
                     var atlasCoord = isLight ? LightTile : DarkTile;
                     SetCell(coord, SourceId, atlasCoord);
                 }
-                // Walls: no tile drawn (empty/void) for now
+                else if (cellType == CellType.Wall)
+                {
+                    SetCell(coord, SourceId, WallTile);
+                }
             }
         }
     }

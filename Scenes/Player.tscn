@@ -9,3 +9,7 @@ script = ExtResource("1_player_script")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_player_tex")
 texture_filter = 0
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
