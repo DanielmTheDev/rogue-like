@@ -25,13 +25,16 @@ public class TurnManager
             return;
         
         SetState(TurnState.Enemy);
-        ProcessEnemyTurn();
     }
 
-    private void ProcessEnemyTurn()
+    /// <summary>
+    /// Signals that all enemies are done moving, yielding control back to the player.
+    /// </summary>
+    public void EndEnemyTurn()
     {
-        // TODO: Later on, this will iterate through an EnemyManager or similar.
-        // For now, enemies simply instantly finish their turn.
+        if (CurrentState != TurnState.Enemy)
+            return;
+            
         SetState(TurnState.Player);
     }
 

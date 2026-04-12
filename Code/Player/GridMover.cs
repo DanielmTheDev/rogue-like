@@ -1,5 +1,6 @@
 using Godot;
 using RogueLike.Code.Grid;
+using RogueLike.Code.Entities;
 
 namespace RogueLike.Code.Player;
 
@@ -10,6 +11,8 @@ namespace RogueLike.Code.Player;
 public class GridMover
 {
     private readonly DungeonGrid _grid;
+    private readonly EntityManager _entityManager;
+    private readonly IActor _owner;
     private Vector2I _gridPosition;
 
     /// <summary>
@@ -22,9 +25,11 @@ public class GridMover
     /// </summary>
     public Vector2 WorldPosition => _grid.GridToWorld(_gridPosition);
 
-    public GridMover(DungeonGrid grid, Vector2I startPos)
+    public GridMover(IActor owner, DungeonGrid grid, EntityManager entityManager, Vector2I startPos)
     {
+        _owner = owner;
         _grid = grid;
+        _entityManager = entityManager;
         _gridPosition = startPos;
     }
 
@@ -38,8 +43,14 @@ public class GridMover
 
         if (!_grid.IsWalkable(target))
             return false;
+            
+        if (_entityManager.IsOccupied(target))
+            return false;
 
+        var oldPos = _gridPosition;
         _gridPosition = target;
+        
+        _entityManager.UpdateActorPosition(_owner, oldPos);
         return true;
     }
 }

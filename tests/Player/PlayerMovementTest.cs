@@ -2,6 +2,7 @@ using GdUnit4;
 using Godot;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
+using RogueLike.Code.Entities;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.tests.Player;
@@ -21,17 +22,26 @@ public class PlayerMovementTest
         return grid;
     }
 
-    private GridMover CreateMover(
-        DungeonGrid grid, Vector2I startPos)
+    private class MockActor : IActor
     {
-        return new GridMover(grid, startPos);
+        public Vector2I GridPosition { get; set; }
+        public bool IsPlayer { get; set; } = true;
+    }
+
+    private GridMover CreateMover(
+        DungeonGrid grid, Vector2I startPos, out EntityManager entityManager)
+    {
+        entityManager = new EntityManager();
+        var actor = new MockActor { GridPosition = startPos };
+        entityManager.RegisterActor(actor);
+        return new GridMover(actor, grid, entityManager, startPos);
     }
 
     [TestCase]
     public void TryMove_ValidDirection_ReturnsTrue()
     {
         var grid = CreateTestGrid();
-        var mover = CreateMover(grid, new Vector2I(2, 2));
+        var mover = CreateMover(grid, new Vector2I(2, 2), out _);
 
         AssertBool(mover.TryMove(Vector2I.Right)).IsTrue();
     }
@@ -40,7 +50,7 @@ public class PlayerMovementTest
     public void TryMove_ValidDirection_UpdatesPosition()
     {
         var grid = CreateTestGrid();
-        var mover = CreateMover(grid, new Vector2I(2, 2));
+        var mover = CreateMover(grid, new Vector2I(2, 2), out _);
 
         mover.TryMove(Vector2I.Right);
 
@@ -53,7 +63,7 @@ public class PlayerMovementTest
     {
         var grid = CreateTestGrid();
         // Start at (2,1), wall is at (2,0)
-        var mover = CreateMover(grid, new Vector2I(2, 1));
+        var mover = CreateMover(grid, new Vector2I(2, 1), out _);
 
         // Move up into the wall
         AssertBool(mover.TryMove(Vector2I.Up)).IsFalse();
@@ -63,7 +73,7 @@ public class PlayerMovementTest
     public void TryMove_IntoWall_PositionUnchanged()
     {
         var grid = CreateTestGrid();
-        var mover = CreateMover(grid, new Vector2I(2, 1));
+        var mover = CreateMover(grid, new Vector2I(2, 1), out _);
 
         mover.TryMove(Vector2I.Up);
 
@@ -75,7 +85,7 @@ public class PlayerMovementTest
     public void TryMove_OutOfBounds_ReturnsFalse()
     {
         var grid = CreateTestGrid();
-        var mover = CreateMover(grid, new Vector2I(0, 0));
+        var mover = CreateMover(grid, new Vector2I(0, 0), out _);
 
         AssertBool(mover.TryMove(Vector2I.Up)).IsFalse();
         AssertBool(mover.TryMove(Vector2I.Left)).IsFalse();
@@ -85,7 +95,7 @@ public class PlayerMovementTest
     public void TryMove_OutOfBounds_PositionUnchanged()
     {
         var grid = CreateTestGrid();
-        var mover = CreateMover(grid, new Vector2I(0, 0));
+        var mover = CreateMover(grid, new Vector2I(0, 0), out _);
 
         mover.TryMove(Vector2I.Up);
 
@@ -97,7 +107,7 @@ public class PlayerMovementTest
     public void TryMove_MultipleSteps_TracksCorrectly()
     {
         var grid = CreateTestGrid();
-        var mover = CreateMover(grid, new Vector2I(2, 2));
+        var mover = CreateMover(grid, new Vector2I(2, 2), out _);
 
         mover.TryMove(Vector2I.Right); // -> (3,2)
         mover.TryMove(Vector2I.Down);  // -> (3,3)
@@ -111,7 +121,7 @@ public class PlayerMovementTest
     public void Initialize_SetsCorrectPosition()
     {
         var grid = CreateTestGrid();
-        var mover = CreateMover(grid, new Vector2I(3, 4));
+        var mover = CreateMover(grid, new Vector2I(3, 4), out _);
 
         AssertInt(mover.GridPosition.X).IsEqual(3);
         AssertInt(mover.GridPosition.Y).IsEqual(4);

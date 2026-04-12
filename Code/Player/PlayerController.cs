@@ -1,5 +1,6 @@
 using Godot;
 using RogueLike.Code.Grid;
+using RogueLike.Code.Entities;
 using RogueLike.Code.TurnContext;
 
 namespace RogueLike.Code.Player;
@@ -8,7 +9,7 @@ namespace RogueLike.Code.Player;
 /// Handles player input and grid-based movement.
 /// Delegates movement logic to GridMover (pure C# / testable).
 /// </summary>
-public partial class PlayerController : Node2D
+public partial class PlayerController : Node2D, IActor
 {
     private GridMover _mover;
     private TurnManager _turnManager;
@@ -18,14 +19,17 @@ public partial class PlayerController : Node2D
     /// </summary>
     public Vector2I GridPosition => _mover.GridPosition;
 
+    public bool IsPlayer => true;
+
     /// <summary>
     /// Initializes the player on the grid at the given starting position.
     /// </summary>
-    public void Initialize(DungeonGrid gridMap, TurnManager turnManager, Vector2I startPos)
+    public void Initialize(DungeonGrid gridMap, EntityManager entityManager, TurnManager turnManager, Vector2I startPos)
     {
-        _mover = new GridMover(gridMap, startPos);
+        _mover = new GridMover(this, gridMap, entityManager, startPos);
         _turnManager = turnManager;
         SyncPosition();
+        entityManager.RegisterActor(this);
     }
 
     /// <summary>

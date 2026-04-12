@@ -2,6 +2,7 @@ using Godot;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
 using RogueLike.Code.TurnContext;
+using RogueLike.Code.Entities;
 
 namespace RogueLike.Code;
 
@@ -16,6 +17,7 @@ public partial class Main : Node2D
     private const int TilePixelSize = 32;
 
     private DungeonGrid _gridMap;
+    private EntityManager _entityManager;
     private TurnManager _turnManager;
 
     public override void _Ready()
@@ -23,17 +25,48 @@ public partial class Main : Node2D
         _gridMap = new DungeonGrid(GridWidth, GridHeight, TilePixelSize);
         Code.Grid.Generators.PillarArenaGenerator.Generate(_gridMap);
         
+        _entityManager = new EntityManager();
+        
         _turnManager = new TurnManager();
         _turnManager.OnTurnChanged += OnTurnChanged;
 
         SetupTileMap();
         SetupPlayer();
+        SetupEnemies();
+    }
+
+    private void SetupEnemies()
+    {
+        var enemyScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
+        var enemyNode = enemyScene.Instantiate<Code.Enemies.EnemyController>();
+        
+        // Spawn them slightly offset from the center
+        var startPos = new Vector2I(GridWidth / 2 + 5, GridHeight / 2 + 5);
+        enemyNode.Initialize(_gridMap, _entityManager, startPos);
+        AddChild(enemyNode);
     }
 
     private void OnTurnChanged(TurnState newState)
     {
-        // Simple log for verification that the game loop is functioning.
-        GD.Print($"Turn changed to: {newState}");
+        if (newState == TurnState.Enemy)
+        {
+            ProcessEnemyTurns();
+        }
+    }
+
+    private void ProcessEnemyTurns()
+    {
+        // For each actor that is NOT the player, try taking a turn
+        foreach (var actor in _entityManager.AllActors)
+        {
+            if (actor is Code.Enemies.EnemyController enemy)
+            {
+                enemy.TakeTurn(_gridMap);
+            }
+        }
+        
+        // Enemies finished, return control to player
+        _turnManager.EndEnemyTurn();
     }
 
     private void SetupTileMap()
@@ -46,6 +79,6 @@ public partial class Main : Node2D
     {
         var player = GetNode<PlayerController>("Player");
         var center = new Vector2I(GridWidth / 2, GridHeight / 2);
-        player.Initialize(_gridMap, _turnManager, center);
+        player.Initialize(_gridMap, _entityManager, _turnManager, center);
     }
 }

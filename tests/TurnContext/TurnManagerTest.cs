@@ -19,14 +19,16 @@ public class TurnManagerTest
     }
 
     [TestCase]
-    public void EndPlayerTurn_ShiftsToEnemyTurn_ThenBackToPlayer()
+    public void EndPlayerTurn_ShiftsToEnemyTurn()
     {
         var turnManager = new TurnManager();
 
-        // As enemies are currently instantly resolving their turn,
-        // it should complete a full cycle back to Player.
         turnManager.EndPlayerTurn();
 
+        AssertInt((int)turnManager.CurrentState).IsEqual((int)TurnState.Enemy);
+        
+        turnManager.EndEnemyTurn();
+        
         AssertInt((int)turnManager.CurrentState).IsEqual((int)TurnState.Player);
     }
 
@@ -45,6 +47,7 @@ public class TurnManagerTest
         };
 
         turnManager.EndPlayerTurn();
+        turnManager.EndEnemyTurn();
 
         AssertInt(enemyTurnFiredCount).IsEqual(1);
         AssertInt(playerTurnFiredCount).IsEqual(1);
