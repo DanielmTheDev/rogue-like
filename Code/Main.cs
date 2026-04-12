@@ -77,8 +77,6 @@ public partial class Main : Node2D
         }
     }
 
-
-
     private void OnTurnChanged(TurnState newState)
     {
         if (newState == TurnState.Enemy)
@@ -108,6 +106,4 @@ public partial class Main : Node2D
         var tileMap = GetNode<DungeonTileMap>("DungeonTileMap");
         tileMap.Render(_gridMap);
     }
-
-
 }

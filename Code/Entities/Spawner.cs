@@ -23,14 +23,6 @@ public static class Spawner
     {
         var centerPos = new Vector2I(startRoom.Position.X + startRoom.Size.X / 2, startRoom.Position.Y + startRoom.Size.Y / 2);
         player.Initialize(grid, entityManager, turnManager, centerPos);
-        
-        // Attach Camera2D dynamically
-        var camera = new Camera2D
-        {
-            Zoom = new Vector2(1.5f, 1.5f), // 150% zoom is standard rogue
-            PositionSmoothingEnabled = true
-        };
-        player.AddChild(camera);
     }
 
     public static void SpawnEnemies(
