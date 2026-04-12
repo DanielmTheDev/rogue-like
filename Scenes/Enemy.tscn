@@ -1,11 +1,26 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://d17dciga5sjjs"]
 
-[ext_resource type="Script" path="res://Code/Enemies/EnemyController.cs" id="1_enemy_script"]
-[ext_resource type="Texture2D" path="res://Assets/Enemy/enemy.png" id="2_enemy_tex"]
+[ext_resource type="Script" uid="uid://bftrg78afxcy2" path="res://Code/Enemies/EnemyController.cs" id="1_enemy_script"]
+[ext_resource type="Texture2D" uid="uid://3rqfac6fcj1c" path="res://Assets/Enemy/enemy.png" id="2_enemy_tex"]
 
-[node name="Enemy" type="Node2D"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.55, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+bg_color = Color(0, 1, 0, 1)
+
+[node name="Enemy" type="Node2D" node_paths=PackedStringArray("HealthBar")]
 script = ExtResource("1_enemy_script")
+HealthBar = NodePath("ProgressBar")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_enemy_tex")
-texture_filter = 0
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -16.0
+offset_top = -20.0
+offset_right = 16.0
+offset_bottom = -14.0
+theme_override_styles/background = SubResource("StyleBoxFlat_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
+show_percentage = false

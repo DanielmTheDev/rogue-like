@@ -18,38 +18,26 @@ public abstract partial class ActorController : Node2D, ICombatant
     public abstract bool IsPlayer { get; }
     public abstract int AttackDamage { get; }
 
+    [Export] public ProgressBar HealthBar { get; set; }
+    [Export] public int BaseHealth { get; set; } = 10;
+    [Export] public int BaseAttackDamage { get; set; } = 2;
+
     /// <summary>
-    /// Base initialization. Sets up health and UI.
+    /// Base initialization. Sets up health and UI mapping.
     /// </summary>
-    public virtual void InitializeBase(EntityManager entityManager, int initialHealth)
+    public virtual void InitializeBase(EntityManager entityManager)
     {
         _entityManager = entityManager;
-        Health = new HealthController(initialHealth);
+        Health = new HealthController(BaseHealth);
         Health.OnDied += Die;
         
-        SetupHealthUI();
-    }
-
-    protected void SetupHealthUI()
-    {
-        var bar = new ProgressBar
+        // Link to Godot inspector node if exists
+        if (HealthBar != null)
         {
-            CustomMinimumSize = new Vector2(32, 6),
-            Position = new Vector2(-16, -20), // Above the 32x32 sprite
-            MaxValue = Health.MaxHp,
-            Value = Health.CurrentHp,
-            ShowPercentage = false
-        };
-
-        var bgStyle = new StyleBoxFlat { BgColor = Colors.DarkRed };
-        var fgStyle = new StyleBoxFlat { BgColor = Colors.Green };
-        
-        bar.AddThemeStyleboxOverride("background", bgStyle);
-        bar.AddThemeStyleboxOverride("fill", fgStyle);
-
-        AddChild(bar);
-
-        Health.OnHealthChanged += (current, max) => bar.Value = current;
+            HealthBar.MaxValue = Health.MaxHp;
+            HealthBar.Value = Health.CurrentHp;
+            Health.OnHealthChanged += (current, max) => HealthBar.Value = current;
+        }
     }
 
     public virtual void Die()

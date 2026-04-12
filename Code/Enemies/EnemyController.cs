@@ -13,11 +13,11 @@ public partial class EnemyController : ActorController
 
     public override Vector2I GridPosition => _ai?.GridPosition ?? Vector2I.Zero;
     public override bool IsPlayer => false;
-    public override int AttackDamage => 2;
+    public override int AttackDamage => BaseAttackDamage;
 
     public void Initialize(DungeonGrid grid, EntityManager entityManager, Vector2I startPos)
     {
-        InitializeBase(entityManager, 10); // 10 HP for an enemy
+        InitializeBase(entityManager);
         
         _ai = new EnemyAI(this, grid, entityManager, startPos);
         entityManager.RegisterActor(this);
