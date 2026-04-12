@@ -1,6 +1,7 @@
 using System.Linq;
 using Godot;
 using RogueLike.Code.Entities;
+using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
 
@@ -47,7 +48,20 @@ public class EnemyAI
 
         if (direction != Vector2I.Zero)
         {
-            _mover.TryMove(direction);
+            var target = _owner.GridPosition + direction;
+            if (_entityManager.IsOccupied(target))
+            {
+                var targetActor = _entityManager.GetActorAt(target);
+                // Only attack the player, prevent goblins fighting goblins
+                if (targetActor.IsPlayer && targetActor is ICombatant playerCombatant && _owner is ICombatant enemyCombatant)
+                {
+                    CombatSystem.ResolveBump(enemyCombatant, playerCombatant);
+                }
+            }
+            else
+            {
+                _mover.TryMove(direction);
+            }
         }
     }
 }
