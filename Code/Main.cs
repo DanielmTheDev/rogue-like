@@ -42,8 +42,12 @@ public partial class Main : Node2D
 
         SetupTileMap();
         SetupFovTileMap();
-        SetupPlayer();
-        SetupEnemies();
+        
+        var player = GetNode<PlayerController>("Player");
+        Spawner.InitializePlayer(player, _rooms[0], _gridMap, _entityManager, _turnManager);
+        
+        var enemyScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
+        Spawner.SpawnEnemies(this, enemyScene, _rooms, _gridMap, _entityManager);
         
         // Initial FOV Compute
         UpdateFov();
@@ -73,27 +77,7 @@ public partial class Main : Node2D
         }
     }
 
-    private void SetupEnemies()
-    {
-        var enemyScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
-        var rng = new System.Random();
 
-        // Spawn one enemy per generated room (skipping the player's room 0)
-        for (int i = 1; i < _rooms.Count; i++)
-        {
-            var room = _rooms[i];
-            
-            // Pick a random tile anywhere inside the room floor
-            int rx = rng.Next(room.Position.X, room.Position.X + room.Size.X);
-            int ry = rng.Next(room.Position.Y, room.Position.Y + room.Size.Y);
-            
-            var enemy = enemyScene.Instantiate<Code.Enemies.EnemyController>();
-            enemy.Name = $"Enemy_{i}";
-            AddChild(enemy);
-
-            enemy.Initialize(_gridMap, _entityManager, new Vector2I(rx, ry));
-        }
-    }
 
     private void OnTurnChanged(TurnState newState)
     {
@@ -125,19 +109,5 @@ public partial class Main : Node2D
         tileMap.Render(_gridMap);
     }
 
-    private void SetupPlayer()
-    {
-        var player = GetNode<PlayerController>("Player");
 
-        var firstRoom = _rooms[0];
-        var centerPos = new Vector2I(firstRoom.Position.X + firstRoom.Size.X / 2, firstRoom.Position.Y + firstRoom.Size.Y / 2);
-
-        player.Initialize(_gridMap, _entityManager, _turnManager, centerPos);
-        
-        // Attach Camera2D dynamically
-        var camera = new Camera2D();
-        camera.Zoom = new Vector2(1.5f, 1.5f); // 150% zoom is standard rogue
-        camera.PositionSmoothingEnabled = true;
-        player.AddChild(camera);
-    }
 }
