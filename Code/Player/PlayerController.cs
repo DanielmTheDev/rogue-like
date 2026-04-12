@@ -10,54 +10,23 @@ namespace RogueLike.Code.Player;
 /// Handles player input and grid-based movement.
 /// Delegates movement logic to GridMover (pure C# / testable).
 /// </summary>
-public partial class PlayerController : Node2D, ICombatant
+public partial class PlayerController : ActorController
 {
     private GridMover _mover;
     private TurnManager _turnManager;
-    private EntityManager _entityManager;
 
-    public Vector2I GridPosition => _mover.GridPosition;
-    public bool IsPlayer => true;
-
-    public HealthController Health { get; private set; }
-    public int AttackDamage => 5;
+    public override Vector2I GridPosition => _mover.GridPosition;
+    public override bool IsPlayer => true;
+    public override int AttackDamage => 5;
 
     public void Initialize(DungeonGrid gridMap, EntityManager entityManager, TurnManager turnManager, Vector2I startPos)
     {
-        _entityManager = entityManager;
-        Health = new HealthController(20); // 20 HP for player
-        Health.OnDied += Die;
-        
-        SetupHealthUI();
+        InitializeBase(entityManager, 20); // 20 HP for player
         
         _mover = new GridMover(this, gridMap, entityManager, startPos);
         _turnManager = turnManager;
         SyncPosition();
         entityManager.RegisterActor(this);
-    }
-
-    private void SetupHealthUI()
-    {
-        var bar = new ProgressBar
-        {
-            CustomMinimumSize = new Vector2(32, 6),
-            Position = new Vector2(-16, -20), // Above the 32x32 sprite
-            MaxValue = Health.MaxHp,
-            Value = Health.CurrentHp,
-            ShowPercentage = false
-        };
-
-        // Red background, Green fill
-        var bgStyle = new StyleBoxFlat { BgColor = Colors.DarkRed };
-        var fgStyle = new StyleBoxFlat { BgColor = Colors.Green };
-        
-        bar.AddThemeStyleboxOverride("background", bgStyle);
-        bar.AddThemeStyleboxOverride("fill", fgStyle);
-
-        AddChild(bar);
-
-        // Update bar visually when C# events fire
-        Health.OnHealthChanged += (current, max) => bar.Value = current;
     }
 
     /// <summary>
@@ -121,11 +90,5 @@ public partial class PlayerController : Node2D, ICombatant
     {
         if (_mover != null)
             Position = _mover.WorldPosition;
-    }
-
-    public void Die()
-    {
-        _entityManager.UnregisterActor(this);
-        QueueFree();
     }
 }
