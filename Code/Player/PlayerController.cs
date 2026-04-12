@@ -98,6 +98,12 @@ public partial class PlayerController : Node2D, ICombatant
         if (_turnManager.CurrentState != TurnState.Player)
             return;
 
+        if (@event is InputEventKey keyEvent && keyEvent.Keycode == Key.Period)
+        {
+            _turnManager.EndPlayerTurn();
+            return;
+        }
+
         var direction = Vector2I.Zero;
 
         if (@event.IsActionPressed("move_up"))
