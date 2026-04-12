@@ -22,7 +22,7 @@ public class HealthController
 
     public void TakeDamage(int amount)
     {
-        if (amount < 0) return; // Healing not supported in this method
+        if (amount <= 0) return;
 
         CurrentHp -= amount;
         if (CurrentHp < 0) CurrentHp = 0;
@@ -33,5 +33,15 @@ public class HealthController
         {
             OnDied?.Invoke();
         }
+    }
+
+    public void Heal(int amount)
+    {
+        if (amount <= 0 || CurrentHp <= 0) return; // Cannot heal dead entities
+
+        CurrentHp += amount;
+        if (CurrentHp > MaxHp) CurrentHp = MaxHp;
+
+        OnHealthChanged?.Invoke(CurrentHp, MaxHp);
     }
 }

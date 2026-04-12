@@ -100,6 +100,7 @@ public partial class PlayerController : Node2D, ICombatant
 
         if (@event is InputEventKey keyEvent && keyEvent.Keycode == Key.Period)
         {
+            Health.Heal(1);
             _turnManager.EndPlayerTurn();
             return;
         }
@@ -128,6 +129,7 @@ public partial class PlayerController : Node2D, ICombatant
 
         if (TryMove(direction))
         {
+            Health.Heal(1);
             _turnManager.EndPlayerTurn();
         }
     }
