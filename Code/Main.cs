@@ -3,6 +3,7 @@ using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
 using RogueLike.Code.TurnContext;
 using RogueLike.Code.Entities;
+using RogueLike.Code.Grid.FOV;
 
 namespace RogueLike.Code;
 
@@ -19,6 +20,10 @@ public partial class Main : Node2D
     private DungeonGrid _gridMap;
     private EntityManager _entityManager;
     private TurnManager _turnManager;
+    
+    private FovMap _fovMap;
+    private IFovAlgorithm _fovAlgorithm;
+    private FovTileMap _fovTileMap;
 
     public override void _Ready()
     {
@@ -27,12 +32,43 @@ public partial class Main : Node2D
         
         _entityManager = new EntityManager();
         
+        _fovMap = new FovMap(GridWidth, GridHeight);
+        _fovAlgorithm = new Raycaster();
+        
         _turnManager = new TurnManager();
         _turnManager.OnTurnChanged += OnTurnChanged;
 
         SetupTileMap();
+        SetupFovTileMap();
         SetupPlayer();
         SetupEnemies();
+        
+        // Initial FOV Compute
+        UpdateFov();
+    }
+
+    private void SetupFovTileMap()
+    {
+        _fovTileMap = new FovTileMap();
+        _fovTileMap.Initialize();
+        AddChild(_fovTileMap);
+    }
+
+    private void UpdateFov()
+    {
+        var player = GetNode<PlayerController>("Player");
+        _fovAlgorithm.ComputeFov(_fovMap, _gridMap, player.GridPosition, 6); // Radius 6
+        _fovTileMap.Render(_fovMap);
+
+        // Sync initial visibility of enemies immediately
+        foreach (var actor in _entityManager.AllActors)
+        {
+            if (actor is Code.Enemies.EnemyController enemy)
+            {
+                var vis = _fovMap.GetVisibility(enemy.GridPosition);
+                enemy.Visible = vis == Code.Grid.FOV.VisibilityState.Visible;
+            }
+        }
     }
 
     private void SetupEnemies()
@@ -50,6 +86,7 @@ public partial class Main : Node2D
     {
         if (newState == TurnState.Enemy)
         {
+            UpdateFov(); // Calculate FOV exactly when player finishes stepping
             ProcessEnemyTurns();
         }
     }
@@ -61,7 +98,7 @@ public partial class Main : Node2D
         {
             if (actor is Code.Enemies.EnemyController enemy)
             {
-                enemy.TakeTurn(_gridMap);
+                enemy.TakeTurn(_gridMap, _fovMap);
             }
         }
         

@@ -19,6 +19,7 @@
 
 
 ## 3. C# & Godot Engineering Standards
+- **Domain Refactoring:** Do not be afraid to heavily refactor the code if deeper insight into the domain model is acquired. It is always better to restructure cleanly than to hack new features into rigid, outdated domain models.
 - **Decoupling:** Use **Signals (Events)** for upward communication (Child -> Parent) and **Dependency Injection** or **Node Exports** for downward communication.
 - **Small Methods:** No method should exceed 20 lines of code. If it does, refactor into sub-methods.
 - **Extensibility:** Use `interface` and `abstract` classes for systems that will have multiple variations (e.g., `IDamageable`, `IAbility`).
@@ -28,6 +29,7 @@
 - **Node Access:** Prefer `[Export]` variables over `GetNode()` to make scenes resilient to hierarchy changes.
 
 ## 4. Testing & Quality Assurance (gdUnit4Net)
+- **Mandatory Final Build Check:** You MUST strictly run `dotnet build` via the terminal and confirm 0 errors AFTER completing all code modifications, and BEFORE finalizing your turn or writing a Walkthrough artifact. Never assume a project builds just because the unit tests compiled earlier in the turn.
 - **Rule:** Every logic-heavy class (Systems, Services, Utils) must have a corresponding test suite.
 - **Framework:** Use `gdUnit4Net`.
 - **Location:** Tests must be placed in a `tests/` directory mirroring the `scripts/` directory structure.

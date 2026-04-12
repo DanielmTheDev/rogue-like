@@ -18,19 +18,25 @@ public partial class EnemyController : Node2D, IActor
     {
         _ai = new EnemyAI(this, grid, entityManager, startPos);
         entityManager.RegisterActor(this);
-        SyncPosition(grid);
+        SyncPosition(grid, null);
     }
 
-    public void TakeTurn(DungeonGrid grid)
+    public void TakeTurn(DungeonGrid grid, RogueLike.Code.Grid.FOV.FovMap fovMap)
     {
         if (_ai == null) return;
         
         _ai.TakeTurn();
-        SyncPosition(grid);
+        SyncPosition(grid, fovMap);
     }
 
-    private void SyncPosition(DungeonGrid grid)
+    private void SyncPosition(DungeonGrid grid, RogueLike.Code.Grid.FOV.FovMap fovMap)
     {
         Position = grid.GridToWorld(GridPosition);
+        
+        if (fovMap != null)
+        {
+            var vis = fovMap.GetVisibility(GridPosition);
+            Visible = vis == RogueLike.Code.Grid.FOV.VisibilityState.Visible;
+        }
     }
 }
