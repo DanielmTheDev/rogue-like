@@ -13,11 +13,7 @@ public abstract partial class ActorController : Node2D, ICombatant
 {
     protected EntityManager _entityManager;
 
-    public new string Name 
-    { 
-        get => base.Name.ToString(); 
-        set => base.Name = value; 
-    }
+    public string DisplayName => Name.ToString();
 
     public HealthController Health { get; protected set; }
 
@@ -50,7 +46,7 @@ public abstract partial class ActorController : Node2D, ICombatant
 
     public virtual void Die()
     {
-        GameLog.Instance.LogDeath(Name);
+        GameLog.Instance.LogDeath(DisplayName);
         _entityManager?.UnregisterActor(this);
         QueueFree();
     }

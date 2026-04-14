@@ -19,7 +19,7 @@ public static class CombatSystem
         defender.Health.TakeDamage(attacker.AttackDamage);
 
         // LOG ACTION
-        GameLog.Instance.LogCombat(attacker.Name, defender.Name, attacker.AttackDamage);
+        GameLog.Instance.LogCombat(attacker.DisplayName, defender.DisplayName, attacker.AttackDamage);
     }
 
     /// <summary>
@@ -33,6 +33,6 @@ public static class CombatSystem
         defender.Health.TakeDamage(attacker.AttackDamage);
 
         // LOG ACTION
-        GameLog.Instance.LogCombat(attacker.Name, defender.Name, attacker.AttackDamage);
+        GameLog.Instance.LogCombat(attacker.DisplayName, defender.DisplayName, attacker.AttackDamage);
     }
 }
