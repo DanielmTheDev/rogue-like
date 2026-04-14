@@ -10,6 +10,7 @@ public class CombatSystemTest
 {
     private class MockCombatant : ICombatant
     {
+        public string Name { get; set; } = "Mock";
         public HealthController Health { get; private set; }
         public int AttackDamage { get; private set; }
         public Vector2I GridPosition { get; set; }

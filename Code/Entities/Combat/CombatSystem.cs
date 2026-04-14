@@ -1,4 +1,5 @@
 using Godot;
+using RogueLike.Code.Services;
 
 namespace RogueLike.Code.Entities.Combat;
 
@@ -16,6 +17,9 @@ public static class CombatSystem
         
         // Very simple logic: attacker deals their direct damage to the defender.
         defender.Health.TakeDamage(attacker.AttackDamage);
+
+        // LOG ACTION
+        GameLog.Instance.LogCombat(attacker.Name, defender.Name, attacker.AttackDamage);
     }
 
     /// <summary>
@@ -27,5 +31,8 @@ public static class CombatSystem
         if (attacker == null || defender == null) return;
         
         defender.Health.TakeDamage(attacker.AttackDamage);
+
+        // LOG ACTION
+        GameLog.Instance.LogCombat(attacker.Name, defender.Name, attacker.AttackDamage);
     }
 }

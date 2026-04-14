@@ -17,4 +17,5 @@
 - **ActorController:** Abstract base class for all grid actors. Centralizes `HealthController`, `[Export]` variables (`BaseHealth`, `BaseAttackDamage`, `HealthBar`), and `Die()` logic.
 - **Spawner:** Static utility handling entity instantiation and placement. Supports multiple enemy types (Goblins and Archers) and alternates them across BSP rooms.
 - **TurnManager:** Pure C# state machine. Enforces sequential game loop (Player Action -> Enemy Action -> Repeat).
+- **GameLog:** Pure C# service managing message history. Decoupled from UI via events.
 - **DungeonTileMap & FovTileMap:** Godot `TileMapLayer` nodes. They listen to the purely logical data grids to render specific visual sprites.

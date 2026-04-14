@@ -5,6 +5,7 @@ namespace RogueLike.Code.Entities.Combat;
 /// </summary>
 public interface ICombatant : IActor
 {
+    string Name { get; }
     HealthController Health { get; }
     int AttackDamage { get; }
     

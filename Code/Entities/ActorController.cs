@@ -1,6 +1,8 @@
 using Godot;
 using RogueLike.Code.Entities.Combat;
 
+using RogueLike.Code.Services;
+
 namespace RogueLike.Code.Entities;
 
 /// <summary>
@@ -10,6 +12,12 @@ namespace RogueLike.Code.Entities;
 public abstract partial class ActorController : Node2D, ICombatant
 {
     protected EntityManager _entityManager;
+
+    public new string Name 
+    { 
+        get => base.Name.ToString(); 
+        set => base.Name = value; 
+    }
 
     public HealthController Health { get; protected set; }
 
@@ -42,6 +50,7 @@ public abstract partial class ActorController : Node2D, ICombatant
 
     public virtual void Die()
     {
+        GameLog.Instance.LogDeath(Name);
         _entityManager?.UnregisterActor(this);
         QueueFree();
     }
