@@ -10,7 +10,11 @@
 - **FOV Array:** Pure C# data structures isolating visibility calculations.
     - `FovMap`: Pure struct tracking `VisibilityState` of every cell.
     - `IFovAlgorithm`: Interface for algorithms (`Raycaster`) that mutate the `FovMap`.
-- **EnemyAI:** Pure C# decision tree. Finds the player via `EntityManager` and paths towards them.
-- **EnemyController / PlayerController:** Godot `Node2D` classes mapped to `IActor`. They delegate logic downward to `GridMover`/`EnemyAI` and only handle visual synchronization and input.
+- **EnemyAI:** Pure C# decision tree. Finds the player via `EntityManager` and paths towards them. Used by melee Goblins.
+- **ArcherAI:** Pure C# decision tree for ranged enemies. Uses `LineOfSight` to check for clear shots. Behavior: shoot if in LOS + range, chase if in LOS but out of range, idle otherwise.
+- **LineOfSight:** Pure C# utility using Bresenham's line algorithm. Answers "is there an unobstructed path between tile A and tile B?" Shared by `ArcherAI` and potentially future systems.
+- **EnemyController / ArcherController / PlayerController:** Godot `Node2D` classes extending `ActorController`. They delegate logic downward to `GridMover`/`EnemyAI`/`ArcherAI` and only handle visual synchronization and input.
+- **ActorController:** Abstract base class for all grid actors. Centralizes `HealthController`, `[Export]` variables (`BaseHealth`, `BaseAttackDamage`, `HealthBar`), and `Die()` logic.
+- **Spawner:** Static utility handling entity instantiation and placement. Supports multiple enemy types (Goblins and Archers) and alternates them across BSP rooms.
 - **TurnManager:** Pure C# state machine. Enforces sequential game loop (Player Action -> Enemy Action -> Repeat).
 - **DungeonTileMap & FovTileMap:** Godot `TileMapLayer` nodes. They listen to the purely logical data grids to render specific visual sprites.

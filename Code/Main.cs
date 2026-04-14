@@ -4,6 +4,7 @@ using RogueLike.Code.Player;
 using RogueLike.Code.TurnContext;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Grid.FOV;
+using System.Linq;
 
 namespace RogueLike.Code;
 
@@ -46,8 +47,15 @@ public partial class Main : Node2D
         var player = GetNode<PlayerController>("Player");
         Spawner.InitializePlayer(player, _rooms[0], _gridMap, _entityManager, _turnManager);
         
-        var enemyScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
-        Spawner.SpawnEnemies(this, enemyScene, _rooms, _gridMap, _entityManager);
+        var goblinScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
+        var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");
+        
+        // TEMPORARY: Spawn one Archer in the same room as the player for testing
+        var testPos = Spawner.RandomFloorTile(_rooms[0]);
+        Spawner.SpawnArcher(this, archerScene, _gridMap, _entityManager, testPos, 999);
+
+        // Later we will re-enable random spawning
+        // Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager);
         
         // Initial FOV Compute
         UpdateFov();
@@ -66,13 +74,14 @@ public partial class Main : Node2D
         _fovAlgorithm.ComputeFov(_fovMap, _gridMap, player.GridPosition, 6); // Radius 6
         _fovTileMap.Render(_fovMap);
 
-        // Sync initial visibility of enemies immediately
-        foreach (var actor in _entityManager.AllActors)
+        // Sync visibility of all non-player actors
+        // Use ToList() snapshot to avoid "Collection was modified" if entities change during sync
+        foreach (var actor in _entityManager.AllActors.ToList())
         {
-            if (actor is Code.Enemies.EnemyController enemy)
+            if (actor is ActorController actorNode && !actor.IsPlayer)
             {
-                var vis = _fovMap.GetVisibility(enemy.GridPosition);
-                enemy.Visible = vis == Code.Grid.FOV.VisibilityState.Visible;
+                var vis = _fovMap.GetVisibility(actor.GridPosition);
+                actorNode.Visible = vis == Code.Grid.FOV.VisibilityState.Visible;
             }
         }
     }
@@ -88,16 +97,16 @@ public partial class Main : Node2D
 
     private void ProcessEnemyTurns()
     {
-        // For each actor that is NOT the player, try taking a turn
-        foreach (var actor in _entityManager.AllActors)
+        // Iterate over a snapshot (ToList) because enemies (or the player) 
+        // might die and unregister themselves during this loop.
+        foreach (var actor in _entityManager.AllActors.ToList())
         {
-            if (actor is Code.Enemies.EnemyController enemy)
-            {
-                enemy.TakeTurn(_gridMap, _fovMap);
-            }
+            if (actor is Code.Enemies.EnemyController goblin)
+                goblin.TakeTurn(_gridMap, _fovMap);
+            else if (actor is Code.Enemies.ArcherController archer)
+                archer.TakeTurn(_gridMap, _fovMap);
         }
-        
-        // Enemies finished, return control to player
+
         _turnManager.EndEnemyTurn();
     }
 

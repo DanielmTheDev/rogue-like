@@ -16,7 +16,16 @@ public static class CombatSystem
         
         // Very simple logic: attacker deals their direct damage to the defender.
         defender.Health.TakeDamage(attacker.AttackDamage);
+    }
+
+    /// <summary>
+    /// Resolves a ranged attack. Separate from bump to allow future divergence
+    /// (e.g., damage falloff, dodge chance, cover bonuses).
+    /// </summary>
+    public static void ResolveRanged(ICombatant attacker, ICombatant defender)
+    {
+        if (attacker == null || defender == null) return;
         
-        // Eventually we might add attack types, combat logs, etc.
+        defender.Health.TakeDamage(attacker.AttackDamage);
     }
 }

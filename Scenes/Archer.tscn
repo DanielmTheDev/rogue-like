@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://bmwudi06xxjt2"]
+
+[ext_resource type="Script" uid="uid://bl6vj72pso5r8" path="res://Code/Enemies/ArcherController.cs" id="1_archer_script"]
+[ext_resource type="Texture2D" uid="uid://bjk4wl0hldafm" path="res://Assets/Archer/archer.png" id="2_archer_tex"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.55, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
+bg_color = Color(0.6, 0.2, 0.8, 1)
+
+[node name="Archer" type="Node2D" node_paths=PackedStringArray("HealthBar")]
+script = ExtResource("1_archer_script")
+HealthBar = NodePath("ProgressBar")
+BaseHealth = 6
+BaseAttackDamage = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_archer_tex")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -16.0
+offset_top = -20.0
+offset_right = 16.0
+offset_bottom = -14.0
+theme_override_styles/background = SubResource("StyleBoxFlat_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fill")
+show_percentage = false
