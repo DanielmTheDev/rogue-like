@@ -50,12 +50,7 @@ public partial class Main : Node2D
         var goblinScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
         var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");
         
-        // TEMPORARY: Spawn one Archer in the same room as the player for testing
-        var testPos = Spawner.RandomFloorTile(_rooms[0]);
-        Spawner.SpawnArcher(this, archerScene, _gridMap, _entityManager, testPos, 999);
-
-        // Later we will re-enable random spawning
-        // Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager);
+        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager);
         
         // Initial FOV Compute
         UpdateFov();
