@@ -4,6 +4,7 @@ using RogueLike.Code.Player;
 using RogueLike.Code.TurnContext;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Grid.FOV;
+using RogueLike.Code.Items;
 using System.Linq;
 
 namespace RogueLike.Code;
@@ -21,6 +22,7 @@ public partial class Main : Node2D
     private DungeonGrid _gridMap;
     private EntityManager _entityManager;
     private TurnManager _turnManager;
+    private ItemManager _itemManager;
     
     private FovMap _fovMap;
     private IFovAlgorithm _fovAlgorithm;
@@ -34,6 +36,7 @@ public partial class Main : Node2D
         _rooms = Code.Grid.Generators.BspDungeonGenerator.Generate(_gridMap);
         
         _entityManager = new EntityManager();
+        _itemManager = new ItemManager();
         
         _fovMap = new FovMap(GridWidth, GridHeight);
         _fovAlgorithm = new Raycaster();
@@ -45,10 +48,17 @@ public partial class Main : Node2D
         SetupFovTileMap();
         
         var player = GetNode<PlayerController>("Player");
-        Spawner.InitializePlayer(player, _rooms[0], _gridMap, _entityManager, _turnManager);
+        Spawner.InitializePlayer(player, _rooms[0], _gridMap, _entityManager, _turnManager, _itemManager);
         
         var goblinScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
         var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");
+        
+        // TEMPORARY: Spawn test enemy and potion in first room for testing
+        var testEnemyPos = Spawner.RandomFloorTile(_rooms[0]);
+        Spawner.SpawnGoblin(this, goblinScene, _gridMap, _entityManager, testEnemyPos, 999);
+        
+        var testPotionPos = Spawner.RandomFloorTile(_rooms[0]);
+        Spawner.SpawnHealingPotion(this, _gridMap, _itemManager, testPotionPos);
         
         Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager);
         

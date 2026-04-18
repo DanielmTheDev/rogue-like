@@ -18,4 +18,5 @@
 - **Spawner:** Static utility handling entity instantiation and placement. Supports multiple enemy types (Goblins and Archers) and alternates them across BSP rooms.
 - **TurnManager:** Pure C# state machine. Enforces sequential game loop (Player Action -> Enemy Action -> Repeat).
 - **GameLog:** Pure C# service managing message history. Decoupled from UI via events.
+- **ItemManager:** Pure C# logic for tracking floor items and managing pickups.
 - **DungeonTileMap & FovTileMap:** Godot `TileMapLayer` nodes. They listen to the purely logical data grids to render specific visual sprites.

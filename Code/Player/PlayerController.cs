@@ -4,6 +4,8 @@ using RogueLike.Code.Entities;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.TurnContext;
 
+using RogueLike.Code.Items;
+
 namespace RogueLike.Code.Player;
 
 /// <summary>
@@ -14,17 +16,19 @@ public partial class PlayerController : ActorController
 {
     private GridMover _mover;
     private TurnManager _turnManager;
+    private ItemManager _itemManager;
 
     public override Vector2I GridPosition => _mover.GridPosition;
     public override bool IsPlayer => true;
     public override int AttackDamage => BaseAttackDamage;
 
-    public void Initialize(DungeonGrid gridMap, EntityManager entityManager, TurnManager turnManager, Vector2I startPos)
+    public void Initialize(DungeonGrid gridMap, EntityManager entityManager, TurnManager turnManager, ItemManager itemManager, Vector2I startPos)
     {
         InitializeBase(entityManager);
         
         _mover = new GridMover(this, gridMap, entityManager, startPos);
         _turnManager = turnManager;
+        _itemManager = itemManager;
         SyncPosition();
         entityManager.RegisterActor(this);
     }
@@ -56,6 +60,10 @@ public partial class PlayerController : ActorController
             return false;
 
         SyncPosition();
+        
+        // CHECK FOR ITEMS
+        _itemManager?.CheckForPickup(GridPosition, this);
+        
         return true;
     }
 

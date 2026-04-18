@@ -4,6 +4,7 @@ using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
 using RogueLike.Code.TurnContext;
+using RogueLike.Code.Items;
 
 namespace RogueLike.Code.Entities;
 
@@ -19,10 +20,11 @@ public static class Spawner
         Rect2I startRoom, 
         DungeonGrid grid, 
         EntityManager entityManager, 
-        TurnManager turnManager)
+        TurnManager turnManager,
+        ItemManager itemManager)
     {
         var centerPos = new Vector2I(startRoom.Position.X + startRoom.Size.X / 2, startRoom.Position.Y + startRoom.Size.Y / 2);
-        player.Initialize(grid, entityManager, turnManager, centerPos);
+        player.Initialize(grid, entityManager, turnManager, itemManager, centerPos);
     }
 
     public static void SpawnEnemies(
@@ -46,7 +48,7 @@ public static class Spawner
         }
     }
 
-    private static void SpawnGoblin(
+    public static void SpawnGoblin(
         Node parent, PackedScene scene, DungeonGrid grid,
         EntityManager entityManager, Vector2I pos, int index)
     {
@@ -64,6 +66,15 @@ public static class Spawner
         archer.Name = $"Archer_{index}";
         parent.AddChild(archer);
         archer.Initialize(grid, entityManager, pos);
+    }
+
+    public static void SpawnHealingPotion(
+        Node parent, DungeonGrid grid,
+        ItemManager itemManager, Vector2I pos)
+    {
+        var potion = new Items.Consumables.HealingPotion();
+        parent.AddChild(potion);
+        potion.Initialize(itemManager, pos);
     }
 
     public static Vector2I RandomFloorTile(Rect2I room)
