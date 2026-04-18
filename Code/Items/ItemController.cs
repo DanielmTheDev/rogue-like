@@ -12,6 +12,7 @@ public partial class ItemController : Node2D, IItem
     [Export] public string ItemName { get; set; } = "Generic Item";
     public string DisplayName => ItemName;
     public Vector2I GridPosition { get; private set; }
+    public virtual bool IsConsumable => true;
 
     protected ItemManager _itemManager;
 
@@ -23,11 +24,20 @@ public partial class ItemController : Node2D, IItem
         _itemManager.RegisterItem(this);
     }
 
-    public virtual bool ProcessPickup(IActor actor)
+    public virtual bool CanPickup(IActor actor)
     {
-        // Default behavior: just log it and disappear
-        GameLog.Instance.Log($"You walk over the {DisplayName}.");
-        QueueFree();
-        return true;
+        return true; // By default, all items can be picked up
+    }
+
+    public virtual void OnPickup(IActor actor)
+    {
+        GameLog.Instance.Log($"You pick up the {DisplayName}.");
+    }
+
+    public virtual bool Use(IActor actor)
+    {
+        // Default behavior: items do nothing when used
+        GameLog.Instance.Log($"You use the {DisplayName}. Nothing happens.");
+        return false;
     }
 }

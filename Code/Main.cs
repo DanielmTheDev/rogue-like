@@ -50,6 +50,10 @@ public partial class Main : Node2D
         var player = GetNode<PlayerController>("Player");
         Spawner.InitializePlayer(player, _rooms[0], _gridMap, _entityManager, _turnManager, _itemManager);
         
+        // Initialize Inventory UI
+        var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");
+        inventoryUI.Initialize(player.Inventory);
+        
         var goblinScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
         var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");

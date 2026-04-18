@@ -24,18 +24,38 @@ public class ItemManager
     }
 
     /// <summary>
-    /// Checks if there is an item at the given position and processes it.
+    /// Checks if there is an item at the given position and attempts to add it to inventory.
+    /// If inventory is null or full, the item stays on the floor.
     /// </summary>
-    public void CheckForPickup(Vector2I position, Entities.IActor actor)
+    public void CheckForPickup(Vector2I position, Entities.IActor actor, Player.Inventory inventory)
     {
         var item = _items.FirstOrDefault(i => i.GridPosition == position);
-        if (item != null)
+        if (item == null)
+            return;
+
+        if (!item.CanPickup(actor))
+            return;
+
+        if (inventory == null)
         {
-            bool shouldRemove = item.ProcessPickup(actor);
-            if (shouldRemove)
+            // No inventory system (for NPCs or future features)
+            return;
+        }
+
+        if (inventory.AddItem(item))
+        {
+            item.OnPickup(actor);
+            UnregisterItem(item);
+            
+            // Remove the visual node from the scene tree
+            if (item is Godot.Node node)
             {
-                UnregisterItem(item);
+                node.QueueFree();
             }
+        }
+        else
+        {
+            Services.GameLog.Instance.Log("[color=orange]Your inventory is full![/color]");
         }
     }
 }

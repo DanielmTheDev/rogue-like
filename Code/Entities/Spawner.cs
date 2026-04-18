@@ -16,10 +16,10 @@ public static class Spawner
     private static readonly System.Random _rng = new System.Random();
 
     public static void InitializePlayer(
-        PlayerController player, 
-        Rect2I startRoom, 
-        DungeonGrid grid, 
-        EntityManager entityManager, 
+        PlayerController player,
+        Rect2I startRoom,
+        DungeonGrid grid,
+        EntityManager entityManager,
         TurnManager turnManager,
         ItemManager itemManager)
     {
@@ -28,11 +28,11 @@ public static class Spawner
     }
 
     public static void SpawnEnemies(
-        Node parentNode, 
+        Node parentNode,
         PackedScene goblinScene,
         PackedScene archerScene,
-        List<Rect2I> rooms, 
-        DungeonGrid grid, 
+        List<Rect2I> rooms,
+        DungeonGrid grid,
         EntityManager entityManager)
     {
         for (int i = 1; i < rooms.Count; i++)
@@ -56,6 +56,7 @@ public static class Spawner
         enemy.Name = $"Goblin_{index}";
         parent.AddChild(enemy);
         enemy.Initialize(grid, entityManager, pos);
+        Services.GameLog.Instance.Log($"[color=gray]Spawned Goblin at {pos}[/color]");
     }
 
     public static void SpawnArcher(
@@ -75,6 +76,7 @@ public static class Spawner
         var potion = potionScene.Instantiate<Items.Consumables.HealingPotion>();
         parent.AddChild(potion);
         potion.Initialize(itemManager, pos);
+        Services.GameLog.Instance.Log($"[color=gray]Spawned Potion at {pos}[/color]");
     }
 
     public static Vector2I RandomFloorTile(Rect2I room)

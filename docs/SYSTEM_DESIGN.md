@@ -19,4 +19,5 @@
 - **TurnManager:** Pure C# state machine. Enforces sequential game loop (Player Action -> Enemy Action -> Repeat).
 - **GameLog:** Pure C# service managing message history. Decoupled from UI via events.
 - **ItemManager:** Pure C# logic for tracking floor items and managing pickups.
+- **Inventory:** Pure C# component owned by PlayerController. Stores up to 10 items. Emits events for UI updates.
 - **DungeonTileMap & FovTileMap:** Godot `TileMapLayer` nodes. They listen to the purely logical data grids to render specific visual sprites.

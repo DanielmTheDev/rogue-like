@@ -17,10 +17,12 @@ public partial class PlayerController : ActorController
     private GridMover _mover;
     private TurnManager _turnManager;
     private ItemManager _itemManager;
+    private Inventory _inventory;
 
     public override Vector2I GridPosition => _mover.GridPosition;
     public override bool IsPlayer => true;
     public override int AttackDamage => BaseAttackDamage;
+    public Inventory Inventory => _inventory;
 
     public void Initialize(DungeonGrid gridMap, EntityManager entityManager, TurnManager turnManager, ItemManager itemManager, Vector2I startPos)
     {
@@ -29,6 +31,7 @@ public partial class PlayerController : ActorController
         _mover = new GridMover(this, gridMap, entityManager, startPos);
         _turnManager = turnManager;
         _itemManager = itemManager;
+        _inventory = new Inventory(maxSlots: 10);
         SyncPosition();
         entityManager.RegisterActor(this);
     }
@@ -61,8 +64,8 @@ public partial class PlayerController : ActorController
 
         SyncPosition();
         
-        // CHECK FOR ITEMS
-        _itemManager?.CheckForPickup(GridPosition, this);
+        // CHECK FOR ITEMS (auto-pickup)
+        _itemManager?.CheckForPickup(GridPosition, this, _inventory);
         
         return true;
     }
@@ -75,11 +78,25 @@ public partial class PlayerController : ActorController
         if (_turnManager.CurrentState != TurnState.Player)
             return;
 
-        if (@event is InputEventKey keyEvent && keyEvent.Keycode == Key.Period)
+        if (@event is InputEventKey keyEvent)
         {
-            // Wait/Rest action (for future implementation)
-            _turnManager.EndPlayerTurn();
-            return;
+            // Wait/Rest action
+            if (keyEvent.Keycode == Key.Period)
+            {
+                _turnManager.EndPlayerTurn();
+                return;
+            }
+
+            // Use item from inventory (keys 1-9)
+            if (keyEvent.Keycode >= Key.Key1 && keyEvent.Keycode <= Key.Key9)
+            {
+                int slot = (int)keyEvent.Keycode - (int)Key.Key1;
+                if (_inventory.UseItem(slot, this))
+                {
+                    _turnManager.EndPlayerTurn();
+                }
+                return;
+            }
         }
 
         var direction = InputMapper.GetDirection(@event);

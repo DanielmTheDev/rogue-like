@@ -17,13 +17,12 @@ public partial class HealingPotion : ItemController
         base.Initialize(itemManager, position);
     }
 
-    public override bool ProcessPickup(IActor actor)
+    public override bool Use(IActor actor)
     {
         if (actor is ICombatant combatant)
         {
             combatant.Health.Heal(HealAmount);
             GameLog.Instance.Log($"[color=green]You drink the Healing Potion and recover {HealAmount} HP![/color]");
-            QueueFree();
             return true;
         }
         return false;

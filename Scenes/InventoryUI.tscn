@@ -1,0 +1,51 @@
+[gd_scene load_steps=2 format=3 uid="uid://d8m3n5p7q9r2s"]
+
+[ext_resource type="Script" path="res://Code/UI/InventoryUI.cs" id="1_inventory_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0, 0, 0, 0.6)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="InventoryUI" type="CanvasLayer"]
+
+[node name="InventoryControl" type="Control" parent="." node_paths=PackedStringArray("InventoryLabel")]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 250.0
+grow_horizontal = 0
+script = ExtResource("1_inventory_script")
+InventoryLabel = NodePath("Panel/RichTextLabel")
+
+[node name="Panel" type="Panel" parent="InventoryControl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="InventoryControl/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+text = "[b]Inventory (0/10)[/b]
+1. <empty>
+2. <empty>"
