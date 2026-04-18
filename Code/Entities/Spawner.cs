@@ -69,10 +69,10 @@ public static class Spawner
     }
 
     public static void SpawnHealingPotion(
-        Node parent, DungeonGrid grid,
+        Node parent, PackedScene potionScene, DungeonGrid grid,
         ItemManager itemManager, Vector2I pos)
     {
-        var potion = new Items.Consumables.HealingPotion();
+        var potion = potionScene.Instantiate<Items.Consumables.HealingPotion>();
         parent.AddChild(potion);
         potion.Initialize(itemManager, pos);
     }

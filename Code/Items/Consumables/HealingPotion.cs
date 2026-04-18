@@ -9,17 +9,12 @@ namespace RogueLike.Code.Items.Consumables;
 /// </summary>
 public partial class HealingPotion : ItemController
 {
-    public int HealAmount { get; set; } = 5;
+    [Godot.Export] public int HealAmount { get; set; } = 5;
 
     public override void Initialize(ItemManager itemManager, Godot.Vector2I position)
     {
         ItemName = "Healing Potion";
         base.Initialize(itemManager, position);
-        
-        // Add visual sprite
-        var sprite = new Godot.Sprite2D();
-        sprite.Texture = Godot.GD.Load<Godot.Texture2D>("res://Assets/Potion/potion.png");
-        AddChild(sprite);
     }
 
     public override bool ProcessPickup(IActor actor)

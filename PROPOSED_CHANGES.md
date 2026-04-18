@@ -1,23 +1,20 @@
-# Proposed Changes: Iterative Inventory Phase 1 (Instant Consumables)
+# Refactoring: HealingPotion Scene + Remove Debug Heal
 
 ## High-Level Outline
-1. **Interface:** Create `Code/Items/IItem.cs` to define basic floor items.
-2. **Actor:** Create `Code/Items/ItemController.cs` (Node2D) for visual floor items.
-3. **Logic:** Create `Code/Items/ItemManager.cs` to track all items on the grid.
-4. **Integration:** Update `Code/Grid/GridMover.cs` or `PlayerController.cs` to trigger `ItemManager.CheckForPickup(position)` after movement.
-5. **Assets:** Use Nano Banana Pro (`image_gen`) to create a 32x32 Healing Potion.
+1. Remove debug heal (Health.Heal(1)) from PlayerController movement.
+2. Create proper HealingPotion.tscn with Sprite2D child.
+3. Update HealingPotion.cs to remove sprite creation code.
+4. Update Spawner to load PackedScene instead of direct instantiation.
 
 ## Reasoning
-This fits our architecture by mirroring the `EntityManager` pattern. Keeping items in their own manager ensures the `DungeonGrid` stays as a "pure data" floor map and doesn't get cluttered with entity/item logic.
+- **Scene Consistency:** All entities (Player, Goblin, Archer) use .tscn. Items should too.
+- **Gameplay Balance:** Debug heal makes game too easy for real testing.
+- **Maintainability:** Sprite should be editable in Inspector, not hardcoded.
 
 ## Architecture Impact
-- **New Directory:** `Code/Items/`.
-- **New Manager:** `ItemManager` will be held by `Main.cs`.
-- **Decoupling:** Items are separate from Actors. Goblins won't pick them up (yet).
+None. Pure cleanup/consistency improvements.
 
-- [ ] Create Code/Items/IItem.cs
-- [ ] Create Code/Items/ItemController.cs
-- [ ] Create Code/Items/ItemManager.cs
-- [ ] Generate Potion Sprite (Nano Banana Pro)
-- [ ] Integrate into Main.cs & PlayerController.cs
-- [ ] Update docs/SYSTEM_DESIGN.md
+- [ ] Remove debug heal from PlayerController.cs
+- [ ] Create proper Scenes/HealingPotion.tscn
+- [ ] Clean up HealingPotion.cs
+- [ ] Update Spawner.cs to use PackedScene

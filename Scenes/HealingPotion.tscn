@@ -1,10 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://c5h3a8mam4n2p"]
+[gd_scene load_steps=3 format=3 uid="uid://c5h3a8l9m4n2p"]
 
 [ext_resource type="Script" path="res://Code/Items/Consumables/HealingPotion.cs" id="1_potion_script"]
+[ext_resource type="Texture2D" path="res://Assets/Potion/potion.png" id="2_potion_texture"]
 
 [node name="HealingPotion" type="Node2D"]
 script = ExtResource("1_potion_script")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(1, 0, 0, 1)
-texture = ExtResource("2_placeholder")
+texture = ExtResource("2_potion_texture")
