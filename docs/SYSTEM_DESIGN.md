@@ -20,4 +20,8 @@
 - **GameLog:** Pure C# service managing message history. Decoupled from UI via events.
 - **ItemManager:** Pure C# logic for tracking floor items and managing pickups.
 - **Inventory:** Pure C# component owned by PlayerController. Stores up to 10 items. Emits events for UI updates.
+- **Advanced Player Actions:**
+  - **Shift Move:** Hold Shift + Direction to auto-move until seeing an enemy, hitting a wall, or encountering a corner.
+  - **Wait Full Health:** Press Shift + `.` to rest repeatedly until health is fully restored.
+  - Both actions consume multiple turns and integrate with FOV system for enemy detection.
 - **DungeonTileMap & FovTileMap:** Godot `TileMapLayer` nodes. They listen to the purely logical data grids to render specific visual sprites.

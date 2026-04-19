@@ -48,7 +48,7 @@ public partial class Main : Node2D
         SetupFovTileMap();
         
         var player = GetNode<PlayerController>("Player");
-        Spawner.InitializePlayer(player, _rooms[0], _gridMap, _entityManager, _turnManager, _itemManager);
+        Spawner.InitializePlayer(player, _rooms[0], _gridMap, _entityManager, _turnManager, _itemManager, _fovMap);
         
         // Initialize Inventory UI
         var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");

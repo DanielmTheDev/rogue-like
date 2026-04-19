@@ -25,6 +25,11 @@ public class GridMover
     /// </summary>
     public Vector2 WorldPosition => _grid.GridToWorld(_gridPosition);
 
+    /// <summary>
+    /// Access to the underlying grid for wall/corner checks.
+    /// </summary>
+    public DungeonGrid Grid => _grid;
+
     public GridMover(IActor owner, DungeonGrid grid, EntityManager entityManager, Vector2I startPos)
     {
         _owner = owner;

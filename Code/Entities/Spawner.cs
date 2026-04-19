@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Godot;
 using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
+using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Player;
 using RogueLike.Code.TurnContext;
 using RogueLike.Code.Items;
@@ -21,10 +22,11 @@ public static class Spawner
         DungeonGrid grid,
         EntityManager entityManager,
         TurnManager turnManager,
-        ItemManager itemManager)
+        ItemManager itemManager,
+        FovMap fovMap)
     {
         var centerPos = new Vector2I(startRoom.Position.X + startRoom.Size.X / 2, startRoom.Position.Y + startRoom.Size.Y / 2);
-        player.Initialize(grid, entityManager, turnManager, itemManager, centerPos);
+        player.Initialize(grid, entityManager, turnManager, itemManager, fovMap, centerPos);
     }
 
     public static void SpawnEnemies(
