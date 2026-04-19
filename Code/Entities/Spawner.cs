@@ -56,7 +56,6 @@ public static class Spawner
         enemy.Name = $"Goblin_{index}";
         parent.AddChild(enemy);
         enemy.Initialize(grid, entityManager, pos);
-        Services.GameLog.Instance.Log($"[color=gray]Spawned Goblin at {pos}[/color]");
     }
 
     public static void SpawnArcher(
@@ -76,7 +75,23 @@ public static class Spawner
         var potion = potionScene.Instantiate<Items.Consumables.HealingPotion>();
         parent.AddChild(potion);
         potion.Initialize(itemManager, pos);
-        Services.GameLog.Instance.Log($"[color=gray]Spawned Potion at {pos}[/color]");
+    }
+
+    public static void SpawnPotions(
+        Node parentNode,
+        PackedScene potionScene,
+        List<Rect2I> rooms,
+        DungeonGrid grid,
+        ItemManager itemManager)
+    {
+        // Spawn 1-2 potions per dungeon in random rooms (skip first room where player starts)
+        int potionCount = _rng.Next(1, 3);
+        for (int i = 0; i < potionCount; i++)
+        {
+            var room = rooms[_rng.Next(1, rooms.Count)];
+            var spawnPos = RandomFloorTile(room);
+            SpawnHealingPotion(parentNode, potionScene, grid, itemManager, spawnPos);
+        }
     }
 
     public static Vector2I RandomFloorTile(Rect2I room)

@@ -39,6 +39,27 @@
 ## 5. Performance & Safety
 - **Memory:** Be explicit about `QueueFree()` and disposing of C# objects that don't inherit from `GodotObject`.
 - **Physics:** Ensure all physics calculations happen in `_PhysicsProcess` and use `delta` correctly.
+
+## 6. Proactive Refactoring & Clean Code
+- **Continuous Review:** After completing any feature, the agent should actively look for refactoring opportunities in the code just written AND in related systems.
+- **Code Smells to Watch For:**
+  - Methods exceeding 20 lines (violates Rule #3)
+  - Repeated code patterns (DRY violations)
+  - Too many constructor parameters (>4 suggests need for config object)
+  - Hard-coded sprites/assets in code (should be in .tscn scenes)
+  - Linear searches in hot paths (consider dictionaries for O(1) lookups)
+  - God classes (classes doing too many things)
+- **When to Refactor:**
+  - **Immediately:** If the code violates Rules #3 (Small Methods) or clean code principles.
+  - **Before Next Feature:** If adding the next feature would make the code worse without refactoring first.
+  - **When Asked:** User may request a refactoring review at any time.
+- **Refactoring Documentation:** When suggesting refactorings, create a `REFACTORING_OPPORTUNITIES.md` artifact listing:
+  - Issue description
+  - Proposed solution
+  - Priority (High/Medium/Low)
+  - When to do it (Now/Before Phase X/Later)
+- **Clean Code First:** It is better to write clean, extensible code from the start than to ship technical debt. If you notice a better domain model emerging during implementation, refactor towards it immediately.
+
 # Asset Creation Pipeline
 
 To ensure a consistent visual style and technical compatibility in this Roguelike project, follow these steps when creating new character or object sprites.

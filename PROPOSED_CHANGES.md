@@ -1,31 +1,18 @@
-# Refactoring: Compact Inventory UI with Item Stacking
+# Cleanup: Remove Test Spawns & Update Agent Rules
 
 ## High-Level Outline
-1. Make InventoryUI window smaller (half the height)
-2. Change display logic to group same items with count
-3. Update input handling to work with grouped slots
+1. Remove temporary test Goblin/Potion spawning from Main.cs
+2. Keep random enemy spawning active
+3. Add random potion spawning to rooms (1-2 potions per dungeon)
+4. Update AGENTS.md with refactoring guidance
 
-## Example
-**Old Display:**
-```
-1. Healing Potion
-2. Healing Potion
-3. <empty>
-```
-
-**New Display:**
-```
-1. Healing Potion x2
-2. <empty>
-```
+## Reasoning
+Test spawns were useful for Phase 2 development. Now we restore normal gameplay loop.
 
 ## Architecture Impact
-- `Inventory.cs`: Add `GetGroupedItems()` method
-- `InventoryUI.cs`: Update display logic
-- `PlayerController.cs`: Map key presses to grouped slots
-- Internal storage stays as `List<IItem>` (no change)
+None. Just cleanup.
 
-- [ ] Add Inventory.GetGroupedItems()
-- [ ] Update InventoryUI display logic
-- [ ] Update PlayerController input handling
-- [ ] Shrink InventoryUI.tscn window
+- [ ] Remove test spawns from Main.cs
+- [ ] Add potion spawning to Spawner
+- [ ] Remove debug spawn logging
+- [ ] Update AGENTS.md

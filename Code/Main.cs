@@ -58,14 +58,8 @@ public partial class Main : Node2D
         var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");
         
-        // TEMPORARY: Spawn test enemy and potion in first room for testing
-        var testEnemyPos = Spawner.RandomFloorTile(_rooms[0]);
-        Spawner.SpawnGoblin(this, goblinScene, _gridMap, _entityManager, testEnemyPos, 999);
-        
-        var testPotionPos = Spawner.RandomFloorTile(_rooms[0]);
-        Spawner.SpawnHealingPotion(this, potionScene, _gridMap, _itemManager, testPotionPos);
-        
         Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager);
+        Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _itemManager);
         
         // Initial FOV Compute
         UpdateFov();
