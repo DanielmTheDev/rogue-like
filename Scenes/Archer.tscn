@@ -13,7 +13,7 @@ bg_color = Color(0.6, 0.2, 0.8, 1)
 script = ExtResource("1_archer_script")
 HealthBar = NodePath("ProgressBar")
 BaseHealth = 6
-BaseAttackDamage = 3
+BaseAttackDamage = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_archer_tex")

@@ -80,9 +80,10 @@ public partial class PlayerController : ActorController
 
         if (@event is InputEventKey keyEvent)
         {
-            // Wait/Rest action
+            // Wait/Rest action (passive heal)
             if (keyEvent.Keycode == Key.Period)
             {
+                Health.Heal(1);
                 _turnManager.EndPlayerTurn();
                 return;
             }
@@ -106,6 +107,7 @@ public partial class PlayerController : ActorController
 
         if (TryMove(direction))
         {
+            Health.Heal(1); // Passive healing per action
             _turnManager.EndPlayerTurn();
         }
     }

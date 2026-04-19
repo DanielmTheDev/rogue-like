@@ -1,18 +1,15 @@
-# Cleanup: Remove Test Spawns & Update Agent Rules
+# Proposed Changes: Re-add Passive Healing & Reduce Archer Damage
 
 ## High-Level Outline
-1. Remove temporary test Goblin/Potion spawning from Main.cs
-2. Keep random enemy spawning active
-3. Add random potion spawning to rooms (1-2 potions per dungeon)
-4. Update AGENTS.md with refactoring guidance
+1. Re-add passive healing (1 HP per turn) to PlayerController
+2. Reduce Archer base damage from 2 to 1 (or configure in Inspector)
 
 ## Reasoning
-Test spawns were useful for Phase 2 development. Now we restore normal gameplay loop.
+- **Passive Healing:** Makes exploration viable. Without it, every hit is permanent damage. This is a core roguelike mechanic (resting/waiting).
+- **Archer Nerf:** Ranged enemies are safer (can hit from distance), so lower damage balances risk/reward.
 
 ## Architecture Impact
-None. Just cleanup.
+None. Simple parameter adjustments.
 
-- [ ] Remove test spawns from Main.cs
-- [ ] Add potion spawning to Spawner
-- [ ] Remove debug spawn logging
-- [ ] Update AGENTS.md
+- [ ] Re-add Health.Heal(1) after successful player actions
+- [ ] Adjust Archer BaseAttackDamage in Archer.tscn or ArcherController.cs
