@@ -90,8 +90,8 @@ public partial class PlayerController : ActorController
             // Use item from inventory (keys 1-9)
             if (keyEvent.Keycode >= Key.Key1 && keyEvent.Keycode <= Key.Key9)
             {
-                int slot = (int)keyEvent.Keycode - (int)Key.Key1;
-                if (_inventory.UseItem(slot, this))
+                int groupSlot = (int)keyEvent.Keycode - (int)Key.Key1;
+                if (_inventory.UseItemByGroup(groupSlot, this))
                 {
                     _turnManager.EndPlayerTurn();
                 }

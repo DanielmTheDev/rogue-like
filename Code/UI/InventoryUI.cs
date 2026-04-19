@@ -26,17 +26,26 @@ public partial class InventoryUI : Control
 
         var text = $"[b]Inventory ({_inventory.Count}/{_inventory.MaxSlots})[/b]\n";
         
-        for (int i = 0; i < _inventory.MaxSlots; i++)
+        var grouped = _inventory.GetGroupedItems();
+        int displaySlot = 1;
+        
+        foreach (var (itemName, count, _) in grouped)
         {
-            var item = _inventory.GetItem(i);
-            if (item != null)
+            if (count > 1)
             {
-                text += $"[color=white]{i + 1}.[/color] {item.DisplayName}\n";
+                text += $"[color=white]{displaySlot}.[/color] {itemName} [color=yellow]x{count}[/color]\n";
             }
             else
             {
-                text += $"[color=gray]{i + 1}. <empty>[/color]\n";
+                text += $"[color=white]{displaySlot}.[/color] {itemName}\n";
             }
+            displaySlot++;
+        }
+
+        // Show a few empty slots if inventory is not full
+        if (_inventory.Count < _inventory.MaxSlots)
+        {
+            text += $"[color=gray]{displaySlot}. <empty>[/color]\n";
         }
 
         InventoryLabel.Text = text;

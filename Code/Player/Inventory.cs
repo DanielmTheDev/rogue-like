@@ -77,4 +77,41 @@ public class Inventory
         _items.Clear();
         OnInventoryChanged?.Invoke();
     }
+
+    /// <summary>
+    /// Groups items by DisplayName and returns a list of (ItemName, Count, FirstIndex).
+    /// Used for compact display and input handling.
+    /// </summary>
+    public List<(string ItemName, int Count, int FirstIndex)> GetGroupedItems()
+    {
+        var grouped = new List<(string, int, int)>();
+        var seen = new HashSet<string>();
+
+        for (int i = 0; i < _items.Count; i++)
+        {
+            var itemName = _items[i].DisplayName;
+            if (!seen.Contains(itemName))
+            {
+                seen.Add(itemName);
+                int count = _items.Count(item => item.DisplayName == itemName);
+                grouped.Add((itemName, count, i));
+            }
+        }
+
+        return grouped;
+    }
+
+    /// <summary>
+    /// Uses the first item matching the given group index.
+    /// Group index corresponds to the grouped display (0 = first unique item type, etc.)
+    /// </summary>
+    public bool UseItemByGroup(int groupIndex, Entities.IActor user)
+    {
+        var grouped = GetGroupedItems();
+        if (groupIndex < 0 || groupIndex >= grouped.Count)
+            return false;
+
+        int actualIndex = grouped[groupIndex].FirstIndex;
+        return UseItem(actualIndex, user);
+    }
 }
