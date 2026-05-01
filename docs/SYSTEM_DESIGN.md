@@ -21,6 +21,9 @@
 - **ItemManager:** Pure C# logic for tracking floor items and managing pickups.
 - **Inventory:** Pure C# component owned by PlayerController. Stores up to 10 items. Emits events for UI updates.
 - **ExperienceSystem:** Pure C# logic for XP, leveling, and stat progression. Decoupled from UI via events.
+- **Level Generation:** `Main.cs` orchestrates level creation, cleanup, and populating new dungeons when the player uses the stairs. Player state is preserved across levels.
+- **Pathfinding:** A pure C# A* `Pathfinder` class provides navigation for AI. Enemies use this to pursue the player when they are visible within the FOV.
+- **Game State:** `Main.cs` also manages the game state, handling level transitions and the restart-on-death flow.
 - **Advanced Player Actions:**
   - **Shift Move:** Hold Shift + Direction to auto-move until seeing an enemy, hitting a wall, or encountering a corner.
   - **Wait Full Health:** Press Shift + `.` to rest repeatedly until health is fully restored.

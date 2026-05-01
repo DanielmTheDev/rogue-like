@@ -3,9 +3,11 @@ using Godot;
 using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
+using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Player;
 using RogueLike.Code.TurnContext;
 using RogueLike.Code.Items;
+using RogueLike.Code.World;
 
 namespace RogueLike.Code.Entities;
 
@@ -16,17 +18,15 @@ public static class Spawner
 {
     private static readonly System.Random _rng = new System.Random();
 
-    public static void InitializePlayer(
+    public static void PlacePlayerOnLevel(
         PlayerController player,
         Rect2I startRoom,
         DungeonGrid grid,
         EntityManager entityManager,
-        TurnManager turnManager,
-        ItemManager itemManager,
         FovMap fovMap)
     {
         var centerPos = new Vector2I(startRoom.Position.X + startRoom.Size.X / 2, startRoom.Position.Y + startRoom.Size.Y / 2);
-        player.Initialize(grid, entityManager, turnManager, itemManager, fovMap, centerPos);
+        player.PlaceOnLevel(grid, entityManager, fovMap, centerPos);
     }
 
     public static void SpawnEnemies(
@@ -35,12 +35,15 @@ public static class Spawner
         PackedScene archerScene,
         List<Rect2I> rooms,
         DungeonGrid grid,
-        EntityManager entityManager)
+        EntityManager entityManager,
+        Pathfinder pathfinder,
+        int dungeonLevel)
     {
         for (int i = 1; i < rooms.Count; i++)
         {
             var room = rooms[i];
-            int numberOfEnemies = _rng.Next(2, 4); // Spawn 2 or 3 enemies
+            // Difficulty scaling: increase max number of enemies with dungeon level
+            int numberOfEnemies = _rng.Next(1, 3) + dungeonLevel;
             var spawnedPositions = new HashSet<Vector2I>();
 
             for (int j = 0; j < numberOfEnemies; j++)
@@ -52,7 +55,7 @@ public static class Spawner
                 {
                     spawnPos = RandomFloorTile(room);
                     attempts++;
-                } while (spawnedPositions.Contains(spawnPos) && attempts < 100);
+                } while ((spawnedPositions.Contains(spawnPos) || !grid.IsWalkable(spawnPos)) && attempts < 100);
 
                 if (attempts >= 100) continue; // Failsafe for very small rooms
                 
@@ -60,31 +63,31 @@ public static class Spawner
 
                 // Alternate enemy types
                 if (j % 2 == 0)
-                    SpawnGoblin(parentNode, goblinScene, grid, entityManager, spawnPos, i * 10 + j);
+                    SpawnGoblin(parentNode, goblinScene, grid, entityManager, pathfinder, spawnPos, i * 10 + j);
                 else
-                    SpawnArcher(parentNode, archerScene, grid, entityManager, spawnPos, i * 10 + j);
+                    SpawnArcher(parentNode, archerScene, grid, entityManager, pathfinder, spawnPos, i * 10 + j);
             }
         }
     }
 
     public static void SpawnGoblin(
         Node parent, PackedScene scene, DungeonGrid grid,
-        EntityManager entityManager, Vector2I pos, int index)
+        EntityManager entityManager, Pathfinder pathfinder, Vector2I pos, int index)
     {
         var enemy = scene.Instantiate<EnemyController>();
         enemy.Name = $"Goblin_{index}";
         parent.AddChild(enemy);
-        enemy.Initialize(grid, entityManager, pos);
+        enemy.Initialize(grid, entityManager, pathfinder, pos);
     }
 
     public static void SpawnArcher(
         Node parent, PackedScene scene, DungeonGrid grid,
-        EntityManager entityManager, Vector2I pos, int index)
+        EntityManager entityManager, Pathfinder pathfinder, Vector2I pos, int index)
     {
         var archer = scene.Instantiate<ArcherController>();
         archer.Name = $"Archer_{index}";
         parent.AddChild(archer);
-        archer.Initialize(grid, entityManager, pos);
+        archer.Initialize(grid, entityManager, pathfinder, pos);
     }
 
     public static void SpawnHealingPotion(
@@ -118,5 +121,17 @@ public static class Spawner
         int rx = _rng.Next(room.Position.X, room.Position.X + room.Size.X);
         int ry = _rng.Next(room.Position.Y, room.Position.Y + room.Size.Y);
         return new Vector2I(rx, ry);
+    }
+
+    public static void SpawnStairs(Node parent, PackedScene scene, Rect2I room, EntityManager entityManager, DungeonGrid grid)
+    {
+        var stairs = scene.Instantiate<StairsController>();
+        var position = new Vector2I(room.Position.X + room.Size.X / 2, room.Position.Y + room.Size.Y / 2);
+        
+        stairs.Initialize(position);
+        stairs.Position = grid.GridToWorld(position);
+        
+        parent.AddChild(stairs);
+        entityManager.RegisterNode(stairs, position);
     }
 }

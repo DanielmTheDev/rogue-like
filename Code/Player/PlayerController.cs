@@ -22,6 +22,9 @@ public partial class PlayerController : ActorController
     private ItemManager _itemManager;
     private Inventory _inventory;
     private FovMap _fovMap;
+    private Main _main; // Reference to Main to trigger level changes
+
+    public bool IsDead { get; private set; } = false;
 
     private int _turnsSinceLastHeal = 0;
     private const int TurnsPerHeal = 5;
@@ -32,19 +35,22 @@ public partial class PlayerController : ActorController
     public Inventory Inventory => _inventory;
     public ExperienceSystem Experience { get; private set; }
 
-    public void Initialize(DungeonGrid gridMap, EntityManager entityManager, TurnManager turnManager, ItemManager itemManager, FovMap fovMap, Vector2I startPos)
+    public void Initialize(Main main, TurnManager turnManager, ItemManager itemManager)
     {
-        InitializeBase(entityManager);
-        
-        _mover = new GridMover(this, gridMap, entityManager, startPos);
+        _main = main;
         _turnManager = turnManager;
         _itemManager = itemManager;
-        _fovMap = fovMap;
+
         _inventory = new Inventory(maxSlots: 10);
-        
         Experience = new ExperienceSystem();
         Experience.OnLevelUp += HandleLevelUp;
+    }
 
+    public void PlaceOnLevel(DungeonGrid gridMap, EntityManager entityManager, FovMap fovMap, Vector2I startPos)
+    {
+        InitializeBase(entityManager);
+        _mover = new GridMover(this, gridMap, entityManager, startPos);
+        _fovMap = fovMap;
         SyncPosition();
         entityManager.RegisterActor(this);
     }
@@ -60,6 +66,14 @@ public partial class PlayerController : ActorController
 
         var target = GridPosition + direction;
         
+        // Check for stairs
+        var nodeAtTarget = _entityManager.GetNodeAt(target);
+        if (nodeAtTarget is World.StairsController)
+        {
+            _main.DescendLevel();
+            return false; // Don't consume a turn, the level change handles it
+        }
+
         // If an actor is there, bump attack!
         if (_entityManager.IsOccupied(target))
         {
@@ -83,9 +97,30 @@ public partial class PlayerController : ActorController
         return true;
     }
 
+    public override void Die()
+    {
+        GameLog.Instance.LogDeath(DisplayName);
+        // Don't unregister or QueueFree the player. Just mark as dead.
+        IsDead = true;
+        // The visible player node will be colored red or replaced with a corpse later.
+        GameLog.Instance.Log("[color=red]You have died. Press [Enter] to restart.[/color]");
+    }
+
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (@event.IsEcho() || !@event.IsPressed() || _turnManager.CurrentState != TurnState.Player)
+        if (@event.IsEcho() || !@event.IsPressed())
+            return;
+
+        if (IsDead)
+        {
+            if (@event.IsActionPressed("restart_game"))
+            {
+                _main.RestartGame();
+            }
+            return;
+        }
+
+        if (_turnManager.CurrentState != TurnState.Player)
             return;
 
         if (HandleWaitActions(@event)) return;
@@ -267,5 +302,34 @@ public partial class PlayerController : ActorController
             }
         }
         _turnManager.EndPlayerTurn();
+    }
+
+    /// <summary>
+    /// Resets the player's state to its default values for a new game.
+    /// </summary>
+    public void Reset()
+    {
+        IsDead = false;
+        
+        // Reset stats to their exported defaults
+        var defaultPlayer = (PlayerController)GD.Load<PackedScene>("res://Scenes/Player.tscn").Instantiate();
+        BaseAttackDamage = defaultPlayer.BaseAttackDamage;
+        BaseHealth = defaultPlayer.BaseHealth;
+        
+        Health = new HealthController(BaseHealth);
+        Health.OnDied += Die;
+        
+        // Reset systems
+        Inventory.Clear();
+        Experience = new ExperienceSystem();
+        Experience.OnLevelUp += HandleLevelUp;
+        
+        // Re-link health bar in case it was disconnected
+        if (HealthBar != null)
+        {
+            HealthBar.MaxValue = Health.MaxHp;
+            HealthBar.Value = Health.CurrentHp;
+            Health.OnHealthChanged += (current, max) => HealthBar.Value = current;
+        }
     }
 }

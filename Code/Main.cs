@@ -5,6 +5,8 @@ using RogueLike.Code.TurnContext;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Items;
+using RogueLike.Code.Pathfinding;
+using RogueLike.Code.Services;
 using System.Linq;
 
 namespace RogueLike.Code;
@@ -23,49 +25,60 @@ public partial class Main : Node2D
     private EntityManager _entityManager;
     private TurnManager _turnManager;
     private ItemManager _itemManager;
+    private Pathfinder _pathfinder;
     
     private FovMap _fovMap;
     private IFovAlgorithm _fovAlgorithm;
     private FovTileMap _fovTileMap;
     
     private System.Collections.Generic.List<Godot.Rect2I> _rooms;
+    private int _dungeonLevel = 1;
 
     public override void _Ready()
     {
         _gridMap = new DungeonGrid(GridWidth, GridHeight, TilePixelSize);
-        _rooms = Code.Grid.Generators.BspDungeonGenerator.Generate(_gridMap);
-        
         _entityManager = new EntityManager();
         _itemManager = new ItemManager();
-        
         _fovMap = new FovMap(GridWidth, GridHeight);
         _fovAlgorithm = new Raycaster();
-        
         _turnManager = new TurnManager();
+        _pathfinder = new Pathfinder();
         _turnManager.OnTurnChanged += OnTurnChanged;
 
-        SetupTileMap();
-        SetupFovTileMap();
-        
         var player = GetNode<PlayerController>("Player");
-        Spawner.InitializePlayer(player, _rooms[0], _gridMap, _entityManager, _turnManager, _itemManager, _fovMap);
+        player.Initialize(this, _turnManager, _itemManager);
+
+        SetupFovTileMap();
+        SetupLevel();
         
-        // Initialize Inventory UI
+        // Initialize UIs after player is fully initialized
         var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");
         inventoryUI.Initialize(player.Inventory);
-
-        // Initialize Experience UI
         var expUI = GetNode<UI.ExperienceUI>("ExperienceUI/ExperienceControl");
         expUI.Initialize(player.Experience);
-        
+    }
+
+    private void SetupLevel()
+    {
+        // 1. Generate map layout
+        _rooms = Code.Grid.Generators.BspDungeonGenerator.Generate(_gridMap);
+        SetupTileMap();
+
+        // 2. Place player
+        var player = GetNode<PlayerController>("Player");
+        Spawner.PlacePlayerOnLevel(player, _rooms[0], _gridMap, _entityManager, _fovMap);
+
+        // 3. Spawn entities
         var goblinScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
         var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");
+        var stairsScene = GD.Load<PackedScene>("res://Scenes/StairsDown.tscn");
         
-        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager);
+        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager, _pathfinder, _dungeonLevel);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _itemManager);
+        Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _entityManager, _gridMap);
         
-        // Initial FOV Compute
+        // 4. Initial FOV Compute
         UpdateFov();
     }
 
@@ -122,5 +135,47 @@ public partial class Main : Node2D
     {
         var tileMap = GetNode<DungeonTileMap>("DungeonTileMap");
         tileMap.Render(_gridMap);
+    }
+
+    public void DescendLevel()
+    {
+        _dungeonLevel++;
+        GameLog.Instance.Log($"[color=purple]You descend to dungeon level {_dungeonLevel}...[/color]");
+
+        // 1. Clean up old level entities (nodes will be children of Main)
+        foreach (var node in GetChildren())
+        {
+            if (node is Enemies.EnemyController || node is Items.ItemController || node is World.StairsController)
+            {
+                node.QueueFree();
+            }
+        }
+        
+        // 2. Clear registries
+        _entityManager.ClearAll();
+        _itemManager.Clear();
+
+        // 3. Generate and setup new level
+        _gridMap = new DungeonGrid(GridWidth, GridHeight, TilePixelSize);
+        _fovMap = new FovMap(GridWidth, GridHeight); // Reset FOV map
+        SetupLevel();
+    }
+
+    public void RestartGame()
+    {
+        GameLog.Instance.Clear();
+        GameLog.Instance.Log("[color=yellow]A new adventure begins...[/color]");
+
+        var player = GetNode<PlayerController>("Player");
+        player.Reset();
+        
+        // Reset the UI to reflect the player's new state
+        var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");
+        inventoryUI.Initialize(player.Inventory);
+        var expUI = GetNode<UI.ExperienceUI>("ExperienceUI/ExperienceControl");
+        expUI.Initialize(player.Experience);
+
+        _dungeonLevel = 0; // DescendLevel will increment this to 1
+        DescendLevel();
     }
 }

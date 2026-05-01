@@ -55,7 +55,7 @@ public class GridMover
         var oldPos = _gridPosition;
         _gridPosition = target;
         
-        _entityManager.UpdateActorPosition(_owner, oldPos);
+        _entityManager.UpdateActorPosition(_owner, oldPos, _gridPosition);
         return true;
     }
 }

@@ -21,9 +21,15 @@ public partial class GameLogController : Control
 
         // Subscribe to log events
         GameLog.Instance.OnMessageLogged += AppendMessage;
+        GameLog.Instance.OnLogCleared += ClearLog;
         
         // Initial welcome
         GameLog.Instance.Log("[color=green]Welcome to the Dungeon, seeker.[/color]");
+    }
+
+    private void ClearLog()
+    {
+        LogLabel.Clear();
     }
 
     private void AppendMessage(string message)
@@ -35,5 +41,6 @@ public partial class GameLogController : Control
     {
         // Cleanup event subscription to prevent memory leaks
         GameLog.Instance.OnMessageLogged -= AppendMessage;
+        GameLog.Instance.OnLogCleared -= ClearLog;
     }
 }

@@ -23,6 +23,13 @@ public class ItemManager
         _items.Remove(item);
     }
 
+    public void Clear()
+    {
+        // We only clear the list. The nodes themselves are children of Main and will be
+        // QueueFree'd from there during a level change.
+        _items.Clear();
+    }
+
     /// <summary>
     /// Checks if there is an item at the given position and attempts to add it to inventory.
     /// If inventory is null or full, the item stays on the floor.

@@ -3,6 +3,7 @@ using Godot;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
+using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Player;
 
 namespace RogueLike.Code.Enemies;
@@ -13,7 +14,9 @@ namespace RogueLike.Code.Enemies;
 public class EnemyAI
 {
     private readonly IActor _owner;
+    private readonly DungeonGrid _grid;
     private readonly EntityManager _entityManager;
+    private readonly Pathfinder _pathfinder;
     private readonly GridMover _mover;
 
     /// <summary>
@@ -21,38 +24,42 @@ public class EnemyAI
     /// </summary>
     public Vector2I GridPosition => _mover.GridPosition;
 
-    public EnemyAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Vector2I startPos)
+    public EnemyAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Pathfinder pathfinder, Vector2I startPos)
     {
         _owner = owner;
+        _grid = grid;
         _entityManager = entityManager;
+        _pathfinder = pathfinder;
         _mover = new GridMover(owner, grid, entityManager, startPos);
     }
 
     /// <summary>
     /// Evaluates game state and makes a single move.
     /// </summary>
-    public void TakeTurn()
+    public void TakeTurn(RogueLike.Code.Grid.FOV.FovMap fovMap)
     {
         var player = _entityManager.AllActors.FirstOrDefault(a => a.IsPlayer);
-        if (player == null)
-            return;
+        if (player == null) return;
 
-        // Extremely simple AI: Step towards the player (X first, then Y)
-        var toPlayer = player.GridPosition - _owner.GridPosition;
-        var direction = Vector2I.Zero;
-
-        if (toPlayer.X > 0) direction.X = 1;
-        else if (toPlayer.X < 0) direction.X = -1;
-        else if (toPlayer.Y > 0) direction.Y = 1;
-        else if (toPlayer.Y < 0) direction.Y = -1;
-
-        if (direction != Vector2I.Zero)
+        // If player is not visible, do nothing for now.
+        // Future AI could move towards last known position.
+        if (fovMap.GetVisibility(player.GridPosition) != Code.Grid.FOV.VisibilityState.Visible)
         {
+            // TODO: Add random wandering later
+            return;
+        }
+
+        var path = _pathfinder.FindPath(_owner.GridPosition, player.GridPosition, _grid);
+
+        if (path != null && path.Count > 0)
+        {
+            var nextStep = path[0];
+            var direction = nextStep - _owner.GridPosition;
+
             var target = _owner.GridPosition + direction;
             if (_entityManager.IsOccupied(target))
             {
                 var targetActor = _entityManager.GetActorAt(target);
-                // Only attack the player, prevent goblins fighting goblins
                 if (targetActor.IsPlayer && targetActor is ICombatant playerCombatant && _owner is ICombatant enemyCombatant)
                 {
                     CombatSystem.ResolveBump(enemyCombatant, playerCombatant);

@@ -3,6 +3,7 @@ using Godot;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
+using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Player;
 
 namespace RogueLike.Code.Enemies;
@@ -18,70 +19,56 @@ public class ArcherAI
     private readonly IActor _owner;
     private readonly DungeonGrid _grid;
     private readonly EntityManager _entityManager;
+    private readonly Pathfinder _pathfinder;
     private readonly GridMover _mover;
     private readonly int _range;
 
     public Vector2I GridPosition => _mover.GridPosition;
 
-    public ArcherAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Vector2I startPos, int range = 5)
+    public ArcherAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Pathfinder pathfinder, Vector2I startPos, int range = 5)
     {
         _owner = owner;
         _grid = grid;
         _entityManager = entityManager;
+        _pathfinder = pathfinder;
         _mover = new GridMover(owner, grid, entityManager, startPos);
         _range = range;
     }
 
-    public void TakeTurn()
+    public void TakeTurn(RogueLike.Code.Grid.FOV.FovMap fovMap)
     {
         var player = _entityManager.AllActors.FirstOrDefault(a => a.IsPlayer);
-        if (player == null)
+        if (player == null) return;
+        
+        bool isPlayerVisible = fovMap.GetVisibility(player.GridPosition) == Code.Grid.FOV.VisibilityState.Visible;
+        if (!isPlayerVisible)
+        {
+            // Player not visible, do nothing
             return;
+        }
 
         var distance = LineOfSight.ManhattanDistance(_owner.GridPosition, player.GridPosition);
-        var hasLos = LineOfSight.HasClearLine(_grid, _owner.GridPosition, player.GridPosition);
-
-        if (hasLos && distance <= _range)
+        
+        if (distance <= _range)
         {
-            // Shoot!
+            // In range and visible, shoot!
             if (_owner is ICombatant attacker && player is ICombatant defender)
                 CombatSystem.ResolveRanged(attacker, defender);
-            return;
         }
-
-        if (hasLos)
+        else
         {
-            // Can see the player but out of range — close the distance
+            // Visible but out of range, move closer using pathfinding.
             ChasePlayer(player);
-            return;
         }
-
-        // No LOS — idle
     }
 
     private void ChasePlayer(IActor player)
     {
-        var toPlayer = player.GridPosition - _owner.GridPosition;
-        var direction = Vector2I.Zero;
-
-        if (toPlayer.X > 0) direction.X = 1;
-        else if (toPlayer.X < 0) direction.X = -1;
-        else if (toPlayer.Y > 0) direction.Y = 1;
-        else if (toPlayer.Y < 0) direction.Y = -1;
-
-        if (direction != Vector2I.Zero)
+        var path = _pathfinder.FindPath(_owner.GridPosition, player.GridPosition, _grid);
+        if (path != null && path.Count > 0)
         {
-            var target = _owner.GridPosition + direction;
-            if (_entityManager.IsOccupied(target))
-            {
-                var targetActor = _entityManager.GetActorAt(target);
-                if (targetActor.IsPlayer && targetActor is ICombatant playerCombatant && _owner is ICombatant enemyCombatant)
-                    CombatSystem.ResolveBump(enemyCombatant, playerCombatant);
-            }
-            else
-            {
-                _mover.TryMove(direction);
-            }
+            var direction = path[0] - _owner.GridPosition;
+            _mover.TryMove(direction);
         }
     }
 }

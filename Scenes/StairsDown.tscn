@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cge7v1q8w2y3x"]
+
+[ext_resource type="Script" path="res://Code/World/StairsController.cs" id="1_stairs_script"]
+[ext_resource type="Texture2D" path="res://Assets/stairs_down.svg" id="2_stairs_svg"]
+
+[node name="StairsDown" type="Node2D"]
+script = ExtResource("1_stairs_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_stairs_svg")

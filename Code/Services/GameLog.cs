@@ -14,9 +14,16 @@ public class GameLog
     public static GameLog Instance => _instance ??= new GameLog();
 
     public event Action<string> OnMessageLogged;
+    public event Action OnLogCleared;
     
     private readonly List<string> _history = new();
     public IReadOnlyList<string> History => _history;
+
+    public void Clear()
+    {
+        _history.Clear();
+        OnLogCleared?.Invoke();
+    }
 
     public void Log(string message)
     {

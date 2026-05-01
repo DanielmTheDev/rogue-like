@@ -3,6 +3,8 @@ using Godot;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
+using RogueLike.Code.Grid.FOV;
+using RogueLike.Code.Pathfinding;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.tests.Enemies;
@@ -25,22 +27,27 @@ public class EnemyAITest
     [TestCase]
     public void TakeTurn_MovesTowardsPlayer()
     {
-        // 5x5 grid, empty floor.
-        var grid = new DungeonGrid(5, 5, 32);
+        var grid = new DungeonGrid(5, 5);
         var entityManager = new EntityManager();
+        var pathfinder = new Pathfinder();
+        var fovMap = new FovMap(5, 5);
 
-        // Player at (4,2)
         var player = new MockPlayer { GridPosition = new Vector2I(4, 2) };
         entityManager.RegisterActor(player);
 
-        // Enemy at (2,2)
         var enemyActor = new MockEnemy { GridPosition = new Vector2I(2, 2) };
+        // The mock doesn't get automatically registered by an Initialize method, so do it here.
         entityManager.RegisterActor(enemyActor);
 
-        var ai = new EnemyAI(enemyActor, grid, entityManager, enemyActor.GridPosition);
+        // Make the whole map visible for this test
+        for(int x = 0; x < 5; x++)
+        for(int y = 0; y < 5; y++)
+            fovMap.SetVisibility(new Vector2I(x, y), VisibilityState.Visible);
 
-        // Enemy should take a step right towards (3,2)
-        ai.TakeTurn();
+        var ai = new EnemyAI(enemyActor, grid, entityManager, pathfinder, enemyActor.GridPosition);
+
+        // Enemy should find a path and move towards (3,2)
+        ai.TakeTurn(fovMap);
 
         AssertInt(ai.GridPosition.X).IsEqual(3);
         AssertInt(ai.GridPosition.Y).IsEqual(2);
