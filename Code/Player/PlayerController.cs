@@ -178,16 +178,42 @@ public partial class PlayerController : ActorController
     }
 
     /// <summary>
-    /// Wait repeatedly until health is full.
+    /// Wait repeatedly until health is full or interrupted.
     /// </summary>
     private void WaitUntilFullHealth()
     {
-        while (Health.CurrentHp < Health.MaxHp)
+        int maxTurns = 200; // Safety break
+        int turnsWaited = 0;
+
+        while (Health.CurrentHp < Health.MaxHp && turnsWaited < maxTurns)
         {
-            // Don't log every single heal event during a long wait
+            int hpBefore = Health.CurrentHp;
+            
+            // Perform one wait turn
             ProcessTurnAction(logHeal: false);
+            turnsWaited++;
+
+            // STOP CONDITIONS
+            
+            // 1. If we took damage, stop immediately
+            if (Health.CurrentHp < hpBefore)
+            {
+                GameLog.Instance.Log("[color=orange]You stop resting because you took damage![/color]");
+                break;
+            }
+
+            // 2. If an enemy is visible, stop immediately
+            if (IsEnemyVisible())
+            {
+                GameLog.Instance.Log("[color=yellow]You stop resting because an enemy is nearby![/color]");
+                break;
+            }
         }
-        GameLog.Instance.Log("[color=green]You rest until fully healed.[/color]");
+
+        if (Health.CurrentHp >= Health.MaxHp)
+        {
+            GameLog.Instance.Log("[color=green]You rest until fully healed.[/color]");
+        }
     }
 
     /// <summary>
