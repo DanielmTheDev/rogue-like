@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="LevelSettings" format=3 uid="uid://ck30u1q20435m"]
+
+[ext_resource type="Script" uid="uid://8dvef1m4ebwu" path="res://Code/Resources/LevelSettings.cs" id="1_wl1xe"]
+
+[resource]
+script = ExtResource("1_wl1xe")
+MinEnemiesPerRoom = 0
+MaxEnemiesPerRoom = 1
+BaseEnemyCountModifier = 0
+DifficultyScaling = 1.0
+metadata/_custom_type_script = "uid://8dvef1m4ebwu"

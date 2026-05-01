@@ -18,6 +18,7 @@
 - **Spawner:** Static utility handling entity instantiation and placement. Supports multiple enemy types (Goblins and Archers) and alternates them across BSP rooms.
 - **TurnManager:** Pure C# state machine. Enforces sequential game loop (Player Action -> Enemy Action -> Repeat).
 - **GameLog:** Pure C# service managing message history. Decoupled from UI via events.
+- **Level Settings:** Godot `Resource` based configuration (`LevelSettings.cs`). Allows tuning spawning parameters (density, difficulty scaling) directly from the Inspector.
 - **ItemManager:** Pure C# logic for tracking floor items and managing pickups.
 - **Inventory:** Pure C# component owned by PlayerController. Stores up to 10 items. Emits events for UI updates.
 - **ExperienceSystem:** Pure C# logic for XP, leveling, and stat progression. Decoupled from UI via events.

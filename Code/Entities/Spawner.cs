@@ -7,6 +7,7 @@ using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Player;
 using RogueLike.Code.TurnContext;
 using RogueLike.Code.Items;
+using RogueLike.Code.Resources;
 using RogueLike.Code.World;
 
 namespace RogueLike.Code.Entities;
@@ -37,13 +38,21 @@ public static class Spawner
         DungeonGrid grid,
         EntityManager entityManager,
         Pathfinder pathfinder,
-        int dungeonLevel)
+        int dungeonLevel,
+        LevelSettings levelSettings)
     {
         for (int i = 1; i < rooms.Count; i++)
         {
             var room = rooms[i];
-            // Difficulty scaling: increase max number of enemies with dungeon level
-            int numberOfEnemies = _rng.Next(1, 3) + dungeonLevel;
+            
+            // Use the LevelSettings resource to determine enemy count
+            int baseCount = levelSettings.BaseEnemyCountModifier;
+            int min = levelSettings.MinEnemiesPerRoom;
+            int max = levelSettings.MaxEnemiesPerRoom;
+            float scaling = levelSettings.DifficultyScaling;
+            
+            int numberOfEnemies = _rng.Next(min, max + 1) + baseCount + (int)((dungeonLevel - 1) * scaling);
+
             var spawnedPositions = new HashSet<Vector2I>();
 
             for (int j = 0; j < numberOfEnemies; j++)

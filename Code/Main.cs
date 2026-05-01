@@ -6,6 +6,7 @@ using RogueLike.Code.Entities;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Items;
 using RogueLike.Code.Pathfinding;
+using RogueLike.Code.Resources;
 using RogueLike.Code.Services;
 using System.Linq;
 
@@ -17,6 +18,9 @@ namespace RogueLike.Code;
 /// </summary>
 public partial class Main : Node2D
 {
+    [Export]
+    public LevelSettings LevelSettings { get; set; }
+
     private const int GridWidth = 50;
     private const int GridHeight = 50;
     private const int TilePixelSize = 32;
@@ -74,7 +78,7 @@ public partial class Main : Node2D
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");
         var stairsScene = GD.Load<PackedScene>("res://Scenes/StairsDown.tscn");
         
-        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager, _pathfinder, _dungeonLevel);
+        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager, _pathfinder, _dungeonLevel, LevelSettings);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _itemManager);
         Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _entityManager, _gridMap);
         
