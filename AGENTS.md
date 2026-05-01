@@ -1,13 +1,14 @@
 # RogueLike Project Context & Rules
 # Godot 4.x C# Development Rules & Guardrails
 
-## 1. The "Think Before You Code" Protocol
-- **Constraint:** Before modifying or creating files, the agent MUST generate a "Proposed Changes" Artifact.
-- **Content:** This artifact must include:
-    1. **High-Level Outline:** List of files to be touched.
-    2. **Reasoning:** Why this specific implementation was chosen over alternatives.
-    3. **Architecture Impact:** How this affects the existing scene tree or signal flow.
-- **Approval:** The agent must wait for user "OK" if the change affects more than 2 core systems.
+## 1. The "Feature Plan" Protocol
+- **Constraint:** Before starting a new feature, the agent MUST update the `CURRENT_FEATURE_PLAN.md` file.
+- **Content:** This file must include:
+    1. **High-Level Goal:** A clear description of the feature.
+    2. **Step-by-Step Plan:** A checklist of distinct implementation steps. This helps maintain focus and track progress.
+    3. **Architecture Impact:** How this affects existing systems.
+- **Workflow:** When starting a new feature, this file is overwritten with the new plan. This keeps the root directory clean and focuses on the current task.
+- **Approval:** The agent must wait for user "OK" if the plan affects more than 2 core systems.
 
 ## 2. Self-Documenting Life System (Architecture Ledger)
 - **Constraint:** The agent must maintain a file at `docs/SYSTEM_DESIGN.md`.
@@ -53,11 +54,8 @@
   - **Immediately:** If the code violates Rules #3 (Small Methods) or clean code principles.
   - **Before Next Feature:** If adding the next feature would make the code worse without refactoring first.
   - **When Asked:** User may request a refactoring review at any time.
-- **Refactoring Documentation:** When suggesting refactorings, create a `REFACTORING_OPPORTUNITIES.md` artifact listing:
-  - Issue description
-  - Proposed solution
-  - Priority (High/Medium/Low)
-  - When to do it (Now/Before Phase X/Later)
+- **Refactoring Documentation:** When suggesting refactorings, update `REFACTORING_OPPORTUNITIES.md` listing the issue, solution, and priority.
+- **Maintenance:** After a refactoring is completed, the corresponding entry MUST be removed from `REFACTORING_OPPORTUNITIES.md` to keep the document current.
 - **Clean Code First:** It is better to write clean, extensible code from the start than to ship technical debt. If you notice a better domain model emerging during implementation, refactor towards it immediately.
 
 # Asset Creation Pipeline
