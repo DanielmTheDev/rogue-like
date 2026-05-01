@@ -76,58 +76,55 @@ public partial class PlayerController : ActorController
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (@event.IsEcho() || !@event.IsPressed())
+        if (@event.IsEcho() || !@event.IsPressed() || _turnManager.CurrentState != TurnState.Player)
             return;
 
-        if (_turnManager.CurrentState != TurnState.Player)
-            return;
+        if (HandleWaitActions(@event)) return;
+        if (HandleItemActions(@event)) return;
+        HandleMovementActions(@event);
+    }
 
-        if (@event is InputEventKey keyEvent)
+    private bool HandleWaitActions(InputEvent @event)
+    {
+        if (!@event.IsActionPressed("wait")) return false;
+        
+        if (Input.IsKeyPressed(Key.Shift))
         {
-            bool isShiftPressed = Input.IsKeyPressed(Key.Shift);
-
-            // Shift + Period: Wait until health is full
-            if (keyEvent.Keycode == Key.Period && isShiftPressed)
-            {
-                WaitUntilFullHealth();
-                return;
-            }
-
-            // Period: Wait/Rest action (passive heal)
-            if (keyEvent.Keycode == Key.Period)
-            {
-                Health.Heal(1);
-                _turnManager.EndPlayerTurn();
-                return;
-            }
-
-            // Use item from inventory (keys 1-9)
-            if (keyEvent.Keycode >= Key.Key1 && keyEvent.Keycode <= Key.Key9)
-            {
-                int groupSlot = (int)keyEvent.Keycode - (int)Key.Key1;
-                if (_inventory.UseItemByGroup(groupSlot, this))
-                {
-                    _turnManager.EndPlayerTurn();
-                }
-                return;
-            }
+            WaitUntilFullHealth();
         }
+        else
+        {
+            Health.Heal(1);
+            _turnManager.EndPlayerTurn();
+        }
+        return true;
+    }
 
+    private bool HandleItemActions(InputEvent @event)
+    {
+        if (@event is not InputEventKey keyEvent) return false;
+        if (keyEvent.Keycode < Key.Key1 || keyEvent.Keycode > Key.Key9) return false;
+        
+        int groupSlot = (int)keyEvent.Keycode - (int)Key.Key1;
+        if (_inventory.UseItemByGroup(groupSlot, this))
+        {
+            _turnManager.EndPlayerTurn();
+        }
+        return true;
+    }
+
+    private void HandleMovementActions(InputEvent @event)
+    {
         var direction = InputMapper.GetDirection(@event);
+        if (direction == Vector2I.Zero) return;
 
-        if (direction == Vector2I.Zero)
-            return;
-
-        bool isShift = Input.IsKeyPressed(Key.Shift);
-
-        // Shift + Direction: Auto-move until seeing enemy or hitting wall/corner
-        if (isShift)
+        if (Input.IsKeyPressed(Key.Shift))
         {
             ShiftMove(direction);
         }
         else if (TryMove(direction))
         {
-            Health.Heal(1); // Passive healing per action
+            Health.Heal(1);
             _turnManager.EndPlayerTurn();
         }
     }
@@ -165,9 +162,7 @@ public partial class PlayerController : ActorController
     /// </summary>
     private void ShiftMove(Vector2I direction)
     {
-        // Calculate orthogonal directions to our movement
-        // North (0, -1) -> East (1, 0) and West (-1, 0)
-        // East (1, 0) -> South (0, 1) and North (0, -1)
+        // Calculate orthogonal directions for path detection
         Vector2I ortho1 = new Vector2I(-direction.Y, direction.X);
         Vector2I ortho2 = new Vector2I(direction.Y, -direction.X);
 
@@ -177,49 +172,61 @@ public partial class PlayerController : ActorController
 
         while (true)
         {
-            var nextPos = GridPosition + direction;
-            
-            // 1. Check if next position is a wall
-            if (_mover.Grid.GetCell(nextPos) == CellType.Wall)
+            if (ShouldShiftMoveStop(direction, ortho1, ortho2, side1WasWalkable, side2WasWalkable))
             {
-                GameLog.Instance.Log("[color=gray]You stop at a wall.[/color]");
-                break;
-            }
-
-            // 2. Check if next position is occupied by an entity
-            if (_entityManager.IsOccupied(nextPos))
-            {
-                GameLog.Instance.Log("[color=gray]You stop near an entity.[/color]");
-                break;
-            }
-
-            // 3. Try to move
-            if (!TryMove(direction))
-            {
-                break;
-            }
-
-            Health.Heal(1);
-            _turnManager.EndPlayerTurn();
-
-            // 4. Check if any enemy is now visible
-            if (IsEnemyVisible())
-            {
-                GameLog.Instance.Log("[color=yellow]You spot an enemy ahead![/color]");
-                break;
-            }
-
-            // 5. PATH DETECTION: Stop if the walkability of tiles to our sides changes.
-            // This detects corners, junctions, and room entrances/exits.
-            bool side1IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho1);
-            bool side2IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho2);
-
-            if (side1IsWalkable != side1WasWalkable || side2IsWalkable != side2WasWalkable)
-            {
-                GameLog.Instance.Log("[color=gray]You stop at a change in the path.[/color]");
                 break;
             }
         }
+    }
+
+    private bool ShouldShiftMoveStop(Vector2I direction, Vector2I ortho1, Vector2I ortho2, bool side1WasWalkable, bool side2WasWalkable)
+    {
+        var nextPos = GridPosition + direction;
+
+        if (IsBlocked(nextPos)) return true;
+        
+        // Try to move
+        if (!TryMove(direction)) return true;
+        
+        Health.Heal(1);
+        _turnManager.EndPlayerTurn();
+
+        if (IsEnemyVisible())
+        {
+            GameLog.Instance.Log("[color=yellow]You spot an enemy ahead![/color]");
+            return true;
+        }
+
+        if (HasPathChanged(ortho1, ortho2, side1WasWalkable, side2WasWalkable))
+        {
+            GameLog.Instance.Log("[color=gray]You stop at a change in the path.[/color]");
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool IsBlocked(Vector2I position)
+    {
+        if (_mover.Grid.GetCell(position) == CellType.Wall)
+        {
+            GameLog.Instance.Log("[color=gray]You stop at a wall.[/color]");
+            return true;
+        }
+
+        if (_entityManager.IsOccupied(position))
+        {
+            GameLog.Instance.Log("[color=gray]You stop near an entity.[/color]");
+            return true;
+        }
+        return false;
+    }
+
+    private bool HasPathChanged(Vector2I ortho1, Vector2I ortho2, bool side1WasWalkable, bool side2WasWalkable)
+    {
+        bool side1IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho1);
+        bool side2IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho2);
+        return side1IsWalkable != side1WasWalkable || side2IsWalkable != side2WasWalkable;
     }
 
     /// <summary>

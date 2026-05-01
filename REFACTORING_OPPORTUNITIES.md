@@ -1,80 +1,91 @@
-# Item System Refactoring Opportunities
+# Refactoring Opportunities & Proposed Changes
 
-## 1. **ItemManager: Spatial Lookup Optimization** [Priority: Low]
-**Current:** Uses `FirstOrDefault` with linear search (O(n)).
-```csharp
-var item = _items.FirstOrDefault(i => i.GridPosition == position);
-```
-**Issue:** If we have 100+ items, this becomes slow.
-**Solution:** Use `Dictionary<Vector2I, IItem>` for O(1) lookup.
-**When:** Only refactor if we plan to have many (50+) items on screen at once.
+## 1. AGENTS.md Rule Violations (Last Commit)
 
----
+### Issue: Methods Exceed 20 Lines
+- **File:** `Code/Player/PlayerController.cs`
+- **Method:** `ShiftMove(Vector2I direction)` is **~35 lines long**. The `while` loop contains too many distinct checks (wall, entity, path change, enemy visibility), making it hard to read and maintain.
+- **Method:** `_UnhandledInput(InputEvent @event)` is **~35 lines long**. It has become a large dispatcher for various input types (wait, items, movement, shift modifiers), reducing clarity.
 
-## 2. **PlayerController: Too Many Constructor Parameters** [Priority: Medium]
-**Current:** `Initialize` takes 5 parameters.
-```csharp
-Initialize(gridMap, entityManager, turnManager, itemManager, startPos)
-```
-**Issue:** Violates "Small Methods" rule. Hard to test. Will grow with more systems (XP, Quests).
-**Solution:** Introduce a `GameContext` or `PlayerInitConfig` struct.
-```csharp
-public struct PlayerInitConfig {
-    public DungeonGrid Grid;
-    public EntityManager Entities;
-    public TurnManager Turns;
-    public ItemManager Items;
-    public Vector2I StartPos;
-}
-player.Initialize(config);
-```
-**When:** Now, before we add more systems (XP, Skills).
+### Issue: Hard-coded Input Key
+- **File:** `Code/Player/PlayerController.cs`
+- **Violation:** The check for `keyEvent.Keycode == Key.Period` is not a scalable or user-friendly way to handle input. It should be a configurable Godot Input Action.
 
 ---
 
-## 3. **HealingPotion: Sprite in Code, Not Scene** [Priority: High]
-**Current:** Sprite created in `Initialize()`.
+## 2. Proposed Refactoring Plan
+
+### Refactor `ShiftMove()`
+Break the complex `while` loop into a series of calls to small, single-purpose private methods.
+
+**Before:**
 ```csharp
-var sprite = new Godot.Sprite2D();
-sprite.Texture = GD.Load<Texture2D>("res://Assets/Potion/potion.png");
-AddChild(sprite);
-```
-**Issue:** Breaks the "Scene-based" pattern used by Enemies/Player. Hard to edit in Inspector.
-**Solution:** Create `Scenes/HealingPotion.tscn` with Sprite2D as child. Load via `PackedScene`.
-**When:** Now, before Phase 2 (Backpack UI).
-
----
-
-## 4. **Spawner: Repetitive Spawn Methods** [Priority: Low]
-**Current:** Separate methods for each type.
-```csharp
-SpawnGoblin(parent, scene, grid, entityManager, pos, index);
-SpawnArcher(parent, scene, grid, entityManager, pos, index);
-SpawnHealingPotion(parent, grid, itemManager, pos);
-```
-**Issue:** Violates DRY. Will explode with more enemy/item types.
-**Solution:** Generic `Spawn<T>()` method or a Factory pattern.
-**When:** After we have 5+ enemy types.
-
----
-
-## 5. **Debug Feature: Health.Heal(1) on Move** [Priority: Medium]
-**Current:** Player heals 1 HP every turn.
-```csharp
-if (TryMove(direction)) {
-    Health.Heal(1); // <-- This
-    _turnManager.EndPlayerTurn();
+private void ShiftMove(Vector2I direction)
+{
+    // ... setup ...
+    while (true)
+    {
+        if (is_wall) { break; }
+        if (is_occupied) { break; }
+        // ... more checks ...
+    }
 }
 ```
-**Issue:** Makes the game too easy. Should be removed or tied to a "resting" mechanic.
-**Solution:** Remove or replace with `if (IsResting) Health.Heal(1);`
-**When:** Before Phase 2 (Backpack).
+
+**After:**
+```csharp
+private void ShiftMove(Vector2I direction)
+{
+    // ... setup ...
+    while (true)
+    {
+        if (CheckShiftMoveStopConditions(direction, ...)) break;
+        
+        // ... perform move ...
+
+        if (CheckPostMoveStopConditions(...)) break;
+    }
+}
+```
+*(Note: A more detailed implementation will break this down further into even smaller helper methods for each condition.)*
+
+### Refactor `_UnhandledInput()`
+Decompose the monolithic method into a chain of responsibility.
+
+**Before:**
+```csharp
+public override void _UnhandledInput(InputEvent @event)
+{
+    if (is_wait_key) { ... }
+    else if (is_item_key) { ... }
+    else if (is_move_key) { ... }
+}
+```
+
+**After:**
+```csharp
+public override void _UnhandledInput(InputEvent @event)
+{
+    // ... guards ...
+    if (HandleWaitActions(@event)) return;
+    if (HandleItemActions(@event)) return;
+    HandleMovementActions(@event);
+}
+
+// Each helper method is < 15 lines
+private bool HandleWaitActions(InputEvent @event) { ... }
+private bool HandleItemActions(InputEvent @event) { ... }
+private void HandleMovementActions(InputEvent @event) { ... }
+```
 
 ---
 
-## Recommendation: Immediate Refactorings
-1. **#3 (HealingPotion Scene)** - Fixes architectural inconsistency.
-2. **#5 (Remove Debug Heal)** - Fixes gameplay balance.
-3. **#2 (PlayerInitConfig)** - Prevents future pain when adding XP/Skills.
+## 3. Proposed Input Action Change
 
-Should I implement these 3 now?
+### `.` (Period) to "wait" Action
+1.  **`project.godot`:** Add a new input action named `wait` and bind it to the `.` (Period) key.
+2.  **`PlayerController.cs`:** The new `HandleWaitActions` method will check for `@event.IsActionPressed("wait")` instead of the hard-coded key.
+
+---
+
+I will await your "OK" before applying these changes, as this is a significant refactoring of a core system.

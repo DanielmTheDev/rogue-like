@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://dwxypcwtmq8qo"]
+[gd_resource type="TileSet" format=3 uid="uid://dwxypcwtmq8qo"]
 
 [ext_resource type="Texture2D" uid="uid://d3g6r0yqhsnyl" path="res://Assets/Tiles/dungeon_tiles.png" id="1_atlas"]
 
