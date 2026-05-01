@@ -48,16 +48,17 @@ public class ArcherAI
         }
 
         var distance = LineOfSight.ManhattanDistance(_owner.GridPosition, player.GridPosition);
+        var hasLos = LineOfSight.HasClearLine(_grid, _owner.GridPosition, player.GridPosition);
         
-        if (distance <= _range)
+        if (hasLos && distance <= _range)
         {
-            // In range and visible, shoot!
+            // In range and has a clear line of sight, shoot!
             if (_owner is ICombatant attacker && player is ICombatant defender)
                 CombatSystem.ResolveRanged(attacker, defender);
         }
-        else
+        else if (isPlayerVisible)
         {
-            // Visible but out of range, move closer using pathfinding.
+            // Visible (e.g., around a corner) but out of range or LOS, move closer.
             ChasePlayer(player);
         }
     }
