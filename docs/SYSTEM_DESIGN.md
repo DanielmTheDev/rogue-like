@@ -20,6 +20,7 @@
 - **GameLog:** Pure C# service managing message history. Decoupled from UI via events.
 - **ItemManager:** Pure C# logic for tracking floor items and managing pickups.
 - **Inventory:** Pure C# component owned by PlayerController. Stores up to 10 items. Emits events for UI updates.
+- **ExperienceSystem:** Pure C# logic for XP, leveling, and stat progression. Decoupled from UI via events.
 - **Advanced Player Actions:**
   - **Shift Move:** Hold Shift + Direction to auto-move until seeing an enemy, hitting a wall, or encountering a corner.
   - **Wait Full Health:** Press Shift + `.` to rest repeatedly until health is fully restored.

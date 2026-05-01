@@ -53,6 +53,10 @@ public partial class Main : Node2D
         // Initialize Inventory UI
         var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");
         inventoryUI.Initialize(player.Inventory);
+
+        // Initialize Experience UI
+        var expUI = GetNode<UI.ExperienceUI>("ExperienceUI/ExperienceControl");
+        expUI.Initialize(player.Experience);
         
         var goblinScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
         var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");

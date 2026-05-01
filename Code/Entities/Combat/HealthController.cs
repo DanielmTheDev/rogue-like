@@ -44,4 +44,11 @@ public class HealthController
 
         OnHealthChanged?.Invoke(CurrentHp, MaxHp);
     }
+
+    public void IncreaseMaxHp(int amount)
+    {
+        if (amount <= 0) return;
+        MaxHp += amount;
+        Heal(MaxHp); // Heal to full
+    }
 }

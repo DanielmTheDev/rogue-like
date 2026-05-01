@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dptunjmwcwqqp" path="res://Scenes/Player.tscn" id="4_player_scene"]
 [ext_resource type="PackedScene" uid="uid://b8k1m5n2p2q4u" path="res://Scenes/GameLogUI.tscn" id="5_gamelog_scene"]
 [ext_resource type="PackedScene" uid="uid://d8m3n5p7q9r2s" path="res://Scenes/InventoryUI.tscn" id="6_inventory_scene"]
+[ext_resource type="PackedScene" uid="uid://b1v2h3i4j5k6l" path="res://Scenes/UI/ExperienceUI.tscn" id="7_exp_ui_scene"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main_script")
@@ -19,3 +20,5 @@ script = ExtResource("2_tilemap_script")
 [node name="GameLogUI" parent="." instance=ExtResource("5_gamelog_scene")]
 
 [node name="InventoryUI" parent="." instance=ExtResource("6_inventory_scene")]
+
+[node name="ExperienceUI" parent="." instance=ExtResource("7_exp_ui_scene")]

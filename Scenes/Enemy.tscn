@@ -12,6 +12,7 @@ bg_color = Color(0, 1, 0, 1)
 [node name="Enemy" type="Node2D" node_paths=PackedStringArray("HealthBar")]
 script = ExtResource("1_enemy_script")
 HealthBar = NodePath("ProgressBar")
+XpReward = 25
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_enemy_tex")

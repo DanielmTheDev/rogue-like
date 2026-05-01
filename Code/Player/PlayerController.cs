@@ -6,6 +6,7 @@ using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.TurnContext;
 using RogueLike.Code.Items;
 using RogueLike.Code.Services;
+using RogueLike.Code.Systems;
 using System.Linq;
 
 namespace RogueLike.Code.Player;
@@ -26,6 +27,7 @@ public partial class PlayerController : ActorController
     public override bool IsPlayer => true;
     public override int AttackDamage => BaseAttackDamage;
     public Inventory Inventory => _inventory;
+    public ExperienceSystem Experience { get; private set; }
 
     public void Initialize(DungeonGrid gridMap, EntityManager entityManager, TurnManager turnManager, ItemManager itemManager, FovMap fovMap, Vector2I startPos)
     {
@@ -36,6 +38,10 @@ public partial class PlayerController : ActorController
         _itemManager = itemManager;
         _fovMap = fovMap;
         _inventory = new Inventory(maxSlots: 10);
+        
+        Experience = new ExperienceSystem();
+        Experience.OnLevelUp += HandleLevelUp;
+
         SyncPosition();
         entityManager.RegisterActor(this);
     }
@@ -237,5 +243,15 @@ public partial class PlayerController : ActorController
         return _entityManager.AllActors
             .Where(actor => !actor.IsPlayer)
             .Any(actor => _fovMap.GetVisibility(actor.GridPosition) == VisibilityState.Visible);
+    }
+
+    private void HandleLevelUp(int newLevel)
+    {
+        // Increase stats
+        BaseAttackDamage++;
+        Health.IncreaseMaxHp(5); // Heal to full on level up as a bonus
+        
+        GameLog.Instance.Log($"[color=purple]You reached Level {newLevel}![/color]");
+        GameLog.Instance.Log("[color=green]Your Max HP and Attack Damage increase![/color]");
     }
 }

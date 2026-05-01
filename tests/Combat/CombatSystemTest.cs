@@ -13,6 +13,7 @@ public class CombatSystemTest
         public string DisplayName { get; set; } = "Mock";
         public HealthController Health { get; private set; }
         public int AttackDamage { get; private set; }
+        public int XpReward { get; set; } = 10; // Default XP for mocks
         public Vector2I GridPosition { get; set; }
         public bool IsPlayer { get; set; }
         
