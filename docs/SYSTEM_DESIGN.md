@@ -24,5 +24,6 @@
 - **Advanced Player Actions:**
   - **Shift Move:** Hold Shift + Direction to auto-move until seeing an enemy, hitting a wall, or encountering a corner.
   - **Wait Full Health:** Press Shift + `.` to rest repeatedly until health is fully restored.
+  - **Passive Healing:** Player now heals 1 HP every 5 turns automatically.
   - Both actions consume multiple turns and integrate with FOV system for enemy detection.
 - **DungeonTileMap & FovTileMap:** Godot `TileMapLayer` nodes. They listen to the purely logical data grids to render specific visual sprites.

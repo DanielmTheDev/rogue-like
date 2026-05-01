@@ -23,6 +23,9 @@ public partial class PlayerController : ActorController
     private Inventory _inventory;
     private FovMap _fovMap;
 
+    private int _turnsSinceLastHeal = 0;
+    private const int TurnsPerHeal = 5;
+
     public override Vector2I GridPosition => _mover.GridPosition;
     public override bool IsPlayer => true;
     public override int AttackDamage => BaseAttackDamage;
@@ -100,8 +103,7 @@ public partial class PlayerController : ActorController
         }
         else
         {
-            Health.Heal(1);
-            _turnManager.EndPlayerTurn();
+            ProcessTurnAction();
         }
         return true;
     }
@@ -130,8 +132,7 @@ public partial class PlayerController : ActorController
         }
         else if (TryMove(direction))
         {
-            Health.Heal(1);
-            _turnManager.EndPlayerTurn();
+            ProcessTurnAction();
         }
     }
 
@@ -148,9 +149,8 @@ public partial class PlayerController : ActorController
     {
         while (Health.CurrentHp < Health.MaxHp)
         {
-            Health.Heal(1);
-            _turnManager.EndPlayerTurn();
-            // Enemy turns happen automatically via TurnManager events
+            // Don't log every single heal event during a long wait
+            ProcessTurnAction(logHeal: false);
         }
         GameLog.Instance.Log("[color=green]You rest until fully healed.[/color]");
     }
@@ -194,8 +194,7 @@ public partial class PlayerController : ActorController
         // Try to move
         if (!TryMove(direction)) return true;
         
-        Health.Heal(1);
-        _turnManager.EndPlayerTurn();
+        ProcessTurnAction();
 
         if (IsEnemyVisible())
         {
@@ -253,5 +252,20 @@ public partial class PlayerController : ActorController
         
         GameLog.Instance.Log($"[color=purple]You reached Level {newLevel}![/color]");
         GameLog.Instance.Log("[color=green]Your Max HP and Attack Damage increase![/color]");
+    }
+
+    private void ProcessTurnAction(bool logHeal = true)
+    {
+        _turnsSinceLastHeal++;
+        if (_turnsSinceLastHeal >= TurnsPerHeal)
+        {
+            Health.Heal(1);
+            _turnsSinceLastHeal = 0;
+            if (logHeal && Health.CurrentHp < Health.MaxHp)
+            {
+                GameLog.Instance.Log("[color=gray]You feel a little better.[/color]");
+            }
+        }
+        _turnManager.EndPlayerTurn();
     }
 }

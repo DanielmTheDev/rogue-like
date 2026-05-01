@@ -40,13 +40,30 @@ public static class Spawner
         for (int i = 1; i < rooms.Count; i++)
         {
             var room = rooms[i];
-            var spawnPos = RandomFloorTile(room);
+            int numberOfEnemies = _rng.Next(2, 4); // Spawn 2 or 3 enemies
+            var spawnedPositions = new HashSet<Vector2I>();
 
-            // Alternate enemy types: odd rooms get goblins, even rooms get archers
-            if (i % 2 == 1)
-                SpawnGoblin(parentNode, goblinScene, grid, entityManager, spawnPos, i);
-            else
-                SpawnArcher(parentNode, archerScene, grid, entityManager, spawnPos, i);
+            for (int j = 0; j < numberOfEnemies; j++)
+            {
+                Vector2I spawnPos;
+                int attempts = 0;
+                // Avoid spawning multiple enemies on the same tile or in walls
+                do
+                {
+                    spawnPos = RandomFloorTile(room);
+                    attempts++;
+                } while (spawnedPositions.Contains(spawnPos) && attempts < 100);
+
+                if (attempts >= 100) continue; // Failsafe for very small rooms
+                
+                spawnedPositions.Add(spawnPos);
+
+                // Alternate enemy types
+                if (j % 2 == 0)
+                    SpawnGoblin(parentNode, goblinScene, grid, entityManager, spawnPos, i * 10 + j);
+                else
+                    SpawnArcher(parentNode, archerScene, grid, entityManager, spawnPos, i * 10 + j);
+            }
         }
     }
 

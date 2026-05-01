@@ -1,54 +1,34 @@
-# CURRENT FEATURE PLAN: Experience & Leveling System
+# CURRENT FEATURE PLAN: Game Balance Tuning
 
 ## 1. High-Level Goal
-Implement a system where the player can gain experience points (XP) by defeating enemies, level up, and become stronger. The player's progress will be displayed via a UI element on the main screen.
+Increase the game's difficulty and encourage more strategic play by reducing passive healing and increasing enemy density.
 
 ## 2. Step-by-Step Plan
 
-### Part 1: Core XP Logic (Pure C# & Unit Tested)
-- **[ ] Step 1.1: Create `ExperienceSystem.cs`**
-  - A pure C# class to handle all XP and leveling logic.
-  - It will manage `CurrentXP`, `CurrentLevel`, and `XPForNextLevel`.
-  - It will have an `AddXP(int amount)` method that processes XP gains and triggers level ups.
-  - It will include events like `OnLevelUp` and `OnXPChanged` for the UI and Player to subscribe to.
-  - XP requirement will scale with each level.
-- **[ ] Step 1.2: Create Unit Tests for `ExperienceSystem`**
-  - Create `tests/Systems/ExperienceSystemTest.cs`.
-  - Test cases:
-    - Gaining XP without leveling up.
-    - Gaining exact XP to level up.
-    - Gaining enough XP to level up multiple times at once.
-    - XP carrying over correctly after a level up.
+### Part 1: Slower Passive Healing
+- **[ ] Step 1.1: Add Turn Counter to `PlayerController`**
+  - Create a new private field `_turnsSinceLastHeal = 0`.
+- **[ ] Step 1.2: Modify Healing Logic**
+  - In `PlayerController.cs`, after a turn-consuming action (move, wait), increment `_turnsSinceLastHeal`.
+  - Only heal 1 HP when `_turnsSinceLastHeal` reaches `5`.
+  - Reset the counter to `0` after healing.
+- **[ ] Step 1.3: Update GameLog Message (Optional but Recommended)**
+  - Add a log message "You feel a little better." to give feedback when the heal occurs, since it's no longer every turn.
 
-### Part 2: Integration with Gameplay
-- **[ ] Step 2.1: Add `XpReward` to Enemies**
-  - Add an `[Export] public int XpReward { get; private set; } = 50;` property to `ActorController.cs`.
-  - Set appropriate values for Goblin and Archer in their `.tscn` files.
-- **[ ] Step 2.2: Grant XP on Kill**
-  - Modify `CombatSystem.cs`. When an enemy is defeated, grant its `XpReward` to the player.
-- **[ ] Step 2.3: Integrate `ExperienceSystem` with `PlayerController`**
-  - Add an `ExperienceSystem` instance to the `PlayerController`.
-  - Subscribe to the `OnLevelUp` event to increase the player's `BaseAttackDamage` and `Health.MaxHp`.
+### Part 2: Increased Enemy Spawns
+- **[ ] Step 2.1: Modify `Spawner.cs`**
+  - Locate the `SpawnEnemies` method.
+  - Change the logic from spawning one enemy per room to spawning a random number of enemies (e.g., 2-3) per room.
+- **[ ] Step 2.2: Ensure Safe Spawning**
+  - Add a check to ensure we don't try to spawn more enemies than there are available floor tiles in a given room. This prevents infinite loops in small rooms.
 
-### Part 3: User Interface
-- **[ ] Step 3.1: Create `ExperienceUI.tscn` Scene**
-  - A `CanvasLayer` scene positioned in the top-left.
-  - Will contain a `ProgressBar` (styled to be purple) and a `Label` for the level number.
-- **[ ] Step 3.2: Create `ExperienceUI.cs` Controller Script**
-  - A script to manage the UI elements.
-  - It will have an `Initialize(ExperienceSystem expSystem)` method.
-  - It will subscribe to the `OnXPChanged` and `OnLevelUp` events to keep the display updated.
-- **[ ] Step 3.3: Wire up the UI in `Main.tscn` and `Main.cs`**
-  - Add the `ExperienceUI` scene to `Main.tscn`.
-  - In `Main.cs`, get the player's `ExperienceSystem` and pass it to the UI's `Initialize` method.
-
-### Part 4: Documentation & Finalization
-- **[ ] Step 4.1: Update `docs/SYSTEM_DESIGN.md`**
-  - Document the new `ExperienceSystem` and its role in player progression.
-- **[ ] Step 4.2: Final Build & Test**
-  - Run `dotnet build` and all unit tests to ensure everything is working correctly.
+### Part 3: Finalization
+- **[ ] Step 3.1: Update `docs/SYSTEM_DESIGN.md`**
+  - Briefly document the new passive healing mechanic.
+- **[ ] Step 3.2: Build and Test**
+  - Run `dotnet build` to ensure no errors were introduced.
 
 ## 3. Architecture Impact
-- A new pure C# `ExperienceSystem` will be created, following our decoupled architecture pattern.
-- The `CombatSystem` will be updated to interact with the player's `ExperienceSystem`.
-- A new UI scene and controller will be created to visualize the system.
+- **`PlayerController`:** Becomes slightly more stateful with the addition of the healing counter.
+- **`Spawner`:** The enemy spawning algorithm will be adjusted.
+- The changes are localized to these two classes and do not affect the core systems in a major way.
