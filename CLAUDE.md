@@ -1,43 +1,53 @@
-# RogueLike — Claude Instructions
-# Godot 4.x / C# Project
+# CLAUDE.md
 
-## Session Start
-- Read `docs/SYSTEM_DESIGN.md` before any task to avoid context drift.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Planning
-- For any non-trivial feature: create a task list via the built-in Tasks tool before writing code.
-- Wait for user "OK" if the plan affects more than 2 core systems.
+# RogueLike — Godot 4.6 / C# (net8.0) turn-based roguelike
 
-## Architecture Ledger
-- Maintain `docs/SYSTEM_DESIGN.md`. Update it synchronously with any code change to Health, Movement, AI, or Map Generation systems.
-- Add "Update docs/SYSTEM_DESIGN.md" as an explicit task whenever planning a feature.
+## Commands
 
-## C# & Godot Standards
-- Signals for upward (child→parent) communication; `[Export]` / DI for downward.
+```bash
+dotnet build                                              # MUST be 0 errors before finishing any change
+dotnet test                                               # run all gdUnit4 tests (headless Godot via test.runsettings)
+dotnet test --filter "FullyQualifiedName~TurnManagerTest" # run one suite
+dotnet test --filter "FullyQualifiedName~TurnManagerTest.MethodName" # run one test
+```
+
+- Tests run headless Godot — configured in `test.runsettings` (`--headless`, stdout capture).
+- Run the game from the Godot editor; main scene is `Scenes/Main.tscn`.
+
+## Big-picture architecture
+
+The core design split: **pure C# logic classes** hold all game rules and are unit-tested in isolation; **Godot `Node2D` controllers** are thin wrappers that handle visuals/input and delegate downward. Keep logic out of the Godot nodes.
+
+- **Logic (pure C#, no Godot deps, tested):** `DungeonGrid` (walkability data), `GridMover` (movement validation), `CombatSystem`/`HealthController`, `EnemyAI`/`ArcherAI` (decision trees), `LineOfSight` (Bresenham), `Pathfinder` (A*), `FovMap`/`Raycaster` (`IFovAlgorithm`), `TurnManager` (Player→Enemy state machine), `EntityManager` (actor registry preventing overlap), `Inventory`, `ItemManager`, `ExperienceSystem`, `GameLog`. Decoupled from UI via **events**.
+- **Controllers (Godot nodes):** `ActorController` (abstract base — owns `HealthController`, `[Export]` stats, `Die()`); `PlayerController`/`EnemyController`/`ArcherController` extend it and delegate to the logic classes. `DungeonTileMap`/`FovTileMap` are `TileMapLayer`s that render from the logical grids. `MinimapController` renders from `DungeonGrid` + `FovMap`.
+- **Orchestration:** `Main.cs` drives level creation/cleanup, level transitions via stairs (player state preserved across levels), FOV recompute, and restart-on-death.
+- **Map generation:** must NEVER live in `DungeonGrid`. Lives in standalone builders (e.g. `BspDungeonGenerator`) operating on a pure `DungeonGrid`.
+- **Spawning:** `Spawner` (static) places entities across BSP rooms; tuned via `LevelSettings` (Godot `Resource`, editable in Inspector).
+
+`namespace RogueLike.<Folder>` mirrors the `Code/` tree exactly. Tests in `tests/` mirror `Code/`.
+
+**Read `docs/SYSTEM_DESIGN.md` before any task** — it is the authoritative architecture ledger and must be updated synchronously with any change to Health, Movement, AI, or Map Generation.
+
+## Workflow rules
+
+- Non-trivial feature: create a task list before coding. Wait for user "OK" if the plan touches >2 core systems.
+- Add an explicit "Update docs/SYSTEM_DESIGN.md" task whenever planning a feature.
+- **Always run `dotnet test` after every code change** — never report a task done without passing tests.
+- After each feature, scan for: methods >20 lines, DRY violations, god classes, hard-coded assets, linear searches in hot paths, constructors with >4 params. Log in `REFACTORING_OPPORTUNITIES.md` (issue/solution/priority); remove entries once resolved. Refactor immediately if clean-code principles are violated.
+
+## C# & Godot standards
+
+- Signals for upward (child→parent) communication; `[Export]` / DI for downward. Prefer `[Export]` over `GetNode()`.
 - Max 20 lines per method — refactor into sub-methods if exceeded.
-- Use `interface` and `abstract` for multi-variant systems (`IDamageable`, `IAbility`, etc.).
-- Naming: PascalCase for public members, `_camelCase` for private fields.
-- Namespaces mirror folder structure exactly (e.g. `Code/Grid/` → `namespace RogueLike.Grid`).
-- Use `var` where type is obvious from the RHS.
-- Prefer `[Export]` over `GetNode()`.
+- `interface`/`abstract` for multi-variant systems (`IDamageable`, `IAbility`, `ICombatant`, `IActor`, `IItem`).
+- Naming: PascalCase public, `_camelCase` private fields. `var` where the RHS type is obvious.
+- Call `QueueFree()` and dispose C# objects that don't inherit `GodotObject`. Physics in `_PhysicsProcess` using `delta`.
 
-## Testing (gdUnit4Net)
-- Every logic-heavy class needs a test suite in `tests/` mirroring `Code/` structure.
-- Run `dotnet build` after all code changes — confirm 0 errors before finishing.
-- Run relevant tests and fix failures before proceeding.
+## Asset pipeline (see `docs/ASSET_PIPELINE.md`)
 
-## Performance & Safety
-- Call `QueueFree()` and dispose C# objects that don't inherit `GodotObject`.
-- Physics calculations in `_PhysicsProcess` with `delta`.
-
-## Refactoring
-- After each feature, scan for: methods >20 lines, DRY violations, god classes, hard-coded assets, linear searches in hot paths, constructors with >4 params.
-- Log opportunities in `REFACTORING_OPPORTUNITIES.md` (issue, solution, priority). Remove entries once resolved.
-- Refactor immediately if clean code principles are violated; otherwise before the next feature.
-
-## Asset Pipeline
-- Sprites: top-down, 32×32px, retro 16-bit pixel art, **solid #00FF00 background** (chromakey — do NOT request transparency directly).
-- Prompt template: *"A pixel art sprite of a [ENTITY] for a roguelike dungeon crawler. 32x32 pixels, top-down perspective. Retro 16-bit pixel art style. SOLID VIBRANT GREEN (#00FF00) BACKGROUND, no shadows, no effects."*
+- Sprites: top-down, 32×32px, retro 16-bit pixel art, **solid #00FF00 background** (chromakey — do NOT request transparency).
+- Prompt: *"A pixel art sprite of a [ENTITY] for a roguelike dungeon crawler. 32x32 pixels, top-down perspective. Retro 16-bit pixel art style. SOLID VIBRANT GREEN (#00FF00) BACKGROUND, no shadows, no effects."*
 - Convert: `convert input.png -scale 32x32 -fuzz 10% -transparent "#00FF00" output.png`
-- Place `.png` in `Assets/[EntityName]/`, create `.tscn` in `Scenes/`.
-- Base class for entities: `ActorController`. Bind sprite to `Sprite2D`. Set `[Export]` vars in Inspector.
+- Place `.png` in `Assets/[EntityName]/`, create `.tscn` in `Scenes/`. Bind sprite to `Sprite2D`; set `[Export]` vars in Inspector.

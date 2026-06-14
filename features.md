@@ -1,0 +1,2 @@
+- map
+- enemies move diagonally

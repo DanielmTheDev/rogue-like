@@ -20,11 +20,6 @@ public class EntityManager
     {
         _allActors.Add(actor);
         _actorsByPosition[actor.GridPosition] = actor;
-        
-        if (actor is Node2D node)
-        {
-            _nodesByPosition[actor.GridPosition] = node;
-        }
     }
 
     public void UnregisterActor(IActor actor)
@@ -33,10 +28,6 @@ public class EntityManager
         if (_actorsByPosition.TryGetValue(actor.GridPosition, out var currentActor) && currentActor == actor)
         {
             _actorsByPosition.Remove(actor.GridPosition);
-        }
-        if (_nodesByPosition.ContainsKey(actor.GridPosition))
-        {
-            _nodesByPosition.Remove(actor.GridPosition);
         }
     }
 
@@ -48,14 +39,9 @@ public class EntityManager
         if (_actorsByPosition.TryGetValue(oldPosition, out var currentActor) && currentActor == actor)
         {
             _actorsByPosition.Remove(oldPosition);
-            _nodesByPosition.Remove(oldPosition);
         }
 
         _actorsByPosition[newPosition] = actor;
-        if (actor is Node2D node)
-        {
-            _nodesByPosition[newPosition] = node;
-        }
     }
     
     public void RegisterNode(Node2D node, Vector2I position)

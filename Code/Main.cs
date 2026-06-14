@@ -34,7 +34,8 @@ public partial class Main : Node2D
     private FovMap _fovMap;
     private IFovAlgorithm _fovAlgorithm;
     private FovTileMap _fovTileMap;
-    
+    private UI.MinimapController _minimap;
+
     private System.Collections.Generic.List<Godot.Rect2I> _rooms;
     private int _dungeonLevel = 1;
 
@@ -60,6 +61,8 @@ public partial class Main : Node2D
         inventoryUI.Initialize(player.Inventory);
         var expUI = GetNode<UI.ExperienceUI>("ExperienceUI/ExperienceControl");
         expUI.Initialize(player.Experience);
+        _minimap = GetNode<UI.MinimapController>("MinimapUI/MinimapController");
+        _minimap.Initialize(_gridMap, _fovMap, player);
     }
 
     private void SetupLevel()
@@ -98,6 +101,7 @@ public partial class Main : Node2D
         var player = GetNode<PlayerController>("Player");
         _fovAlgorithm.ComputeFov(_fovMap, _gridMap, player.GridPosition, 6); // Radius 6
         _fovTileMap.Render(_fovMap);
+        _minimap?.Refresh();
 
         // Sync visibility of all non-player actors
         // Use ToList() snapshot to avoid "Collection was modified" if entities change during sync
@@ -163,6 +167,8 @@ public partial class Main : Node2D
         _gridMap = new DungeonGrid(GridWidth, GridHeight, TilePixelSize);
         _fovMap = new FovMap(GridWidth, GridHeight); // Reset FOV map
         SetupLevel();
+        var player = GetNode<PlayerController>("Player");
+        _minimap.Initialize(_gridMap, _fovMap, player);
     }
 
     public void RestartGame()
