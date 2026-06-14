@@ -40,6 +40,20 @@ The core design split: **pure C# logic classes** hold all game rules and are uni
 - **Always run `dotnet test` after every code change** — never report a task done without passing tests.
 - After each feature, scan for: methods >20 lines, DRY violations, god classes, hard-coded assets, linear searches in hot paths, constructors with >4 params. Log in `REFACTORING_OPPORTUNITIES.md` (issue/solution/priority); remove entries once resolved. Refactor immediately if clean-code principles are violated.
 
+## Domain modelling rules (rich domain)
+
+The codebase is migrating toward **rich domain models**: behavior lives with the data it owns. Anemic data + external service mutators is an anti-pattern to reject. Apply these to all new and changed code.
+
+- **Behavior lives with its data.** A type that owns state exposes the operations on that state; callers do NOT reach in and mutate its fields. Model the verb as a method on the entity/aggregate that owns the data (`attacker.Attack(defender)`, `item.TryPickup(actor)`), never as a free-standing service that takes the entity and mutates its internals.
+- **No static `*System` services that mutate entity internals.** If you're tempted to write `SomeSystem.DoX(entity)` that writes to `entity`'s state, put `DoX()` on the entity instead. (Stateless pure-function utilities/algorithms — pathfinding, line-of-sight, raycasting — are fine; they compute, they don't mutate domain state.)
+- **The domain layer is Godot-free.** Pure-C# domain types (target home: `Code/Domain/`) must not `using Godot;`. Positions/vectors/grid concepts use the project Value Objects (`GridPos`, `Direction`), never `Vector2I`, inside the domain. `Vector2I` is confined to the Godot view edge + the single conversion bridge.
+- **Value Objects are immutable, equality-by-value, self-validating.** No setters; operations return new instances; invalid states are unconstructable (validate in the constructor).
+- **Aggregate roots guard their own invariants.** No public setters on domain types. The aggregate rejects illegal transitions internally rather than trusting callers.
+- **Godot controllers are Views.** (Target end-state.) Controllers render and forward input; they must not contain game rules. During migration a controller may still host the domain object, but no NEW rule may be added to a controller — put it on the domain type.
+- **Self-review gate.** Before presenting any batch, run the rubric in `docs/DDD_REVIEW_CHECKLIST.md` (a reviewer subagent reads the diff + rubric); fix blocker/major findings before the user reviews. See `docs/SYSTEM_DESIGN.md` for the migration status table.
+
+(Reaffirming existing rules: TDD failing-test-first, small batches build+test green, never commit without explicit user approval.)
+
 ## C# & Godot standards
 
 - Signals for upward (child→parent) communication; `[Export]` / DI for downward. Prefer `[Export]` over `GetNode()`.

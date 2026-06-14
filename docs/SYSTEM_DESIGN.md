@@ -34,3 +34,41 @@
   - Both actions consume multiple turns and integrate with FOV system for enemy detection.
 - **DungeonTileMap & FovTileMap:** Godot `TileMapLayer` nodes. They listen to the purely logical data grids to render specific visual sprites.
 - **Minimap:** Godot `Control` node (`MinimapController.cs`) that renders a compact 100×100px grid overview in the bottom-right corner. Data sources: `DungeonGrid` (cell types) and `FovMap` (visibility states). Coloring: Unexplored=hidden, Explored=dark gray, Visible=light gray, walls slightly darker, player=yellow dot. Updated via `Refresh()` which triggers `QueueRedraw()`, called from `Main.UpdateFov()` after each `ComputeFov()`.
+
+## Domain Layer (target architecture)
+
+The codebase is migrating toward a **rich domain model** under full DDD. Target layering (hard physical split):
+
+- `Code/Domain/` — pure C#, **never `using Godot;`**. Value Objects, aggregate roots, world/turn logic, domain events.
+- `Code/View/` — Godot nodes only. Render + input, no game rules. A single `GodotConv` bridge converts `Vector2I`↔`GridPos`/`Direction`.
+
+**Value Object catalogue** (immutable `readonly record struct`, invariants in ctor, equality-by-value, no setters):
+
+| VO | Invariant | Replaces |
+|----|-----------|----------|
+| `GridPos(X,Y)` | none (bounds are the grid's job) | `Vector2I` for positions in the domain |
+| `Direction(Dx,Dy)` | Dx,Dy ∈ {-1,0,1} | raw `Vector2I` direction deltas |
+| `Health(Current,Max)` | Max>0, 0≤Current≤Max | mutable `HealthController` state |
+| `Damage(Amount)` | Amount≥0 | `int AttackDamage` |
+| `XpAmount(Value)` (optional) | Value≥0 | `int` XP |
+
+**Aggregate roots** (pure C#, own state + behavior, raise domain events, no public setters): `Actor` (→ `TryMove`, `Attack`, `TakeDamage`), `Player` / `Enemy` / `Archer` (own their turn/decision behavior), plus `Dungeon`, `ActorRegistry`, `Inventory`, `FloorItems`, `ExperienceTrack`, `TurnEngine`. Godot controllers become Views that observe domain events and render.
+
+### Migration status (anemic → rich)
+
+| System | Status | Notes |
+|--------|--------|-------|
+| HealthController | 🟡 rich-mutable | clamp/invariants present; to become `Health` VO + events on `Actor` |
+| DungeonGrid | 🟢 rich | pixel math to move to `GodotConv`; `Vector2I`→`GridPos` pending |
+| GridMover | 🟢 rich | to be absorbed into `Actor.TryMove` |
+| Inventory | 🟢 rich | keep |
+| ExperienceSystem | 🟢 rich | → `ExperienceTrack`, `int`→`XpAmount` |
+| FovMap / Raycaster | 🟢 rich | `Vector2I`→`GridPos` pending |
+| TurnManager | 🟢 rich | → `TurnEngine`, absorb enemy-phase loop |
+| Pathfinder / LineOfSight | 🟢 pure-util | `Vector2I`→`GridPos`, `Mathf`→`Math` |
+| **CombatSystem** | 🔴 anemic | static mutator → behavior onto the combatant; to be deleted |
+| **EnemyAI / ArcherAI** | 🔴 anemic | behavior split from entity → absorb into `Enemy`/`Archer` |
+| **ItemManager** | 🔴 anemic | pickup orchestration → `Item.TryPickup`; → `FloorItems` |
+| **Controllers (Player/Enemy/Archer/Actor)** | 🔴 are-the-entity | implement `IActor`/`ICombatant` today → demote to Views |
+
+Update this table as each migration batch lands. 🔴 = anemic/anti-pattern present, 🟡 = partially rich, 🟢 = rich/clean.
