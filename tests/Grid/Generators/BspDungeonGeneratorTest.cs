@@ -12,8 +12,8 @@ public class BspDungeonGeneratorTest
     [TestCase]
     public void Generate_FillsGridAndReturnsRooms()
     {
-        var grid = new DungeonGrid(50, 50, 32);
-        var rooms = BspDungeonGenerator.Generate(grid, 10);
+        var grid = new DungeonGrid(50, 50);
+        var rooms = BspDungeonGenerator.Generate(grid);
 
         // Assert we got at least a few rooms
         AssertBool(rooms.Count > 2).IsTrue();

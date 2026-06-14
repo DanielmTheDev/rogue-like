@@ -59,7 +59,7 @@ public class DungeonGridTest
     [TestCase]
     public void GridToWorld_ReturnsCorrectCenter()
     {
-        var grid = new DungeonGrid(10, 8, 32);
+        var grid = new DungeonGrid(10, 8);
 
         // Tile (0,0) center should be at (16, 16)
         var worldPos = grid.GridToWorld(new Vector2I(0, 0));
@@ -75,7 +75,7 @@ public class DungeonGridTest
     [TestCase]
     public void WorldToGrid_ReturnsCorrectCoord()
     {
-        var grid = new DungeonGrid(10, 8, 32);
+        var grid = new DungeonGrid(10, 8);
 
         // World position (16, 16) -> grid (0, 0)
         var coord = grid.WorldToGrid(new Vector2(16f, 16f));
@@ -91,7 +91,7 @@ public class DungeonGridTest
     [TestCase]
     public void GetCell_OutOfBounds_ReturnsWall()
     {
-        var grid = new DungeonGrid(10, 8, 32);
+        var grid = new DungeonGrid(10, 8);
 
         AssertObject(grid.GetCell(new Vector2I(-1, 0)))
             .IsEqual(CellType.Wall);
@@ -100,7 +100,7 @@ public class DungeonGridTest
     [TestCase]
     public void SetCell_ThenGetCell_ReturnsCorrectType()
     {
-        var grid = new DungeonGrid(10, 8, 32);
+        var grid = new DungeonGrid(10, 8);
         grid.SetCell(new Vector2I(2, 3), CellType.Wall);
 
         AssertObject(grid.GetCell(new Vector2I(2, 3)))

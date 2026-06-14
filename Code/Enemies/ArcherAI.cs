@@ -40,7 +40,7 @@ public class ArcherAI
         var player = _entityManager.AllActors.FirstOrDefault(a => a.IsPlayer);
         if (player == null) return;
         
-        bool isPlayerVisible = fovMap.GetVisibility(player.GridPosition) == Code.Grid.FOV.VisibilityState.Visible;
+        var isPlayerVisible = fovMap.GetVisibility(player.GridPosition) == Code.Grid.FOV.VisibilityState.Visible;
         if (!isPlayerVisible)
         {
             // Player not visible, do nothing

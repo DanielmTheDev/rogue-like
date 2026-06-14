@@ -14,12 +14,12 @@ public class Raycaster : IFovAlgorithm
         fovMap.SetVisibility(origin, VisibilityState.Visible);
 
         // Raycast across the perimeter of a square bound
-        for (int x = -radius; x <= radius; x++)
+        for (var x = -radius; x <= radius; x++)
         {
             CastRay(fovMap, grid, origin, new Vector2I(origin.X + x, origin.Y - radius), radius);
             CastRay(fovMap, grid, origin, new Vector2I(origin.X + x, origin.Y + radius), radius);
         }
-        for (int y = -radius + 1; y < radius; y++)
+        for (var y = -radius + 1; y < radius; y++)
         {
             CastRay(fovMap, grid, origin, new Vector2I(origin.X - radius, origin.Y + y), radius);
             CastRay(fovMap, grid, origin, new Vector2I(origin.X + radius, origin.Y + y), radius);
@@ -28,14 +28,14 @@ public class Raycaster : IFovAlgorithm
 
     private void CastRay(FovMap fovMap, DungeonGrid grid, Vector2I origin, Vector2I target, int radiusRadius)
     {
-        int dx = Math.Abs(target.X - origin.X);
-        int dy = Math.Abs(target.Y - origin.Y);
-        int sx = origin.X < target.X ? 1 : -1;
-        int sy = origin.Y < target.Y ? 1 : -1;
-        int err = dx - dy;
+        var dx = Math.Abs(target.X - origin.X);
+        var dy = Math.Abs(target.Y - origin.Y);
+        var sx = origin.X < target.X ? 1 : -1;
+        var sy = origin.Y < target.Y ? 1 : -1;
+        var err = dx - dy;
 
-        int cx = origin.X;
-        int cy = origin.Y;
+        var cx = origin.X;
+        var cy = origin.Y;
 
         while (true)
         {
@@ -58,7 +58,7 @@ public class Raycaster : IFovAlgorithm
             if (cx == target.X && cy == target.Y)
                 break;
 
-            int e2 = 2 * err;
+            var e2 = 2 * err;
             if (e2 > -dy)
             {
                 err -= dy;

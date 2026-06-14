@@ -5,7 +5,6 @@ using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Pathfinding;
-using RogueLike.Code.Player;
 using RogueLike.Code.Entities.Combat;
 using static GdUnit4.Assertions;
 
@@ -24,7 +23,7 @@ public class ArcherAITest
         public int XpReward => 0;
         public void Die() { }
     }
-    
+
     private class MockArcher : IActor, ICombatant
     {
         public Vector2I GridPosition { get; set; }
@@ -40,7 +39,7 @@ public class ArcherAITest
     private EntityManager _entityManager;
     private Pathfinder _pathfinder;
     private FovMap _fovMap;
-    
+
     [BeforeTest]
     public void Setup()
     {
@@ -56,7 +55,7 @@ public class ArcherAITest
         // Arrange
         var player = new MockPlayer();
         var archer = new MockArcher();
-        
+
         // Place player and archer with a wall between them
         player.GridPosition = new Vector2I(1, 1);
         archer.GridPosition = new Vector2I(1, 3);
@@ -72,8 +71,8 @@ public class ArcherAITest
         // Initialize health
         player.Health = new HealthController(10);
         archer.Health = new HealthController(10);
-        
-        var ai = new ArcherAI(archer, _grid, _entityManager, _pathfinder, archer.GridPosition, 5);
+
+        var ai = new ArcherAI(archer, _grid, _entityManager, _pathfinder, archer.GridPosition);
 
         // Act
         ai.TakeTurn(_fovMap);

@@ -1,6 +1,5 @@
 using Godot;
 using RogueLike.Code.Entities;
-using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Pathfinding;
 
@@ -19,7 +18,7 @@ public partial class EnemyController : ActorController
     public void Initialize(DungeonGrid grid, EntityManager entityManager, Pathfinder pathfinder, Vector2I startPos)
     {
         InitializeBase(entityManager);
-        
+
         _ai = new EnemyAI(this, grid, entityManager, pathfinder, startPos);
         entityManager.RegisterActor(this);
         SyncPosition(grid, null);
@@ -28,7 +27,7 @@ public partial class EnemyController : ActorController
     public void TakeTurn(DungeonGrid grid, RogueLike.Code.Grid.FOV.FovMap fovMap)
     {
         if (_ai == null) return;
-        
+
         _ai.TakeTurn(fovMap);
         SyncPosition(grid, fovMap);
     }
@@ -36,7 +35,7 @@ public partial class EnemyController : ActorController
     private void SyncPosition(DungeonGrid grid, RogueLike.Code.Grid.FOV.FovMap fovMap)
     {
         Position = grid.GridToWorld(GridPosition);
-        
+
         if (fovMap != null)
         {
             var vis = fovMap.GetVisibility(GridPosition);

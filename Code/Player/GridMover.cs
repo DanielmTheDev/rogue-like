@@ -48,8 +48,12 @@ public class GridMover
 
         if (!_grid.IsWalkable(target))
             return false;
-            
+
         if (_entityManager.IsOccupied(target))
+            return false;
+
+        // No diagonal corner-cutting through walls.
+        if (_grid.IsDiagonalCornerCut(_gridPosition, direction))
             return false;
 
         var oldPos = _gridPosition;

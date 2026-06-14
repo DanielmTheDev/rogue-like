@@ -30,7 +30,7 @@ public partial class Main : Node2D
     private TurnManager _turnManager;
     private ItemManager _itemManager;
     private Pathfinder _pathfinder;
-    
+
     private FovMap _fovMap;
     private IFovAlgorithm _fovAlgorithm;
     private FovTileMap _fovTileMap;
@@ -41,7 +41,7 @@ public partial class Main : Node2D
 
     public override void _Ready()
     {
-        _gridMap = new DungeonGrid(GridWidth, GridHeight, TilePixelSize);
+        _gridMap = new DungeonGrid(GridWidth, GridHeight);
         _entityManager = new EntityManager();
         _itemManager = new ItemManager();
         _fovMap = new FovMap(GridWidth, GridHeight);
@@ -55,7 +55,7 @@ public partial class Main : Node2D
 
         SetupFovTileMap();
         SetupLevel();
-        
+
         // Initialize UIs after player is fully initialized
         var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");
         inventoryUI.Initialize(player.Inventory);
@@ -80,11 +80,11 @@ public partial class Main : Node2D
         var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");
         var stairsScene = GD.Load<PackedScene>("res://Scenes/StairsDown.tscn");
-        
+
         Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager, _pathfinder, _dungeonLevel, LevelSettings);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _itemManager);
         Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _entityManager, _gridMap);
-        
+
         // 4. Initial FOV Compute
         UpdateFov();
     }
@@ -126,7 +126,7 @@ public partial class Main : Node2D
 
     private void ProcessEnemyTurns()
     {
-        // Iterate over a snapshot (ToList) because enemies (or the player) 
+        // Iterate over a snapshot (ToList) because enemies (or the player)
         // might die and unregister themselves during this loop.
         foreach (var actor in _entityManager.AllActors.ToList())
         {
@@ -158,13 +158,13 @@ public partial class Main : Node2D
                 node.QueueFree();
             }
         }
-        
+
         // 2. Clear registries
         _entityManager.ClearAll();
         _itemManager.Clear();
 
         // 3. Generate and setup new level
-        _gridMap = new DungeonGrid(GridWidth, GridHeight, TilePixelSize);
+        _gridMap = new DungeonGrid(GridWidth, GridHeight);
         _fovMap = new FovMap(GridWidth, GridHeight); // Reset FOV map
         SetupLevel();
         var player = GetNode<PlayerController>("Player");
@@ -178,7 +178,7 @@ public partial class Main : Node2D
 
         var player = GetNode<PlayerController>("Player");
         player.Reset();
-        
+
         // Reset the UI to reflect the player's new state
         var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");
         inventoryUI.Initialize(player.Inventory);

@@ -45,6 +45,20 @@ public class DungeonGrid
     }
 
     /// <summary>
+    /// True if moving <paramref name="dir"/> from <paramref name="from"/> is a diagonal step
+    /// that cuts a wall corner. A diagonal is only traversable when both orthogonally-adjacent
+    /// cells are walkable. Cardinal directions are never corner cuts.
+    /// </summary>
+    public bool IsDiagonalCornerCut(Vector2I from, Vector2I dir)
+    {
+        if (dir.X == 0 || dir.Y == 0)
+            return false;
+
+        return !IsWalkable(from + new Vector2I(dir.X, 0))
+            || !IsWalkable(from + new Vector2I(0, dir.Y));
+    }
+
+    /// <summary>
     /// Converts a grid coordinate to the world-space center of that tile.
     /// </summary>
     public Vector2 GridToWorld(Vector2I coord)

@@ -5,7 +5,6 @@ using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Player;
-using RogueLike.Code.TurnContext;
 using RogueLike.Code.Items;
 using RogueLike.Code.Resources;
 using RogueLike.Code.World;
@@ -17,7 +16,7 @@ namespace RogueLike.Code.Entities;
 /// </summary>
 public static class Spawner
 {
-    private static readonly System.Random _rng = new System.Random();
+    private static readonly System.Random _rng = new();
 
     public static void PlacePlayerOnLevel(
         PlayerController player,
@@ -41,24 +40,24 @@ public static class Spawner
         int dungeonLevel,
         LevelSettings levelSettings)
     {
-        for (int i = 1; i < rooms.Count; i++)
+        for (var i = 1; i < rooms.Count; i++)
         {
             var room = rooms[i];
-            
+
             // Use the LevelSettings resource to determine enemy count
-            int baseCount = levelSettings.BaseEnemyCountModifier;
-            int min = levelSettings.MinEnemiesPerRoom;
-            int max = levelSettings.MaxEnemiesPerRoom;
-            float scaling = levelSettings.DifficultyScaling;
-            
-            int numberOfEnemies = _rng.Next(min, max + 1) + baseCount + (int)((dungeonLevel - 1) * scaling);
+            var baseCount = levelSettings.BaseEnemyCountModifier;
+            var min = levelSettings.MinEnemiesPerRoom;
+            var max = levelSettings.MaxEnemiesPerRoom;
+            var scaling = levelSettings.DifficultyScaling;
+
+            var numberOfEnemies = _rng.Next(min, max + 1) + baseCount + (int)((dungeonLevel - 1) * scaling);
 
             var spawnedPositions = new HashSet<Vector2I>();
 
-            for (int j = 0; j < numberOfEnemies; j++)
+            for (var j = 0; j < numberOfEnemies; j++)
             {
                 Vector2I spawnPos;
-                int attempts = 0;
+                var attempts = 0;
                 // Avoid spawning multiple enemies on the same tile or in walls
                 do
                 {
@@ -67,7 +66,7 @@ public static class Spawner
                 } while ((spawnedPositions.Contains(spawnPos) || !grid.IsWalkable(spawnPos)) && attempts < 100);
 
                 if (attempts >= 100) continue; // Failsafe for very small rooms
-                
+
                 spawnedPositions.Add(spawnPos);
 
                 // Alternate enemy types
@@ -116,8 +115,8 @@ public static class Spawner
         ItemManager itemManager)
     {
         // Spawn 1-2 potions per dungeon in random rooms (skip first room where player starts)
-        int potionCount = _rng.Next(1, 3);
-        for (int i = 0; i < potionCount; i++)
+        var potionCount = _rng.Next(1, 3);
+        for (var i = 0; i < potionCount; i++)
         {
             var room = rooms[_rng.Next(1, rooms.Count)];
             var spawnPos = RandomFloorTile(room);
@@ -127,8 +126,8 @@ public static class Spawner
 
     public static Vector2I RandomFloorTile(Rect2I room)
     {
-        int rx = _rng.Next(room.Position.X, room.Position.X + room.Size.X);
-        int ry = _rng.Next(room.Position.Y, room.Position.Y + room.Size.Y);
+        var rx = _rng.Next(room.Position.X, room.Position.X + room.Size.X);
+        var ry = _rng.Next(room.Position.Y, room.Position.Y + room.Size.Y);
         return new Vector2I(rx, ry);
     }
 
@@ -136,10 +135,10 @@ public static class Spawner
     {
         var stairs = scene.Instantiate<StairsController>();
         var position = new Vector2I(room.Position.X + room.Size.X / 2, room.Position.Y + room.Size.Y / 2);
-        
+
         stairs.Initialize(position);
         stairs.Position = grid.GridToWorld(position);
-        
+
         parent.AddChild(stairs);
         entityManager.RegisterNode(stairs, position);
     }

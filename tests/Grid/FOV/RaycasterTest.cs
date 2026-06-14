@@ -12,7 +12,7 @@ public class RaycasterTest
     [TestCase]
     public void ComputeFov_ClearsPreviousVisibleTiles()
     {
-        var grid = new DungeonGrid(10, 10, 32);
+        var grid = new DungeonGrid(10, 10);
         var fov = new FovMap(10, 10);
         var raycaster = new Raycaster();
 
@@ -30,7 +30,7 @@ public class RaycasterTest
     [TestCase]
     public void ComputeFov_BlockedByWall()
     {
-        var grid = new DungeonGrid(10, 10, 32);
+        var grid = new DungeonGrid(10, 10);
         var fov = new FovMap(10, 10);
         var raycaster = new Raycaster();
 

@@ -9,7 +9,7 @@ namespace RogueLike.Code.Grid.Generators;
 /// </summary>
 public static class BspDungeonGenerator
 {
-    private static readonly Random _rng = new Random();
+    private static readonly Random _rng = new();
 
     /// <summary>
     /// Executes the complete BSP algorithm on the grid map.
@@ -18,9 +18,9 @@ public static class BspDungeonGenerator
     public static List<Rect2I> Generate(DungeonGrid grid, int minSplitSize = 10)
     {
         // 1. Fill completely with rock
-        for (int x = 0; x < grid.Size.X; x++)
+        for (var x = 0; x < grid.Size.X; x++)
         {
-            for (int y = 0; y < grid.Size.Y; y++)
+            for (var y = 0; y < grid.Size.Y; y++)
             {
                 grid.SetCell(new Vector2I(x, y), CellType.Wall);
             }
@@ -45,8 +45,8 @@ public static class BspDungeonGenerator
             return;
 
         // Try split
-        bool splitHorizontal = _rng.NextDouble() > 0.5;
-        
+        var splitHorizontal = _rng.NextDouble() > 0.5;
+
         // If width > 25% bigger than height, force vertical split
         if (node.Bounds.Size.X > node.Bounds.Size.Y * 1.25)
             splitHorizontal = false;
@@ -78,19 +78,19 @@ public static class BspDungeonGenerator
         if (node.IsLeaf)
         {
             // Randomly carve a room inside this space
-            int w = _rng.Next(4, node.Bounds.Size.X - 2);
-            int h = _rng.Next(4, node.Bounds.Size.Y - 2);
-            int x = _rng.Next(node.Bounds.Position.X + 1, node.Bounds.Position.X + node.Bounds.Size.X - w - 1);
-            int y = _rng.Next(node.Bounds.Position.Y + 1, node.Bounds.Position.Y + node.Bounds.Size.Y - h - 1);
+            var w = _rng.Next(4, node.Bounds.Size.X - 2);
+            var h = _rng.Next(4, node.Bounds.Size.Y - 2);
+            var x = _rng.Next(node.Bounds.Position.X + 1, node.Bounds.Position.X + node.Bounds.Size.X - w - 1);
+            var y = _rng.Next(node.Bounds.Position.Y + 1, node.Bounds.Position.Y + node.Bounds.Size.Y - h - 1);
 
             var room = new Rect2I(x, y, w, h);
             node.Room = room;
             roomsList.Add(room);
 
             // Carve floors
-            for (int rX = room.Position.X; rX < room.End.X; rX++)
+            for (var rX = room.Position.X; rX < room.End.X; rX++)
             {
-                for (int rY = room.Position.Y; rY < room.End.Y; rY++)
+                for (var rY = room.Position.Y; rY < room.End.Y; rY++)
                 {
                     grid.SetCell(new Vector2I(rX, rY), CellType.Floor);
                 }
@@ -114,8 +114,8 @@ public static class BspDungeonGenerator
 
     private static void ConnectRooms(DungeonGrid grid, Rect2I room1, Rect2I room2)
     {
-        Vector2I center1 = GetCenter(room1);
-        Vector2I center2 = GetCenter(room2);
+        var center1 = GetCenter(room1);
+        var center2 = GetCenter(room2);
 
         // Carve L-shaped corridor
         if (_rng.NextDouble() > 0.5)
@@ -132,7 +132,7 @@ public static class BspDungeonGenerator
 
     private static void CarveHorizontalTunn(DungeonGrid grid, int x1, int x2, int y)
     {
-        for (int x = Math.Min(x1, x2); x <= Math.Max(x1, x2); x++)
+        for (var x = Math.Min(x1, x2); x <= Math.Max(x1, x2); x++)
         {
             grid.SetCell(new Vector2I(x, y), CellType.Floor);
         }
@@ -140,7 +140,7 @@ public static class BspDungeonGenerator
 
     private static void CarveVerticalTunn(DungeonGrid grid, int y1, int y2, int x)
     {
-        for (int y = Math.Min(y1, y2); y <= Math.Max(y1, y2); y++)
+        for (var y = Math.Min(y1, y2); y <= Math.Max(y1, y2); y++)
         {
             grid.SetCell(new Vector2I(x, y), CellType.Floor);
         }

@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://b8k1m5n2p2q4u" path="res://Scenes/GameLogUI.tscn" id="5_gamelog_scene"]
 [ext_resource type="PackedScene" uid="uid://d8m3n5p7q9r2s" path="res://Scenes/InventoryUI.tscn" id="6_inventory_scene"]
 [ext_resource type="PackedScene" uid="uid://b1v2h3i4j5k6l" path="res://Scenes/UI/ExperienceUI.tscn" id="7_exp_ui_scene"]
-[ext_resource type="Resource" uid="uid://cws5w4f3g2h1k" path="res://Resources/DefaultLevelSettings.tres" id="8_level_settings"]
+[ext_resource type="Resource" uid="uid://ck30u1q20435m" path="res://Resources/DefaultLevelSettings.tres" id="8_level_settings"]
 [ext_resource type="PackedScene" uid="uid://d1y3r25jmk0l4" path="res://Scenes/MinimapUI.tscn" id="9_minimap_scene"]
 
 [node name="Main" type="Node2D"]

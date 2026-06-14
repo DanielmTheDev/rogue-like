@@ -25,15 +25,15 @@ public partial class MinimapController : Control
     public override void _Draw()
     {
         if (_grid == null || _fov == null) return;
-        for (int x = 0; x < _grid.Size.X; x++)
+        for (var x = 0; x < _grid.Size.X; x++)
         {
-            for (int y = 0; y < _grid.Size.Y; y++)
+            for (var y = 0; y < _grid.Size.Y; y++)
             {
                 var coord = new Vector2I(x, y);
                 var vis = _fov.GetVisibility(coord);
                 if (vis == VisibilityState.Unexplored) continue;
-                bool isWall = _grid.GetCell(coord) == CellType.Wall;
-                Color color = vis == VisibilityState.Visible
+                var isWall = _grid.GetCell(coord) == CellType.Wall;
+                var color = vis == VisibilityState.Visible
                     ? (isWall ? new Color(0.4f, 0.4f, 0.4f) : new Color(0.8f, 0.8f, 0.8f))
                     : new Color(0.3f, 0.3f, 0.3f);
                 DrawRect(new Rect2(x * CellPx, y * CellPx, CellPx, CellPx), color);

@@ -16,21 +16,21 @@ public static class LineOfSight
     /// </summary>
     public static bool HasClearLine(DungeonGrid grid, Vector2I origin, Vector2I target)
     {
-        int dx = Math.Abs(target.X - origin.X);
-        int dy = Math.Abs(target.Y - origin.Y);
-        int sx = origin.X < target.X ? 1 : -1;
-        int sy = origin.Y < target.Y ? 1 : -1;
-        int err = dx - dy;
+        var dx = Math.Abs(target.X - origin.X);
+        var dy = Math.Abs(target.Y - origin.Y);
+        var sx = origin.X < target.X ? 1 : -1;
+        var sy = origin.Y < target.Y ? 1 : -1;
+        var err = dx - dy;
 
-        int cx = origin.X;
-        int cy = origin.Y;
+        var cx = origin.X;
+        var cy = origin.Y;
 
         while (true)
         {
             if (cx == target.X && cy == target.Y)
                 return true; // Reached target without hitting a wall
 
-            int e2 = 2 * err;
+            var e2 = 2 * err;
             if (e2 > -dy) { err -= dy; cx += sx; }
             if (e2 < dx)  { err += dx; cy += sy; }
 

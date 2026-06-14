@@ -17,7 +17,7 @@ public class PlayerMovementTest
     private DungeonGrid CreateTestGrid()
     {
         // 5x5 grid, all floor, with a wall at (2,0)
-        var grid = new DungeonGrid(5, 5, 32);
+        var grid = new DungeonGrid(5, 5);
         grid.SetCell(new Vector2I(2, 0), CellType.Wall);
         return grid;
     }
@@ -115,6 +115,31 @@ public class PlayerMovementTest
 
         AssertInt(mover.GridPosition.X).IsEqual(2);
         AssertInt(mover.GridPosition.Y).IsEqual(3);
+    }
+
+    [TestCase]
+    public void TryMove_DiagonalIntoOpenSpace_ReturnsTrue()
+    {
+        var grid = CreateTestGrid();
+        var mover = CreateMover(grid, new Vector2I(2, 2), out _);
+
+        // Down-right to (3,3); both orthogonal cells (3,2) and (2,3) are floor.
+        AssertBool(mover.TryMove(new Vector2I(1, 1))).IsTrue();
+        AssertInt(mover.GridPosition.X).IsEqual(3);
+        AssertInt(mover.GridPosition.Y).IsEqual(3);
+    }
+
+    [TestCase]
+    public void TryMove_DiagonalCornerCut_ReturnsFalse()
+    {
+        var grid = CreateTestGrid();
+        grid.SetCell(new Vector2I(3, 2), CellType.Wall); // block one orthogonal side
+        var mover = CreateMover(grid, new Vector2I(2, 2), out _);
+
+        // Down-right target (3,3) is floor, but it would cut the corner past wall (3,2).
+        AssertBool(mover.TryMove(new Vector2I(1, 1))).IsFalse();
+        AssertInt(mover.GridPosition.X).IsEqual(2);
+        AssertInt(mover.GridPosition.Y).IsEqual(2);
     }
 
     [TestCase]

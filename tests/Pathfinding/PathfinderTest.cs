@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using GdUnit4;
 using Godot;
 using RogueLike.Code.Grid;
@@ -44,12 +43,42 @@ public class PathfinderTest
         var path = _pathfinder.FindPath(start, end, _grid);
 
         Assertions.AssertThat(path).IsNotNull();
-        // Expected path: (1,2) -> (0,2) or (2,2) -> (0,3) or (2,3) etc.
-        // The exact path can vary, but it must not contain the wall.
+        // Must not pass through the wall.
         Assertions.AssertThat(path.Contains(new Vector2I(1, 3))).IsFalse();
-        Assertions.AssertThat(path.Count).IsGreaterEqual(6); // Path is longer now
+        // With diagonals the detour is shorter than the old 4-directional path (was >= 6).
+        Assertions.AssertThat(path.Count).IsLessEqual(5);
     }
-    
+
+    [TestCase]
+    public void FindPath_OpenDiagonal_TakesDiagonalShortcut()
+    {
+        var start = new Vector2I(1, 1);
+        var end = new Vector2I(4, 4);
+        var path = _pathfinder.FindPath(start, end, _grid);
+
+        Assertions.AssertThat(path).IsNotNull();
+        // Pure diagonal: 3 steps instead of the 6 a cardinal grid would need.
+        Assertions.AssertThat(path.Count).IsEqual(3);
+        Assertions.AssertThat(path[2]).IsEqual(new Vector2I(4, 4));
+    }
+
+    [TestCase]
+    public void FindPath_DiagonalCornerCut_RoutesAround()
+    {
+        // Wall on one orthogonal side of the (1,1)->(2,2) diagonal.
+        _grid.SetCell(new Vector2I(2, 1), CellType.Wall);
+
+        var start = new Vector2I(1, 1);
+        var end = new Vector2I(2, 2);
+        var path = _pathfinder.FindPath(start, end, _grid);
+
+        Assertions.AssertThat(path).IsNotNull();
+        // Cannot cut the corner; must step via (1,2) first.
+        Assertions.AssertThat(path.Count).IsEqual(2);
+        Assertions.AssertThat(path[0]).IsEqual(new Vector2I(1, 2));
+        Assertions.AssertThat(path[1]).IsEqual(new Vector2I(2, 2));
+    }
+
     [TestCase]
     public void FindPath_NoPathExists()
     {

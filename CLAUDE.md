@@ -34,6 +34,9 @@ The core design split: **pure C# logic classes** hold all game rules and are uni
 
 - Non-trivial feature: create a task list before coding. Wait for user "OK" if the plan touches >2 core systems.
 - Add an explicit "Update docs/SYSTEM_DESIGN.md" task whenever planning a feature.
+- **TDD: write the failing test first, then the implementation.** No production code without a test that drove it.
+- **Work in small batches** — one logical change at a time, build + test green before the next.
+- **NEVER commit until the user explicitly approves the changes.** No `git commit` on your own initiative.
 - **Always run `dotnet test` after every code change** — never report a task done without passing tests.
 - After each feature, scan for: methods >20 lines, DRY violations, god classes, hard-coded assets, linear searches in hot paths, constructors with >4 params. Log in `REFACTORING_OPPORTUNITIES.md` (issue/solution/priority); remove entries once resolved. Refactor immediately if clean-code principles are violated.
 
@@ -42,7 +45,8 @@ The core design split: **pure C# logic classes** hold all game rules and are uni
 - Signals for upward (child→parent) communication; `[Export]` / DI for downward. Prefer `[Export]` over `GetNode()`.
 - Max 20 lines per method — refactor into sub-methods if exceeded.
 - `interface`/`abstract` for multi-variant systems (`IDamageable`, `IAbility`, `ICombatant`, `IActor`, `IItem`).
-- Naming: PascalCase public, `_camelCase` private fields. `var` where the RHS type is obvious.
+- Naming: PascalCase public, `_camelCase` private fields.
+- **Prefer `var` over explicit type in local declarations.** Use the explicit type only when the RHS type is not inferable/obvious from the expression.
 - Call `QueueFree()` and dispose C# objects that don't inherit `GodotObject`. Physics in `_PhysicsProcess` using `delta`.
 
 ## Asset pipeline (see `docs/ASSET_PIPELINE.md`)

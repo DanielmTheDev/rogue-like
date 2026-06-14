@@ -65,7 +65,7 @@ public partial class PlayerController : ActorController
             return false;
 
         var target = GridPosition + direction;
-        
+
         // Check for stairs
         var nodeAtTarget = _entityManager.GetNodeAt(target);
         if (nodeAtTarget is World.StairsController)
@@ -90,10 +90,10 @@ public partial class PlayerController : ActorController
             return false;
 
         SyncPosition();
-        
+
         // CHECK FOR ITEMS (auto-pickup)
         _itemManager?.CheckForPickup(GridPosition, this, _inventory);
-        
+
         return true;
     }
 
@@ -131,7 +131,7 @@ public partial class PlayerController : ActorController
     private bool HandleWaitActions(InputEvent @event)
     {
         if (!@event.IsActionPressed("wait")) return false;
-        
+
         if (Input.IsKeyPressed(Key.Shift))
         {
             WaitUntilFullHealth();
@@ -147,8 +147,8 @@ public partial class PlayerController : ActorController
     {
         if (@event is not InputEventKey keyEvent) return false;
         if (keyEvent.Keycode < Key.Key1 || keyEvent.Keycode > Key.Key9) return false;
-        
-        int groupSlot = (int)keyEvent.Keycode - (int)Key.Key1;
+
+        var groupSlot = (int)keyEvent.Keycode - (int)Key.Key1;
         if (_inventory.UseItemByGroup(groupSlot, this))
         {
             _turnManager.EndPlayerTurn();
@@ -182,19 +182,19 @@ public partial class PlayerController : ActorController
     /// </summary>
     private void WaitUntilFullHealth()
     {
-        int maxTurns = 200; // Safety break
-        int turnsWaited = 0;
+        var maxTurns = 200; // Safety break
+        var turnsWaited = 0;
 
         while (Health.CurrentHp < Health.MaxHp && turnsWaited < maxTurns)
         {
-            int hpBefore = Health.CurrentHp;
-            
+            var hpBefore = Health.CurrentHp;
+
             // Perform one wait turn
             ProcessTurnAction(logHeal: false);
             turnsWaited++;
 
             // STOP CONDITIONS
-            
+
             // 1. If we took damage, stop immediately
             if (Health.CurrentHp < hpBefore)
             {
@@ -230,12 +230,12 @@ public partial class PlayerController : ActorController
     private void ShiftMove(Vector2I direction)
     {
         // Calculate orthogonal directions for path detection
-        Vector2I ortho1 = new Vector2I(-direction.Y, direction.X);
-        Vector2I ortho2 = new Vector2I(direction.Y, -direction.X);
+        var ortho1 = new Vector2I(-direction.Y, direction.X);
+        var ortho2 = new Vector2I(direction.Y, -direction.X);
 
         // Record initial walkability of side-tiles
-        bool side1WasWalkable = _mover.Grid.IsWalkable(GridPosition + ortho1);
-        bool side2WasWalkable = _mover.Grid.IsWalkable(GridPosition + ortho2);
+        var side1WasWalkable = _mover.Grid.IsWalkable(GridPosition + ortho1);
+        var side2WasWalkable = _mover.Grid.IsWalkable(GridPosition + ortho2);
 
         while (true)
         {
@@ -251,10 +251,10 @@ public partial class PlayerController : ActorController
         var nextPos = GridPosition + direction;
 
         if (IsBlocked(nextPos)) return true;
-        
+
         // Try to move
         if (!TryMove(direction)) return true;
-        
+
         ProcessTurnAction();
 
         if (IsEnemyVisible())
@@ -290,8 +290,8 @@ public partial class PlayerController : ActorController
 
     private bool HasPathChanged(Vector2I ortho1, Vector2I ortho2, bool side1WasWalkable, bool side2WasWalkable)
     {
-        bool side1IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho1);
-        bool side2IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho2);
+        var side1IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho1);
+        var side2IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho2);
         return side1IsWalkable != side1WasWalkable || side2IsWalkable != side2WasWalkable;
     }
 
@@ -310,7 +310,7 @@ public partial class PlayerController : ActorController
         // Increase stats
         BaseAttackDamage++;
         Health.IncreaseMaxHp(5); // Heal to full on level up as a bonus
-        
+
         GameLog.Instance.Log($"[color=purple]You reached Level {newLevel}![/color]");
         GameLog.Instance.Log("[color=green]Your Max HP and Attack Damage increase![/color]");
     }
@@ -336,20 +336,20 @@ public partial class PlayerController : ActorController
     public void Reset()
     {
         IsDead = false;
-        
+
         // Reset stats to their exported defaults
         var defaultPlayer = (PlayerController)GD.Load<PackedScene>("res://Scenes/Player.tscn").Instantiate();
         BaseAttackDamage = defaultPlayer.BaseAttackDamage;
         BaseHealth = defaultPlayer.BaseHealth;
-        
+
         Health = new HealthController(BaseHealth);
         Health.OnDied += Die;
-        
+
         // Reset systems
         Inventory.Clear();
         Experience = new ExperienceSystem();
         Experience.OnLevelUp += HandleLevelUp;
-        
+
         // Re-link health bar in case it was disconnected
         if (HealthBar != null)
         {

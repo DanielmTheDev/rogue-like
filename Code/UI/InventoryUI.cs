@@ -27,7 +27,7 @@ public partial class InventoryUI : Control
         var text = $"[b]Inventory ({_inventory.Count}/{_inventory.MaxSlots})[/b]\n";
         
         var grouped = _inventory.GetGroupedItems();
-        int displaySlot = 1;
+        var displaySlot = 1;
         
         foreach (var (itemName, count, _) in grouped)
         {

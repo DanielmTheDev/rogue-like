@@ -39,7 +39,7 @@ public class Pathfinder
         while (openList.Count > 0)
         {
             var currentNode = openList.OrderBy(n => n.FCost).ThenBy(n => n.HCost).First();
-            
+
             openList.Remove(currentNode);
             closedList.Add(currentNode.Position);
 
@@ -56,7 +56,7 @@ public class Pathfinder
                     continue;
                 }
 
-                int newMovementCostToNeighbor = currentNode.GCost + GetDistance(currentNode, neighbor);
+                var newMovementCostToNeighbor = currentNode.GCost + GetDistance(currentNode, neighbor);
                 if (newMovementCostToNeighbor < neighbor.GCost || !openList.Any(n => n.Position == neighbor.Position))
                 {
                     neighbor.GCost = newMovementCostToNeighbor;
@@ -88,28 +88,39 @@ public class Pathfinder
         return path;
     }
 
+    private static readonly Vector2I[] Directions =
+    [
+        Vector2I.Up, Vector2I.Down, Vector2I.Left, Vector2I.Right,
+        new(-1, -1), new(1, -1), new(-1, 1), new(1, 1)
+    ];
+
     private List<PathNode> GetNeighbors(PathNode node, DungeonGrid grid)
     {
         var neighbors = new List<PathNode>();
-        // Using 4-directional movement for now
-        var directions = new[] { Vector2I.Up, Vector2I.Down, Vector2I.Left, Vector2I.Right };
 
-        foreach (var dir in directions)
+        foreach (var dir in Directions)
         {
             var checkPos = node.Position + dir;
-            if (grid.IsWalkable(checkPos))
-            {
-                neighbors.Add(new PathNode(checkPos));
-            }
+            if (!grid.IsWalkable(checkPos))
+                continue;
+            // Disallow diagonals that cut a wall corner (matches GridMover).
+            if (grid.IsDiagonalCornerCut(node.Position, dir))
+                continue;
+
+            neighbors.Add(new PathNode(checkPos));
         }
         return neighbors;
     }
 
     private int GetDistance(PathNode nodeA, PathNode nodeB)
     {
-        // Using Manhattan distance for a 4-directional grid
-        int dstX = Mathf.Abs(nodeA.Position.X - nodeB.Position.X);
-        int dstY = Mathf.Abs(nodeA.Position.Y - nodeB.Position.Y);
-        return dstX + dstY;
+        // Octile distance for 8-directional movement: D=10 cardinal, D2=14 diagonal.
+        // Keeps the A* heuristic admissible and gives diagonal steps the correct cost.
+        const int D = 10;
+        const int D2 = 14;
+        var dstX = Mathf.Abs(nodeA.Position.X - nodeB.Position.X);
+        var dstY = Mathf.Abs(nodeA.Position.Y - nodeB.Position.Y);
+        var min = Mathf.Min(dstX, dstY);
+        return D2 * min + D * (Mathf.Max(dstX, dstY) - min);
     }
 }

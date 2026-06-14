@@ -1,5 +1,4 @@
 using GdUnit4;
-using Godot;
 using RogueLike.Code.TurnContext;
 using static GdUnit4.Assertions;
 
@@ -26,9 +25,9 @@ public class TurnManagerTest
         turnManager.EndPlayerTurn();
 
         AssertInt((int)turnManager.CurrentState).IsEqual((int)TurnState.Enemy);
-        
+
         turnManager.EndEnemyTurn();
-        
+
         AssertInt((int)turnManager.CurrentState).IsEqual((int)TurnState.Player);
     }
 

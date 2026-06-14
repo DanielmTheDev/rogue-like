@@ -62,8 +62,8 @@ public class ExperienceSystemTest
     [TestCase]
     public void Events_OnXPChanged_FiresCorrectly()
     {
-        int receivedCurrentXP = -1;
-        int receivedXPForNext = -1;
+        var receivedCurrentXP = -1;
+        var receivedXPForNext = -1;
 
         _exp.OnXPChanged += (current, next) =>
         {
@@ -80,7 +80,7 @@ public class ExperienceSystemTest
     [TestCase]
     public void Events_OnLevelUp_FiresCorrectly()
     {
-        int receivedNewLevel = 0;
+        var receivedNewLevel = 0;
         _exp.OnLevelUp += (newLevel) =>
         {
             receivedNewLevel = newLevel;

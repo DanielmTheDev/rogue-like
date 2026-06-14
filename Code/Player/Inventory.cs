@@ -48,7 +48,7 @@ public class Inventory
             return false;
 
         var item = _items[index];
-        bool wasUsed = item.Use(user);
+        var wasUsed = item.Use(user);
 
         if (wasUsed && item.IsConsumable)
         {
@@ -87,13 +87,13 @@ public class Inventory
         var grouped = new List<(string, int, int)>();
         var seen = new HashSet<string>();
 
-        for (int i = 0; i < _items.Count; i++)
+        for (var i = 0; i < _items.Count; i++)
         {
             var itemName = _items[i].DisplayName;
             if (!seen.Contains(itemName))
             {
                 seen.Add(itemName);
-                int count = _items.Count(item => item.DisplayName == itemName);
+                var count = _items.Count(item => item.DisplayName == itemName);
                 grouped.Add((itemName, count, i));
             }
         }
@@ -111,7 +111,7 @@ public class Inventory
         if (groupIndex < 0 || groupIndex >= grouped.Count)
             return false;
 
-        int actualIndex = grouped[groupIndex].FirstIndex;
+        var actualIndex = grouped[groupIndex].FirstIndex;
         return UseItem(actualIndex, user);
     }
 }

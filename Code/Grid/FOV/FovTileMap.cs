@@ -34,9 +34,9 @@ public partial class FovTileMap : TileMapLayer
     public void Render(FovMap map)
     {
         Clear();
-        for (int x = 0; x < map.Width; x++)
+        for (var x = 0; x < map.Width; x++)
         {
-            for (int y = 0; y < map.Height; y++)
+            for (var y = 0; y < map.Height; y++)
             {
                 var state = map.GetVisibility(new Vector2I(x, y));
                 if (state == VisibilityState.Unexplored)

@@ -48,7 +48,7 @@ public class InventoryTest
         var inventory = new Inventory(maxSlots: 5);
         var item = new MockItem();
 
-        bool added = inventory.AddItem(item);
+        var added = inventory.AddItem(item);
 
         AssertBool(added).IsTrue();
         AssertInt(inventory.Count).IsEqual(1);
@@ -61,7 +61,7 @@ public class InventoryTest
         inventory.AddItem(new MockItem());
         inventory.AddItem(new MockItem());
 
-        bool added = inventory.AddItem(new MockItem());
+        var added = inventory.AddItem(new MockItem());
 
         AssertBool(added).IsFalse();
         AssertInt(inventory.Count).IsEqual(2);
@@ -76,7 +76,7 @@ public class InventoryTest
         inventory.AddItem(item);
         var actor = new MockActor();
 
-        bool used = inventory.UseItem(0, actor);
+        var used = inventory.UseItem(0, actor);
 
         AssertBool(used).IsTrue();
         AssertBool(item.UseWasCalled).IsTrue();
@@ -114,7 +114,7 @@ public class InventoryTest
         var inventory = new Inventory();
         var actor = new MockActor();
 
-        bool used = inventory.UseItem(5, actor);
+        var used = inventory.UseItem(5, actor);
 
         AssertBool(used).IsFalse();
     }
@@ -137,7 +137,7 @@ public class InventoryTest
     public void OnInventoryChanged_FiresWhenItemAdded()
     {
         var inventory = new Inventory();
-        bool eventFired = false;
+        var eventFired = false;
         inventory.OnInventoryChanged += () => eventFired = true;
 
         inventory.AddItem(new MockItem());
