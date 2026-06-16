@@ -40,8 +40,9 @@ public static class CombatSystem
         }
 
         defender.Health.OnDied += OnDefenderDied;
-        defender.Health.TakeDamage(attacker.AttackDamage);
-        GameLog.Instance.LogCombat(attacker.DisplayName, defender.DisplayName, attacker.AttackDamage);
+
+        // Damage + log now live on the attacker (rich domain). XP-on-kill stays here for now.
+        attacker.TryAttack(defender);
 
         // If the defender survived, unsubscribe so the handler can't fire on a later death.
         if (defender.Health.CurrentHp > 0)

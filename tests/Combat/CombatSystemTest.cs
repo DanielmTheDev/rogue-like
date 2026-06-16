@@ -79,4 +79,24 @@ public class CombatSystemTest
         AssertInt(defender.Health.CurrentHp).IsEqual(0);
         AssertBool(defender.IsDead).IsTrue();
     }
+
+    [TestCase]
+    public void TryAttack_DealsDamage_AndReturnsTrue()
+    {
+        ICombatant attacker = new MockCombatant(10, 3);
+        var defender = new MockCombatant(10, 2);
+
+        var hit = attacker.TryAttack(defender);
+
+        AssertBool(hit).IsTrue();
+        AssertInt(defender.Health.CurrentHp).IsEqual(7);
+    }
+
+    [TestCase]
+    public void TryAttack_NullDefender_ReturnsFalse()
+    {
+        ICombatant attacker = new MockCombatant(10, 3);
+
+        AssertBool(attacker.TryAttack(null)).IsFalse();
+    }
 }
