@@ -55,4 +55,28 @@ public class CombatSystemTest
         AssertInt(defender.Health.CurrentHp).IsEqual(0);
         AssertBool(defender.IsDead).IsTrue();
     }
+
+    [TestCase]
+    public void ResolveRanged_DealsDamage()
+    {
+        var attacker = new MockCombatant(10, 3);
+        var defender = new MockCombatant(10, 2);
+
+        CombatSystem.ResolveRanged(attacker, defender);
+
+        AssertInt(defender.Health.CurrentHp).IsEqual(7);
+        AssertInt(attacker.Health.CurrentHp).IsEqual(10); // ranged attacker takes no damage
+    }
+
+    [TestCase]
+    public void ResolveRanged_KillsDefender_TriggersDie()
+    {
+        var attacker = new MockCombatant(10, 10);
+        var defender = new MockCombatant(5, 0);
+
+        CombatSystem.ResolveRanged(attacker, defender);
+
+        AssertInt(defender.Health.CurrentHp).IsEqual(0);
+        AssertBool(defender.IsDead).IsTrue();
+    }
 }

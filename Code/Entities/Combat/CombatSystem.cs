@@ -12,44 +12,23 @@ public static class CombatSystem
     /// Resolves an attack when one combatant bumps into another.
     /// </summary>
     public static void ResolveBump(ICombatant attacker, ICombatant defender)
-    {
-        if (attacker == null || defender == null) return;
-        
-        // Subscribe to the defender's death event to grant XP
-        void OnDefenderDied()
-        {
-            if (attacker is PlayerController player)
-            {
-                player.Experience.AddXP(defender.XpReward);
-                GameLog.Instance.Log($"[color=yellow]You gained {defender.XpReward} XP![/color]");
-            }
-            // Unsubscribe to prevent memory leaks
-            defender.Health.OnDied -= OnDefenderDied;
-        }
-
-        defender.Health.OnDied += OnDefenderDied;
-
-        // Very simple logic: attacker deals their direct damage to the defender.
-        defender.Health.TakeDamage(attacker.AttackDamage);
-
-        // LOG ACTION
-        GameLog.Instance.LogCombat(attacker.DisplayName, defender.DisplayName, attacker.AttackDamage);
-
-        // If the defender didn't die, we must unsubscribe to prevent the event handler
-        // from being called on a future, unrelated death.
-        if (defender.Health.CurrentHp > 0)
-        {
-            defender.Health.OnDied -= OnDefenderDied;
-        }
-    }
+        => Resolve(attacker, defender);
 
     /// <summary>
     /// Resolves a ranged attack.
     /// </summary>
     public static void ResolveRanged(ICombatant attacker, ICombatant defender)
+        => Resolve(attacker, defender);
+
+    /// <summary>
+    /// Shared resolution: attacker deals direct damage, the action is logged,
+    /// and a killed defender grants XP to a player attacker.
+    /// </summary>
+    private static void Resolve(ICombatant attacker, ICombatant defender)
     {
         if (attacker == null || defender == null) return;
 
+        // Subscribe to the defender's death event to grant XP on a kill.
         void OnDefenderDied()
         {
             if (attacker is PlayerController player)
@@ -57,15 +36,14 @@ public static class CombatSystem
                 player.Experience.AddXP(defender.XpReward);
                 GameLog.Instance.Log($"[color=yellow]You gained {defender.XpReward} XP![/color]");
             }
-            defender.Health.OnDied -= OnDefenderDied;
+            defender.Health.OnDied -= OnDefenderDied; // unsubscribe to prevent leaks
         }
 
         defender.Health.OnDied += OnDefenderDied;
-        
         defender.Health.TakeDamage(attacker.AttackDamage);
-
         GameLog.Instance.LogCombat(attacker.DisplayName, defender.DisplayName, attacker.AttackDamage);
 
+        // If the defender survived, unsubscribe so the handler can't fire on a later death.
         if (defender.Health.CurrentHp > 0)
         {
             defender.Health.OnDied -= OnDefenderDied;
