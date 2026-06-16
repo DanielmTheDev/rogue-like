@@ -106,6 +106,16 @@ public partial class PlayerController : ActorController
         GameLog.Instance.Log("[color=red]You have died. Press [Enter] to restart.[/color]");
     }
 
+    /// <summary>
+    /// The player gains XP when its attack kills a combatant (rich-domain kill reaction;
+    /// see <see cref="ICombatant.OnKilled"/>).
+    /// </summary>
+    public void OnKilled(ICombatant victim)
+    {
+        Experience.AddXP(victim.XpReward);
+        GameLog.Instance.Log($"[color=yellow]You gained {victim.XpReward} XP![/color]");
+    }
+
     public override void _UnhandledInput(InputEvent @event)
     {
         if (@event.IsEcho() || !@event.IsPressed())

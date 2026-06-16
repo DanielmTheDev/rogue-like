@@ -1,53 +1,17 @@
-using RogueLike.Code.Player;
-using RogueLike.Code.Services;
-
 namespace RogueLike.Code.Entities.Combat;
 
 /// <summary>
-/// Pure C# combat resolution logic.
+/// Thin combat entry points kept for existing callers. The actual attack behavior
+/// (damage, log, kill reaction) lives on <see cref="ICombatant.TryAttack"/>.
+/// Scheduled for removal once callers invoke <c>attacker.TryAttack(defender)</c> directly.
 /// </summary>
 public static class CombatSystem
 {
-    /// <summary>
-    /// Resolves an attack when one combatant bumps into another.
-    /// </summary>
+    /// <summary>Resolves an attack when one combatant bumps into another.</summary>
     public static void ResolveBump(ICombatant attacker, ICombatant defender)
-        => Resolve(attacker, defender);
+        => attacker?.TryAttack(defender);
 
-    /// <summary>
-    /// Resolves a ranged attack.
-    /// </summary>
+    /// <summary>Resolves a ranged attack.</summary>
     public static void ResolveRanged(ICombatant attacker, ICombatant defender)
-        => Resolve(attacker, defender);
-
-    /// <summary>
-    /// Shared resolution: attacker deals direct damage, the action is logged,
-    /// and a killed defender grants XP to a player attacker.
-    /// </summary>
-    private static void Resolve(ICombatant attacker, ICombatant defender)
-    {
-        if (attacker == null || defender == null) return;
-
-        // Subscribe to the defender's death event to grant XP on a kill.
-        void OnDefenderDied()
-        {
-            if (attacker is PlayerController player)
-            {
-                player.Experience.AddXP(defender.XpReward);
-                GameLog.Instance.Log($"[color=yellow]You gained {defender.XpReward} XP![/color]");
-            }
-            defender.Health.OnDied -= OnDefenderDied; // unsubscribe to prevent leaks
-        }
-
-        defender.Health.OnDied += OnDefenderDied;
-
-        // Damage + log now live on the attacker (rich domain). XP-on-kill stays here for now.
-        attacker.TryAttack(defender);
-
-        // If the defender survived, unsubscribe so the handler can't fire on a later death.
-        if (defender.Health.CurrentHp > 0)
-        {
-            defender.Health.OnDied -= OnDefenderDied;
-        }
-    }
+        => attacker?.TryAttack(defender);
 }

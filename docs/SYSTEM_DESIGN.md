@@ -66,7 +66,7 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 | FovMap / Raycaster | 🟢 rich | `Vector2I`→`GridPos` pending |
 | TurnManager | 🟢 rich | → `TurnEngine`, absorb enemy-phase loop |
 | Pathfinder / LineOfSight | 🟢 pure-util | `Vector2I`→`GridPos`, `Mathf`→`Math` |
-| **CombatSystem** | 🟡 relocating | damage+log moved onto `ICombatant.TryAttack` (default interface method); static service now only hosts XP-on-kill (→ moves in 1.3, deleted in 1.4) |
+| **CombatSystem** | 🟡 shim only | all behavior moved onto `ICombatant.TryAttack` (damage+log) + `OnKilled` kill-reaction hook (player overrides → XP); `PlayerController` cast removed, CombatSystem now a zero-dependency thin shim (deleted in 1.4) |
 | **EnemyAI / ArcherAI** | 🔴 anemic | behavior split from entity → absorb into `Enemy`/`Archer` |
 | **ItemManager** | 🔴 anemic | pickup orchestration → `Item.TryPickup`; → `FloorItems` |
 | **Controllers (Player/Enemy/Archer/Actor)** | 🔴 are-the-entity | implement `IActor`/`ICombatant` today → demote to Views |
