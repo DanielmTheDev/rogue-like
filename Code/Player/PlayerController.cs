@@ -80,7 +80,7 @@ public partial class PlayerController : ActorController
             var targetActor = _entityManager.GetActorAt(target);
             if (targetActor is ICombatant targetCombatant)
             {
-                CombatSystem.ResolveBump(this, targetCombatant);
+                ((ICombatant)this).TryAttack(targetCombatant);
                 return true; // Successfully consumed turn with an attack
             }
         }

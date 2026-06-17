@@ -54,7 +54,7 @@ public class ArcherAI
         {
             // In range and has a clear line of sight, shoot!
             if (_owner is ICombatant attacker && player is ICombatant defender)
-                CombatSystem.ResolveRanged(attacker, defender);
+                attacker.TryAttack(defender);
         }
         else if (isPlayerVisible)
         {

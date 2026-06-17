@@ -62,7 +62,7 @@ public class EnemyAI
                 var targetActor = _entityManager.GetActorAt(target);
                 if (targetActor.IsPlayer && targetActor is ICombatant playerCombatant && _owner is ICombatant enemyCombatant)
                 {
-                    CombatSystem.ResolveBump(enemyCombatant, playerCombatant);
+                    enemyCombatant.TryAttack(playerCombatant);
                 }
             }
             else

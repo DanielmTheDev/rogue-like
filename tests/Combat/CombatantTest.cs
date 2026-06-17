@@ -6,56 +6,8 @@ using static GdUnit4.Assertions;
 namespace RogueLike.tests.Combat;
 
 [TestSuite]
-public class CombatSystemTest
+public class CombatantTest
 {
-    [TestCase]
-    public void ResolveBump_DealsDamage()
-    {
-        var attacker = new MockCombatant(10, 3);
-        var defender = new MockCombatant(10, 2);
-
-        CombatSystem.ResolveBump(attacker, defender);
-
-        AssertInt(defender.Health.CurrentHp).IsEqual(7);
-        AssertInt(attacker.Health.CurrentHp).IsEqual(10); // attacker takes no damage from bumping
-    }
-
-    [TestCase]
-    public void ResolveBump_KillsDefender_TriggersDie()
-    {
-        var attacker = new MockCombatant(10, 10);
-        var defender = new MockCombatant(5, 0);
-
-        CombatSystem.ResolveBump(attacker, defender);
-
-        AssertInt(defender.Health.CurrentHp).IsEqual(0);
-        AssertBool(defender.IsDead).IsTrue();
-    }
-
-    [TestCase]
-    public void ResolveRanged_DealsDamage()
-    {
-        var attacker = new MockCombatant(10, 3);
-        var defender = new MockCombatant(10, 2);
-
-        CombatSystem.ResolveRanged(attacker, defender);
-
-        AssertInt(defender.Health.CurrentHp).IsEqual(7);
-        AssertInt(attacker.Health.CurrentHp).IsEqual(10); // ranged attacker takes no damage
-    }
-
-    [TestCase]
-    public void ResolveRanged_KillsDefender_TriggersDie()
-    {
-        var attacker = new MockCombatant(10, 10);
-        var defender = new MockCombatant(5, 0);
-
-        CombatSystem.ResolveRanged(attacker, defender);
-
-        AssertInt(defender.Health.CurrentHp).IsEqual(0);
-        AssertBool(defender.IsDead).IsTrue();
-    }
-
     [TestCase]
     public void TryAttack_DealsDamage_AndReturnsTrue()
     {
@@ -66,6 +18,7 @@ public class CombatSystemTest
 
         AssertBool(hit).IsTrue();
         AssertInt(defender.Health.CurrentHp).IsEqual(7);
+        AssertInt(((MockCombatant)attacker).Health.CurrentHp).IsEqual(10); // attacker takes no damage
     }
 
     [TestCase]
@@ -74,6 +27,18 @@ public class CombatSystemTest
         ICombatant attacker = new MockCombatant(10, 3);
 
         AssertBool(attacker.TryAttack(null)).IsFalse();
+    }
+
+    [TestCase]
+    public void TryAttack_KillsDefender_TriggersDie()
+    {
+        ICombatant attacker = new MockCombatant(10, 10);
+        var defender = new MockCombatant(5, 0);
+
+        attacker.TryAttack(defender);
+
+        AssertInt(defender.Health.CurrentHp).IsEqual(0);
+        AssertBool(defender.IsDead).IsTrue();
     }
 
     [TestCase]

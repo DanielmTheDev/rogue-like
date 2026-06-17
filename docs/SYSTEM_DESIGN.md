@@ -5,7 +5,7 @@
 - **Map Generators:** Procedural generation MUST NEVER reside in `DungeonGrid`. Complex mapping logic must be extracted into static or standalone builder classes (e.g., `BspDungeonGenerator`) that operate on a pure `DungeonGrid`.
 - **DungeonGrid:** Pure C# data structure. Maps grid indices to Walkability and tracks out-of-bounds. Default constructor yields a blank featureless floor.
 - **EntityManager/IActor:** The core dynamic Entity registry. `GridMover` coordinates with `EntityManager` to ensure no two `IActor` instances overlap.
-- **CombatSystem & HealthController:** Pure C# logic. `ICombatant` extends `IActor` to carry `HealthController`. `CombatSystem.ResolveBump()` performs interactions outside of standard `GridMover` logic.
+- **Combat & HealthController:** Pure C# logic. `ICombatant` extends `IActor` to carry `HealthController`. Attack behavior lives on the combatant itself: `ICombatant.TryAttack(defender)` (default interface method) deals damage + logs, and invokes the `OnKilled(victim)` kill-reaction hook on death (the player overrides it to gain XP). The old static `CombatSystem` service has been removed (rich-domain migration); callers invoke `attacker.TryAttack(defender)` directly.
 - **GridMover:** Pure C# movement logic. Validates pathing via `DungeonGrid` and `EntityManager`. Supports 8-directional movement; rejects diagonal corner-cutting via `DungeonGrid.IsDiagonalCornerCut`.
 - **DungeonGrid traversability:** The no-corner-cut rule lives on `DungeonGrid` (`IsDiagonalCornerCut`, next to `IsWalkable`) — it is a query over grid topology, so the grid owns it. Both `GridMover` (actual moves) and `Pathfinder` (planned paths) call it, so plans never include steps the mover would reject.
 - **FOV Array:** Pure C# data structures isolating visibility calculations.
@@ -66,7 +66,7 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 | FovMap / Raycaster | 🟢 rich | `Vector2I`→`GridPos` pending |
 | TurnManager | 🟢 rich | → `TurnEngine`, absorb enemy-phase loop |
 | Pathfinder / LineOfSight | 🟢 pure-util | `Vector2I`→`GridPos`, `Mathf`→`Math` |
-| **CombatSystem** | 🟡 shim only | all behavior moved onto `ICombatant.TryAttack` (damage+log) + `OnKilled` kill-reaction hook (player overrides → XP); `PlayerController` cast removed, CombatSystem now a zero-dependency thin shim (deleted in 1.4) |
+| ~~CombatSystem~~ | 🟢 done | deleted; attack behavior lives on `ICombatant.TryAttack` + `OnKilled` hook. Callers (`PlayerController`, `EnemyAI`, `ArcherAI`) invoke `attacker.TryAttack(defender)` directly |
 | **EnemyAI / ArcherAI** | 🔴 anemic | behavior split from entity → absorb into `Enemy`/`Archer` |
 | **ItemManager** | 🔴 anemic | pickup orchestration → `Item.TryPickup`; → `FloorItems` |
 | **Controllers (Player/Enemy/Archer/Actor)** | 🔴 are-the-entity | implement `IActor`/`ICombatant` today → demote to Views |
