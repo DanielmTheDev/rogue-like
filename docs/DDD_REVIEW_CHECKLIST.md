@@ -26,6 +26,16 @@ No praise, no scope creep. Severities: **blocker** (must fix before presenting),
 | 12 | No driving test for new/changed production behavior (TDD violation) | **major** | A failing test must have driven the change. |
 | 13 | Presentation strings (BBCode `[color=...]`, UI text) produced inside domain logic | **minor** | Emit structured events; format in the View. |
 
+## Transitional-code marker (convention)
+
+Any code that is a deliberate half-step — kept only because a later phase hasn't landed yet — MUST carry a greppable marker comment:
+
+```
+// TRANSITIONAL (DDD Phase N): <what is temporary> → <target end-state>
+```
+
+Grep `TRANSITIONAL (DDD` to list every outstanding compromise. The reviewer should: (a) confirm new transitional compromises are marked, and (b) NOT re-flag an already-marked compromise as a finding (it's a known, recorded deferral). Markers are removed when their phase resolves them.
+
 ## Phase awareness
 
 - During **Phase 1–2**, controllers still host domain objects and `Vector2I` still appears outside `Code/Domain/` — rules 1 and 6 apply only to *new* domain code and *newly added* controller rules, not to not-yet-migrated legacy.

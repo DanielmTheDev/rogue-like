@@ -68,7 +68,7 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 | Pathfinder / LineOfSight | 🟢 pure-util | `Vector2I`→`GridPos`, `Mathf`→`Math` |
 | ~~CombatSystem~~ | 🟢 done | deleted; attack behavior lives on `ICombatant.TryAttack` + `OnKilled` hook. Callers (`PlayerController`, `EnemyAI`, `ArcherAI`) invoke `attacker.TryAttack(defender)` directly |
 | **EnemyAI / ArcherAI** | 🔴 anemic | behavior split from entity → absorb into `Enemy`/`Archer` |
-| **ItemManager** | 🔴 anemic | pickup orchestration → `Item.TryPickup`; → `FloorItems` |
+| **ItemManager** | 🟡 relocating | pickup decision moved onto `IItem.TryPickup` (default interface method); node self-frees via `ItemController.OnPickup`; `ItemManager` now only finds + delegates + unregisters. Still `Vector2I`-typed + named `ItemManager` (→ `FloorItems`/`GridPos` in Phase 2). **Phase-3 target: pickup ownership flips to `Player.TryPickup(item)`** — the actor aggregate owns the acquire + its own inventory; the item keeps only `CanPickup`/`OnPickup`. `item.TryPickup(actor, inventory)` is a transitional placement (an item mutating another aggregate's inventory); the verb belongs to the actor that owns the inventory boundary. |
 | **Controllers (Player/Enemy/Archer/Actor)** | 🔴 are-the-entity | implement `IActor`/`ICombatant` today → demote to Views |
 
 Update this table as each migration batch lands. 🔴 = anemic/anti-pattern present, 🟡 = partially rich, 🟢 = rich/clean.

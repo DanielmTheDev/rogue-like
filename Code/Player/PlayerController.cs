@@ -80,6 +80,8 @@ public partial class PlayerController : ActorController
             var targetActor = _entityManager.GetActorAt(target);
             if (targetActor is ICombatant targetCombatant)
             {
+                // TRANSITIONAL (DDD Phase 3): cast needed because TryAttack is a default interface
+                // method; disappears when the pure Actor aggregate exposes Attack() directly.
                 ((ICombatant)this).TryAttack(targetCombatant);
                 return true; // Successfully consumed turn with an attack
             }
@@ -110,6 +112,8 @@ public partial class PlayerController : ActorController
     /// The player gains XP when its attack kills a combatant (rich-domain kill reaction;
     /// see <see cref="ICombatant.OnKilled"/>).
     /// </summary>
+    // TRANSITIONAL (DDD Phase 3): this XP rule lives on the Godot controller; moves onto the
+    // pure Player aggregate (which will own ExperienceTrack) when the controller becomes a View.
     public void OnKilled(ICombatant victim)
     {
         Experience.AddXP(victim.XpReward);

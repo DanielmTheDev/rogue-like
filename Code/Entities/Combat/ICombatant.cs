@@ -22,6 +22,9 @@ public interface ICombatant : IActor
     /// defender dies—invokes <see cref="OnKilled"/> on this attacker. Behavior lives with the
     /// data it mutates (rich domain). Returns false if there is no defender.
     /// </summary>
+    // TRANSITIONAL (DDD Phase 3): implemented as a default interface method so it's shared and
+    // unit-testable without Godot while controllers still ARE the combatants. Target: a real
+    // Attack() method on the pure Actor aggregate (no DIM, no interface-cast at call sites).
     bool TryAttack(ICombatant defender)
     {
         if (defender == null) return false;

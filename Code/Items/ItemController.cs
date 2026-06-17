@@ -32,6 +32,8 @@ public partial class ItemController : Node2D, IItem
     public virtual void OnPickup(IActor actor)
     {
         GameLog.Instance.Log($"You pick up the {DisplayName}.");
+        // The visual node removes itself once collected (view-side lifecycle).
+        QueueFree();
     }
 
     public virtual bool Use(IActor actor)
