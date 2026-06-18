@@ -67,7 +67,7 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 | TurnManager | 🟢 rich | → `TurnEngine`, absorb enemy-phase loop |
 | Pathfinder / LineOfSight | 🟢 pure-util | `Vector2I`→`GridPos`, `Mathf`→`Math` |
 | ~~CombatSystem~~ | 🟢 done | deleted; attack behavior lives on `ICombatant.TryAttack` + `OnKilled` hook. Callers (`PlayerController`, `EnemyAI`, `ArcherAI`) invoke `attacker.TryAttack(defender)` directly |
-| **EnemyAI / ArcherAI** | 🔴 anemic | behavior split from entity → absorb into `Enemy`/`Archer` |
+| **EnemyAI / ArcherAI** | 🟡 decision-tree | no longer reference the deleted `CombatSystem`; drive the entity's own verbs (`combatant.TryAttack`, `mover.TryMove`). Test coverage now locks the attack paths (enemy bump, archer ranged shot). Still a separate object from the entity — full absorption into `Enemy`/`Archer` aggregates is Phase 3.3 |
 | **ItemManager** | 🟡 relocating | pickup decision moved onto `IItem.TryPickup` (default interface method); node self-frees via `ItemController.OnPickup`; `ItemManager` now only finds + delegates + unregisters. Still `Vector2I`-typed + named `ItemManager` (→ `FloorItems`/`GridPos` in Phase 2). **Phase-3 target: pickup ownership flips to `Player.TryPickup(item)`** — the actor aggregate owns the acquire + its own inventory; the item keeps only `CanPickup`/`OnPickup`. `item.TryPickup(actor, inventory)` is a transitional placement (an item mutating another aggregate's inventory); the verb belongs to the actor that owns the inventory boundary. |
 | **Controllers (Player/Enemy/Archer/Actor)** | 🔴 are-the-entity | implement `IActor`/`ICombatant` today → demote to Views |
 

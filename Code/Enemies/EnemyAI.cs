@@ -11,6 +11,10 @@ namespace RogueLike.Code.Enemies;
 /// <summary>
 /// Pure C# class representing the AI decision making for an Enemy.
 /// </summary>
+// TRANSITIONAL (DDD Phase 3.3): the entity is split across EnemyController (node) + this AI +
+// the GridMover it owns (which actually holds the enemy's position). Target: a pure
+// Enemy : Actor aggregate that owns position/health and its own DecideAndAct(TurnContext);
+// EnemyController demotes to a pure View. This separate AI object then disappears.
 public class EnemyAI
 {
     private readonly IActor _owner;

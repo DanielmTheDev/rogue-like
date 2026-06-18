@@ -14,6 +14,10 @@ namespace RogueLike.Code.Enemies;
 ///           If player is visible but out of range → walk closer.
 ///           Otherwise → idle.
 /// </summary>
+// TRANSITIONAL (DDD Phase 3.3): the entity is split across ArcherController (node) + this AI +
+// the GridMover it owns (which actually holds the archer's position). Target: a pure
+// Archer : Enemy : Actor aggregate that owns position/health and its own DecideAndAct(TurnContext);
+// ArcherController demotes to a pure View. This separate AI object then disappears.
 public class ArcherAI
 {
     private readonly IActor _owner;

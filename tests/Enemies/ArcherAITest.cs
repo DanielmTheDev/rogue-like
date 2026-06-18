@@ -72,13 +72,31 @@ public class ArcherAITest
         player.Health = new HealthController(10);
         archer.Health = new HealthController(10);
 
+        // The player should NOT have taken damage because there is a wall in the way.
         var ai = new ArcherAI(archer, _grid, _entityManager, _pathfinder, archer.GridPosition);
 
         // Act
         ai.TakeTurn(_fovMap);
 
         // Assert
-        // The player should NOT have taken damage because there is a wall in the way.
         AssertThat(player.Health.CurrentHp).IsEqual(10);
+    }
+
+    [TestCase]
+    public void TakeTurn_InRangeWithClearLos_Shoots()
+    {
+        var player = new MockPlayer { GridPosition = new Vector2I(1, 1), Health = new HealthController(10) };
+        var archer = new MockArcher { GridPosition = new Vector2I(1, 3), Health = new HealthController(10) };
+
+        _entityManager.RegisterActor(player);
+        _entityManager.RegisterActor(archer);
+        _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
+
+        var ai = new ArcherAI(archer, _grid, _entityManager, _pathfinder, archer.GridPosition);
+
+        // Distance 2, no wall, within range -> the AI drives the archer's TryAttack verb.
+        ai.TakeTurn(_fovMap);
+
+        AssertThat(player.Health.CurrentHp).IsEqual(9); // archer AttackDamage == 1
     }
 }
