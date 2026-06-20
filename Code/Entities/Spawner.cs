@@ -3,7 +3,6 @@ using Godot;
 using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
-using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Player;
 using RogueLike.Code.Items;
 using RogueLike.Code.Resources;
@@ -36,7 +35,6 @@ public static class Spawner
         List<Rect2I> rooms,
         DungeonGrid grid,
         EntityManager entityManager,
-        Pathfinder pathfinder,
         int dungeonLevel,
         LevelSettings levelSettings)
     {
@@ -71,31 +69,31 @@ public static class Spawner
 
                 // Alternate enemy types
                 if (j % 2 == 0)
-                    SpawnGoblin(parentNode, goblinScene, grid, entityManager, pathfinder, spawnPos, i * 10 + j);
+                    SpawnGoblin(parentNode, goblinScene, grid, entityManager, spawnPos, i * 10 + j);
                 else
-                    SpawnArcher(parentNode, archerScene, grid, entityManager, pathfinder, spawnPos, i * 10 + j);
+                    SpawnArcher(parentNode, archerScene, grid, entityManager, spawnPos, i * 10 + j);
             }
         }
     }
 
     public static void SpawnGoblin(
         Node parent, PackedScene scene, DungeonGrid grid,
-        EntityManager entityManager, Pathfinder pathfinder, Vector2I pos, int index)
+        EntityManager entityManager, Vector2I pos, int index)
     {
         var enemy = scene.Instantiate<EnemyController>();
         enemy.Name = $"Goblin_{index}";
         parent.AddChild(enemy);
-        enemy.Initialize(grid, entityManager, pathfinder, pos);
+        enemy.Initialize(grid, entityManager, pos);
     }
 
     public static void SpawnArcher(
         Node parent, PackedScene scene, DungeonGrid grid,
-        EntityManager entityManager, Pathfinder pathfinder, Vector2I pos, int index)
+        EntityManager entityManager, Vector2I pos, int index)
     {
         var archer = scene.Instantiate<ArcherController>();
         archer.Name = $"Archer_{index}";
         parent.AddChild(archer);
-        archer.Initialize(grid, entityManager, pathfinder, pos);
+        archer.Initialize(grid, entityManager, pos);
     }
 
     public static void SpawnHealingPotion(

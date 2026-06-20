@@ -5,7 +5,6 @@ using RogueLike.Code.Entities;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
-using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Player;
 
 namespace RogueLike.Code.Enemies;
@@ -25,18 +24,16 @@ public class ArcherAI
     private readonly IActor _owner;
     private readonly DungeonGrid _grid;
     private readonly EntityManager _entityManager;
-    private readonly Pathfinder _pathfinder;
     private readonly GridMover _mover;
     private readonly int _range;
 
     public Vector2I GridPosition => _mover.GridPosition;
 
-    public ArcherAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Pathfinder pathfinder, Vector2I startPos, int range = 5)
+    public ArcherAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Vector2I startPos, int range = 5)
     {
         _owner = owner;
         _grid = grid;
         _entityManager = entityManager;
-        _pathfinder = pathfinder;
         _mover = new GridMover(owner, grid, entityManager, startPos);
         _range = range;
     }
@@ -72,7 +69,7 @@ public class ArcherAI
 
     private void ChasePlayer(IActor player)
     {
-        var path = _pathfinder.FindPath(_owner.GridPosition, player.GridPosition, _grid);
+        var path = _grid.FindPath(_owner.GridPosition, player.GridPosition);
         if (path != null && path.Count > 0)
         {
             var direction = path[0] - _owner.GridPosition;

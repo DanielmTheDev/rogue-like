@@ -4,7 +4,6 @@ using RogueLike.Code.Entities;
 using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
-using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Entities.Combat;
 using static GdUnit4.Assertions;
 
@@ -37,7 +36,6 @@ public class ArcherAITest
 
     private DungeonGrid _grid;
     private EntityManager _entityManager;
-    private Pathfinder _pathfinder;
     private FovMap _fovMap;
 
     [BeforeTest]
@@ -45,7 +43,6 @@ public class ArcherAITest
     {
         _grid = new DungeonGrid(10, 10);
         _entityManager = new EntityManager();
-        _pathfinder = new Pathfinder();
         _fovMap = new FovMap(10, 10);
     }
 
@@ -73,7 +70,7 @@ public class ArcherAITest
         archer.Health = new HealthController(10);
 
         // The player should NOT have taken damage because there is a wall in the way.
-        var ai = new ArcherAI(archer, _grid, _entityManager, _pathfinder, archer.GridPosition);
+        var ai = new ArcherAI(archer, _grid, _entityManager, archer.GridPosition);
 
         // Act
         ai.TakeTurn(_fovMap);
@@ -92,7 +89,7 @@ public class ArcherAITest
         _entityManager.RegisterActor(archer);
         _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
 
-        var ai = new ArcherAI(archer, _grid, _entityManager, _pathfinder, archer.GridPosition);
+        var ai = new ArcherAI(archer, _grid, _entityManager, archer.GridPosition);
 
         // Distance 2, no wall, within range -> the AI drives the archer's TryAttack verb.
         ai.TakeTurn(_fovMap);

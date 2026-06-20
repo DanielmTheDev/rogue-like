@@ -58,6 +58,7 @@ The codebase is migrating toward **rich domain models**: behavior lives with the
 
 - Signals for upward (child→parent) communication; `[Export]` / DI for downward. Prefer `[Export]` over `GetNode()`.
 - Max 20 lines per method — refactor into sub-methods if exceeded.
+- **Member ordering: public methods first, private methods below them** in every class. Reorder if a change leaves a private interleaved with publics.
 - `interface`/`abstract` for multi-variant systems (`IDamageable`, `IAbility`, `ICombatant`, `IActor`, `IItem`).
 - Naming: PascalCase public, `_camelCase` private fields.
 - **Prefer `var` over explicit type in local declarations.** Use the explicit type only when the RHS type is not inferable/obvious from the expression.

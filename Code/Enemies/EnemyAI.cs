@@ -3,7 +3,6 @@ using Godot;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
-using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Player;
 
 namespace RogueLike.Code.Enemies;
@@ -20,7 +19,6 @@ public class EnemyAI
     private readonly IActor _owner;
     private readonly DungeonGrid _grid;
     private readonly EntityManager _entityManager;
-    private readonly Pathfinder _pathfinder;
     private readonly GridMover _mover;
 
     /// <summary>
@@ -28,12 +26,11 @@ public class EnemyAI
     /// </summary>
     public Vector2I GridPosition => _mover.GridPosition;
 
-    public EnemyAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Pathfinder pathfinder, Vector2I startPos)
+    public EnemyAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Vector2I startPos)
     {
         _owner = owner;
         _grid = grid;
         _entityManager = entityManager;
-        _pathfinder = pathfinder;
         _mover = new GridMover(owner, grid, entityManager, startPos);
     }
 
@@ -53,7 +50,7 @@ public class EnemyAI
             return;
         }
 
-        var path = _pathfinder.FindPath(_owner.GridPosition, player.GridPosition, _grid);
+        var path = _grid.FindPath(_owner.GridPosition, player.GridPosition);
 
         if (path != null && path.Count > 0)
         {

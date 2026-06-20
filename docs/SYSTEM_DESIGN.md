@@ -6,8 +6,9 @@
 - **DungeonGrid:** Pure C# data structure. Maps grid indices to Walkability and tracks out-of-bounds. Default constructor yields a blank featureless floor.
 - **EntityManager/IActor:** The core dynamic Entity registry. `GridMover` coordinates with `EntityManager` to ensure no two `IActor` instances overlap.
 - **Combat & HealthController:** Pure C# logic. `ICombatant` extends `IActor` to carry `HealthController`. Attack behavior lives on the combatant itself: `ICombatant.TryAttack(defender)` (default interface method) deals damage + logs, and invokes the `OnKilled(victim)` kill-reaction hook on death (the player overrides it to gain XP). The old static `CombatSystem` service has been removed (rich-domain migration); callers invoke `attacker.TryAttack(defender)` directly.
-- **GridMover:** Pure C# movement logic. Validates pathing via `DungeonGrid` and `EntityManager`. Supports 8-directional movement; rejects diagonal corner-cutting via `DungeonGrid.IsDiagonalCornerCut`.
-- **DungeonGrid traversability:** The no-corner-cut rule lives on `DungeonGrid` (`IsDiagonalCornerCut`, next to `IsWalkable`) — it is a query over grid topology, so the grid owns it. Both `GridMover` (actual moves) and `Pathfinder` (planned paths) call it, so plans never include steps the mover would reject.
+- **GridMover:** Pure C# movement logic. Supports 8-directional movement. Validates each step via `DungeonGrid.CanStep` (the shared terrain rule), then adds its own occupancy check via `EntityManager`.
+- **DungeonGrid traversability:** The terrain rule lives on `DungeonGrid` as `CanStep(GridPos, Direction)` = walkable target **and** not a diagonal corner-cut (built on `IsWalkable` + `IsDiagonalCornerCut`). It is a query over grid topology, so the grid owns it. Reused by both `GridMover` (actual moves) and pathfinding (planned paths), so plans never include steps the mover would reject. Occupancy is **not** part of `CanStep` — that's the mover's concern (the grid knows walls, not actors).
+- **Where spatial logic lives (decided principle):** single-impl topology queries that read the grid's own cells fold **onto** `DungeonGrid` (line-of-sight, pathfinding) — the grid owns the walls, so the query lives with the data. Pluggable/swappable algorithms stay **separate injected interfaces** (FOV keeps `IFovAlgorithm`, selected in `Main`). This is the line that keeps the grid cohesive rather than a dumping ground.
 - **FOV Array:** Pure C# data structures isolating visibility calculations.
     - `FovMap`: Pure struct tracking `VisibilityState` of every cell.
     - `IFovAlgorithm`: Interface for algorithms (`Raycaster`) that mutate the `FovMap`.
@@ -24,7 +25,7 @@
 - **Inventory:** Pure C# component owned by PlayerController. Stores up to 10 items. Emits events for UI updates.
 - **ExperienceSystem:** Pure C# logic for XP, leveling, and stat progression. Decoupled from UI via events.
 - **Level Generation:** `Main.cs` orchestrates level creation, cleanup, and populating new dungeons when the player uses the stairs. Player state is preserved across levels.
-- **Pathfinding:** A pure C# A* `Pathfinder` class provides navigation for AI. Enemies use this to pursue the player when they are visible within the FOV. 8-directional: `GetNeighbors` emits cardinal + diagonal neighbors (skipping corner-cuts via `MovementRules`), and `GetDistance` uses octile distance (D=10 cardinal, D2=14 diagonal) to keep the heuristic admissible. `EnemyAI` derives its step direction from the path and so moves diagonally with no further changes.
+- **Pathfinding:** A* navigation is a query over the grid's own cells, so it lives **on `DungeonGrid`** (`FindPath`, folded in from the deleted `Pathfinder` class, 2.3b). The only public surface is `grid.FindPath(GridPos, GridPos)` (+ a `Vector2I` edge for not-yet-migrated callers); the A* work runs in a **hidden per-search `PathSearch` object** so its mutable open/closed state never lives on the long-lived grid. 8-directional: neighbours come from `grid.WalkableNeighbors` (`Direction.AllEight` filtered by `CanStep`), and an octile heuristic (D=10 cardinal, D2=14 diagonal) keeps it admissible. Enemies (`EnemyAI`/`ArcherAI`) call `grid.FindPath` to pursue a visible player and derive their step direction from the path.
 - **Game State:** `Main.cs` also manages the game state, handling level transitions and the restart-on-death flow.
 - **Advanced Player Actions:**
   - **Shift Move:** Hold Shift + Direction to auto-move until seeing an enemy, hitting a wall, or encountering a corner.
@@ -42,7 +43,7 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 - `Code/Domain/` — pure C#, **never `using Godot;`**. Value Objects, aggregate roots, world/turn logic, domain events.
 - `Code/View/` — Godot nodes only. Render + input, no game rules. A single `GodotConv` bridge converts `Vector2I`↔`GridPos`/`Direction`.
 
-**Domain is organized as vertical slices, not by technical kind.** Each slice owns its types: `Domain/Combat/` (Damage, Health, attack/kill), `Domain/Actors/`, `Domain/Items/`, `Domain/Progression/`, `Domain/World/` (Dungeon — which owns the line-of-sight query — FOV, Pathfinder). `Domain/Common/` is the **thin shared kernel** — ONLY cross-cutting VOs used by many slices (`GridPos`, `Direction`). A type goes in `Common/` only if multiple slices need it; otherwise it lives in its owning slice.
+**Domain is organized as vertical slices, not by technical kind.** Each slice owns its types: `Domain/Combat/` (Damage, Health, attack/kill), `Domain/Actors/`, `Domain/Items/`, `Domain/Progression/`, `Domain/World/` (Dungeon — which owns the line-of-sight **and** pathfinding queries over its own cells — and FOV). Pathfinding is **not** a separate type: it folds onto the Dungeon (see "Where spatial logic lives"). `Domain/Common/` is the **thin shared kernel** — ONLY cross-cutting VOs used by many slices (`GridPos`, `Direction`). A type goes in `Common/` only if multiple slices need it; otherwise it lives in its owning slice.
 
 **Value Object catalogue** (immutable `readonly record struct`, invariants in ctor, equality-by-value, no setters):
 
@@ -63,14 +64,14 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 | System | Status | Notes |
 |--------|--------|-------|
 | HealthController | 🟡 rich-mutable | clamp/invariants present; to become `Health` VO + events on `Actor` |
-| DungeonGrid | 🟢 rich | ✅ (2.3a) owns the line-of-sight query `HasClearLine(GridPos, GridPos)` (Bresenham over its own cells) — folded in from the deleted `LineOfSight` static class, since the grid owns the walls. Rest still `Vector2I`; pixel math → `GodotConv`, `Vector2I`→`GridPos` pending (2.3c) |
-| GridMover | 🟢 rich | to be absorbed into `Actor.TryMove` |
+| DungeonGrid | 🟢 rich | ✅ (2.3a) owns `HasClearLine`; ✅ (2.3b) owns pathfinding — `FindPath`/`CanStep`/`WalkableNeighbors` + hidden `PathSearch`, folded in from the deleted `Pathfinder` class (grid owns the walls). Rest still `Vector2I`; pixel math → `GodotConv`, `Vector2I`→`GridPos` pending (2.3c) |
+| GridMover | 🟢 rich | ✅ (2.3b) now validates via `DungeonGrid.CanStep` (deduped the walkable+corner-cut pair); to be absorbed into `Actor.TryMove` |
 | Inventory | 🟢 rich | keep |
 | ExperienceSystem | 🟢 rich | → `ExperienceTrack`, `int`→`XpAmount` |
 | FovMap / Raycaster | 🟢 rich | `Vector2I`→`GridPos` pending |
 | TurnManager | 🟢 rich | → `TurnEngine`, absorb enemy-phase loop |
 | ~~LineOfSight~~ | 🟢 done | ✅ (2.3a) deleted; `HasClearLine` folded onto `DungeonGrid` as a GridPos query (grid owns the walls), `ManhattanDistance` dropped → `GridPos.ManhattanTo` |
-| Pathfinder | 🟢 pure-util | `Vector2I`→`GridPos` (2.3b), `Mathf`→`Math` |
+| ~~Pathfinder~~ | 🟢 done | ✅ (2.3b) class **deleted**; A* folded onto `DungeonGrid` (hidden `PathSearch`, `GridPos`-native) since pathfinding is a query over the grid's cells. All `new Pathfinder()` DI threading (Main→Spawner→Controllers→AI) removed; AIs call `grid.FindPath`. `WalkableNeighbors`+`CanStep` reuse the grid's walls directly (no `Vector2I` bridge). Public `FindPath` keeps a `Vector2I` edge until callers migrate (2.4) |
 | ~~CombatSystem~~ | 🟢 done | deleted; attack behavior lives on `ICombatant.TryAttack` + `OnKilled` hook. Callers (`PlayerController`, `EnemyAI`, `ArcherAI`) invoke `attacker.TryAttack(defender)` directly |
 | **EnemyAI / ArcherAI** | 🟡 decision-tree | no longer reference the deleted `CombatSystem`; drive the entity's own verbs (`combatant.TryAttack`, `mover.TryMove`). Test coverage now locks the attack paths (enemy bump, archer ranged shot). Still a separate object from the entity — full absorption into `Enemy`/`Archer` aggregates is Phase 3.3 |
 | **ItemManager** | 🟡 relocating | pickup decision moved onto `IItem.TryPickup` (default interface method); node self-frees via `ItemController.OnPickup`; `ItemManager` now only finds + delegates + unregisters. Still `Vector2I`-typed + named `ItemManager` (→ `FloorItems`/`GridPos` in Phase 2). **Phase-3 target: pickup ownership flips to `Player.TryPickup(item)`** — the actor aggregate owns the acquire + its own inventory; the item keeps only `CanPickup`/`OnPickup`. `item.TryPickup(actor, inventory)` is a transitional placement (an item mutating another aggregate's inventory); the verb belongs to the actor that owns the inventory boundary. |

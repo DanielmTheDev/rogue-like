@@ -5,7 +5,6 @@ using RogueLike.Code.TurnContext;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Items;
-using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Resources;
 using RogueLike.Code.Services;
 using System.Linq;
@@ -23,13 +22,11 @@ public partial class Main : Node2D
 
     private const int GridWidth = 50;
     private const int GridHeight = 50;
-    private const int TilePixelSize = 32;
 
     private DungeonGrid _gridMap;
     private EntityManager _entityManager;
     private TurnManager _turnManager;
     private ItemManager _itemManager;
-    private Pathfinder _pathfinder;
 
     private FovMap _fovMap;
     private IFovAlgorithm _fovAlgorithm;
@@ -47,7 +44,6 @@ public partial class Main : Node2D
         _fovMap = new FovMap(GridWidth, GridHeight);
         _fovAlgorithm = new Raycaster();
         _turnManager = new TurnManager();
-        _pathfinder = new Pathfinder();
         _turnManager.OnTurnChanged += OnTurnChanged;
 
         var player = GetNode<PlayerController>("Player");
@@ -81,7 +77,7 @@ public partial class Main : Node2D
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");
         var stairsScene = GD.Load<PackedScene>("res://Scenes/StairsDown.tscn");
 
-        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager, _pathfinder, _dungeonLevel, LevelSettings);
+        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager, _dungeonLevel, LevelSettings);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _itemManager);
         Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _entityManager, _gridMap);
 

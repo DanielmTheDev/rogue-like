@@ -1,4 +1,5 @@
 using Godot;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Entities;
 
@@ -46,14 +47,11 @@ public class GridMover
     {
         var target = _gridPosition + direction;
 
-        if (!_grid.IsWalkable(target))
+        // Terrain traversability (walkable + no diagonal corner-cut) is the grid's rule.
+        if (!_grid.CanStep(new GridPos(_gridPosition.X, _gridPosition.Y), Direction.FromDelta(direction.X, direction.Y)))
             return false;
 
         if (_entityManager.IsOccupied(target))
-            return false;
-
-        // No diagonal corner-cutting through walls.
-        if (_grid.IsDiagonalCornerCut(_gridPosition, direction))
             return false;
 
         var oldPos = _gridPosition;

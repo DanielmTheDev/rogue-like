@@ -5,7 +5,6 @@ using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
-using RogueLike.Code.Pathfinding;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Enemies;
@@ -40,7 +39,6 @@ public class EnemyAITest
     {
         var grid = new DungeonGrid(5, 5);
         var entityManager = new EntityManager();
-        var pathfinder = new Pathfinder();
         var fovMap = new FovMap(5, 5);
 
         var player = new MockPlayer { GridPosition = new Vector2I(4, 2) };
@@ -55,7 +53,7 @@ public class EnemyAITest
             for (var y = 0; y < 5; y++)
                 fovMap.SetVisibility(new Vector2I(x, y), VisibilityState.Visible);
 
-        var ai = new EnemyAI(enemyActor, grid, entityManager, pathfinder, enemyActor.GridPosition);
+        var ai = new EnemyAI(enemyActor, grid, entityManager, enemyActor.GridPosition);
 
         // Enemy should find a path and move towards (3,2)
         ai.TakeTurn(fovMap);
@@ -69,7 +67,6 @@ public class EnemyAITest
     {
         var grid = new DungeonGrid(5, 5);
         var entityManager = new EntityManager();
-        var pathfinder = new Pathfinder();
         var fovMap = new FovMap(5, 5);
 
         var player = new MockPlayer { GridPosition = new Vector2I(4, 2), Health = new HealthController(10) };
@@ -83,7 +80,7 @@ public class EnemyAITest
             for (var y = 0; y < 5; y++)
                 fovMap.SetVisibility(new Vector2I(x, y), VisibilityState.Visible);
 
-        var ai = new EnemyAI(enemyActor, grid, entityManager, pathfinder, enemyActor.GridPosition);
+        var ai = new EnemyAI(enemyActor, grid, entityManager, enemyActor.GridPosition);
 
         ai.TakeTurn(fovMap);
 

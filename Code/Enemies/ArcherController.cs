@@ -1,7 +1,6 @@
 using Godot;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Grid;
-using RogueLike.Code.Pathfinding;
 
 namespace RogueLike.Code.Enemies;
 
@@ -19,11 +18,11 @@ public partial class ArcherController : ActorController
     public override bool IsPlayer => false;
     public override int AttackDamage => BaseAttackDamage;
 
-    public void Initialize(DungeonGrid grid, EntityManager entityManager, Pathfinder pathfinder, Vector2I startPos)
+    public void Initialize(DungeonGrid grid, EntityManager entityManager, Vector2I startPos)
     {
         InitializeBase(entityManager);
 
-        _ai = new ArcherAI(this, grid, entityManager, pathfinder, startPos, Range);
+        _ai = new ArcherAI(this, grid, entityManager, startPos, Range);
         entityManager.RegisterActor(this);
         SyncPosition(grid, null);
     }
