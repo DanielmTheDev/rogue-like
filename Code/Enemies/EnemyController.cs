@@ -24,7 +24,7 @@ public partial class EnemyController : ActorController
         SyncPosition(grid, null);
     }
 
-    public void TakeTurn(DungeonGrid grid, RogueLike.Code.Grid.FOV.FovMap fovMap)
+    public void TakeTurn(DungeonGrid grid, Grid.FOV.FovMap fovMap)
     {
         if (_ai == null) return;
 
@@ -32,14 +32,14 @@ public partial class EnemyController : ActorController
         SyncPosition(grid, fovMap);
     }
 
-    private void SyncPosition(DungeonGrid grid, RogueLike.Code.Grid.FOV.FovMap fovMap)
+    private void SyncPosition(DungeonGrid grid, Grid.FOV.FovMap fovMap)
     {
         Position = grid.GridToWorld(GridPosition);
 
         if (fovMap != null)
         {
             var vis = fovMap.GetVisibility(GridPosition);
-            Visible = vis == RogueLike.Code.Grid.FOV.VisibilityState.Visible;
+            Visible = vis == Grid.FOV.VisibilityState.Visible;
         }
     }
 }

@@ -40,14 +40,14 @@ public class EnemyAI
     /// <summary>
     /// Evaluates game state and makes a single move.
     /// </summary>
-    public void TakeTurn(RogueLike.Code.Grid.FOV.FovMap fovMap)
+    public void TakeTurn(Grid.FOV.FovMap fovMap)
     {
         var player = _entityManager.AllActors.FirstOrDefault(a => a.IsPlayer);
         if (player == null) return;
 
         // If player is not visible, do nothing for now.
         // Future AI could move towards last known position.
-        if (fovMap.GetVisibility(player.GridPosition) != Code.Grid.FOV.VisibilityState.Visible)
+        if (fovMap.GetVisibility(player.GridPosition) != Grid.FOV.VisibilityState.Visible)
         {
             // TODO: Add random wandering later
             return;

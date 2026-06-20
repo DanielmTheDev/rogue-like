@@ -18,6 +18,11 @@ dotnet_diagnostic.IDE0301.severity = error
 dotnet_diagnostic.IDE0302.severity = error
 dotnet_diagnostic.IDE0305.severity = error
 
+# Redundant qualifiers fail the build: IDE0001 (simplify type name, e.g.
+# `RogueLike.Code.Grid.FOV.FovMap` -> `FovMap`), IDE0002 (simplify member access).
+dotnet_diagnostic.IDE0001.severity = error
+dotnet_diagnostic.IDE0002.severity = error
+
 # Prefer ternary over if/else for assignment + return. Severity `suggestion` (IDE hint only):
 # NOT a build warning and NOT auto-applied by the `dotnet format` gate — because blanket
 # auto-conversion turns guard clauses into the `? false :` anti-pattern / nested ternaries,

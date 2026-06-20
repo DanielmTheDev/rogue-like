@@ -36,7 +36,7 @@ public partial class Main : Node2D
     private FovTileMap _fovTileMap;
     private UI.MinimapController _minimap;
 
-    private System.Collections.Generic.List<Godot.Rect2I> _rooms;
+    private System.Collections.Generic.List<Rect2I> _rooms;
     private int _dungeonLevel = 1;
 
     public override void _Ready()
@@ -68,7 +68,7 @@ public partial class Main : Node2D
     private void SetupLevel()
     {
         // 1. Generate map layout
-        _rooms = Code.Grid.Generators.BspDungeonGenerator.Generate(_gridMap);
+        _rooms = Grid.Generators.BspDungeonGenerator.Generate(_gridMap);
         SetupTileMap();
 
         // 2. Place player
@@ -110,7 +110,7 @@ public partial class Main : Node2D
             if (actor is ActorController actorNode && !actor.IsPlayer)
             {
                 var vis = _fovMap.GetVisibility(actor.GridPosition);
-                actorNode.Visible = vis == Code.Grid.FOV.VisibilityState.Visible;
+                actorNode.Visible = vis == VisibilityState.Visible;
             }
         }
     }
@@ -130,9 +130,9 @@ public partial class Main : Node2D
         // might die and unregister themselves during this loop.
         foreach (var actor in _entityManager.AllActors.ToList())
         {
-            if (actor is Code.Enemies.EnemyController goblin)
+            if (actor is Enemies.EnemyController goblin)
                 goblin.TakeTurn(_gridMap, _fovMap);
-            else if (actor is Code.Enemies.ArcherController archer)
+            else if (actor is Enemies.ArcherController archer)
                 archer.TakeTurn(_gridMap, _fovMap);
         }
 
@@ -153,7 +153,7 @@ public partial class Main : Node2D
         // 1. Clean up old level entities (nodes will be children of Main)
         foreach (var node in GetChildren())
         {
-            if (node is Enemies.EnemyController || node is Items.ItemController || node is World.StairsController)
+            if (node is Enemies.EnemyController || node is ItemController || node is World.StairsController)
             {
                 node.QueueFree();
             }
