@@ -41,6 +41,10 @@ Grep `TRANSITIONAL (DDD` to list every outstanding compromise. The reviewer shou
 - During **Phase 1–2**, controllers still host domain objects and `Vector2I` still appears outside `Code/Domain/` — rules 1 and 6 apply only to *new* domain code and *newly added* controller rules, not to not-yet-migrated legacy.
 - After **Phase 3**, rule 6 escalates to blocker and controllers must hold no rules at all.
 
+## Formatting gate (before review)
+
+At the end of each implementation chunk, before this review runs: `dotnet format RogueLike.sln` (+ `jb cleanupcode … --include=<changed files>` if ternaries were touched), then confirm `dotnet build` is 0 warnings / 0 errors. The reviewer may assume code is already formatted; flag only substantive issues, not whitespace.
+
 ## Output contract
 
 Return only the findings list (one line each, format above), then a final line: `VERDICT: PASS` (no blocker/major) or `VERDICT: FAIL`. If FAIL, the gate fixes and re-reviews (cap ~3 loops) before presenting to the user.

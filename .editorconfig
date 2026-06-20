@@ -17,3 +17,23 @@ dotnet_diagnostic.IDE0300.severity = error
 dotnet_diagnostic.IDE0301.severity = error
 dotnet_diagnostic.IDE0302.severity = error
 dotnet_diagnostic.IDE0305.severity = error
+
+# Prefer ternary over if/else for assignment + return. Severity `suggestion` (IDE hint only):
+# NOT a build warning and NOT auto-applied by the `dotnet format` gate — because blanket
+# auto-conversion turns guard clauses into the `? false :` anti-pattern / nested ternaries,
+# which read worse. The hint nudges where a ternary genuinely fits; the human decides.
+dotnet_style_prefer_conditional_expression_over_assignment = true
+dotnet_style_prefer_conditional_expression_over_return = true
+dotnet_diagnostic.IDE0045.severity = suggestion
+dotnet_diagnostic.IDE0046.severity = suggestion
+
+# Prefer `var` everywhere (warning, auto-fixed by `dotnet format`).
+csharp_style_var_for_built_in_types = true
+csharp_style_var_when_type_is_apparent = true
+csharp_style_var_elsewhere = true
+dotnet_diagnostic.IDE0007.severity = warning
+
+# Ternary formatting (ReSharper/Rider + `jb cleanupcode` only — Roslyn/dotnet format can't wrap
+# ternaries): each branch on its own line, with ? and : at the start of the wrapped line.
+resharper_csharp_wrap_before_ternary_opsign = true
+resharper_wrap_ternary_expr_style = chop_always
