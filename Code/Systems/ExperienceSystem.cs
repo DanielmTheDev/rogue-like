@@ -45,7 +45,7 @@ public class ExperienceSystem
         CurrentXP -= XPForNextLevel;
         CurrentLevel++;
         XPForNextLevel = CalculateXPForLevel(CurrentLevel);
-        
+
         OnLevelUp?.Invoke(CurrentLevel);
         OnXPChanged?.Invoke(CurrentXP, XPForNextLevel);
     }

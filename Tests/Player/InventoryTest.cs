@@ -19,7 +19,7 @@ public class InventoryTest
 
         public bool CanPickup(IActor actor) => true;
         public void OnPickup(IActor actor) { }
-        
+
         public bool Use(IActor actor)
         {
             UseWasCalled = true;
@@ -37,7 +37,7 @@ public class InventoryTest
     public void NewInventory_IsEmpty()
     {
         var inventory = new Inventory(maxSlots: 5);
-        
+
         AssertInt(inventory.Count).IsEqual(0);
         AssertBool(inventory.IsFull).IsFalse();
     }

@@ -9,7 +9,7 @@ namespace RogueLike.Code.UI;
 public partial class InventoryUI : Control
 {
     [Export] public RichTextLabel InventoryLabel;
-    
+
     private Inventory _inventory;
 
     public void Initialize(Inventory inventory)
@@ -25,10 +25,10 @@ public partial class InventoryUI : Control
             return;
 
         var text = $"[b]Inventory ({_inventory.Count}/{_inventory.MaxSlots})[/b]\n";
-        
+
         var grouped = _inventory.GetGroupedItems();
         var displaySlot = 1;
-        
+
         foreach (var (itemName, count, _) in grouped)
         {
             if (count > 1)

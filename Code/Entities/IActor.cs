@@ -8,7 +8,7 @@ namespace RogueLike.Code.Entities;
 public interface IActor
 {
     Vector2I GridPosition { get; }
-    
+
     /// <summary>
     /// Identifies if this actor is the primary player.
     /// </summary>

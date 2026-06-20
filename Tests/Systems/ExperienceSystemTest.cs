@@ -85,7 +85,7 @@ public class ExperienceSystemTest
         {
             receivedNewLevel = newLevel;
         };
-        
+
         _exp.AddXP(100);
 
         Assertions.AssertThat(receivedNewLevel).IsEqual(2);

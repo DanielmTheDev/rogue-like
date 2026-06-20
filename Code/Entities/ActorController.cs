@@ -35,7 +35,7 @@ public abstract partial class ActorController : Node2D, ICombatant
         _entityManager = entityManager;
         Health = new HealthController(BaseHealth);
         Health.OnDied += Die;
-        
+
         // Link to Godot inspector node if exists
         if (HealthBar != null)
         {

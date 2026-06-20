@@ -51,9 +51,9 @@ public class EnemyAITest
         entityManager.RegisterActor(enemyActor);
 
         // Make the whole map visible for this test
-        for(var x = 0; x < 5; x++)
-        for(var y = 0; y < 5; y++)
-            fovMap.SetVisibility(new Vector2I(x, y), VisibilityState.Visible);
+        for (var x = 0; x < 5; x++)
+            for (var y = 0; y < 5; y++)
+                fovMap.SetVisibility(new Vector2I(x, y), VisibilityState.Visible);
 
         var ai = new EnemyAI(enemyActor, grid, entityManager, pathfinder, enemyActor.GridPosition);
 
@@ -80,8 +80,8 @@ public class EnemyAITest
         entityManager.RegisterActor(enemyActor);
 
         for (var x = 0; x < 5; x++)
-        for (var y = 0; y < 5; y++)
-            fovMap.SetVisibility(new Vector2I(x, y), VisibilityState.Visible);
+            for (var y = 0; y < 5; y++)
+                fovMap.SetVisibility(new Vector2I(x, y), VisibilityState.Visible);
 
         var ai = new EnemyAI(enemyActor, grid, entityManager, pathfinder, enemyActor.GridPosition);
 

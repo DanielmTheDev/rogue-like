@@ -21,9 +21,9 @@ public class TurnManager
     /// </summary>
     public void EndPlayerTurn()
     {
-        if (CurrentState != TurnState.Player) 
+        if (CurrentState != TurnState.Player)
             return;
-        
+
         SetState(TurnState.Enemy);
     }
 
@@ -34,7 +34,7 @@ public class TurnManager
     {
         if (CurrentState != TurnState.Enemy)
             return;
-            
+
         SetState(TurnState.Player);
     }
 

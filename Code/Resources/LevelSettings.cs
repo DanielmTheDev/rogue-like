@@ -14,7 +14,7 @@ public partial class LevelSettings : Resource
 
     [Export(PropertyHint.Range, "1,10,1")]
     public int MaxEnemiesPerRoom { get; set; } = 2;
-    
+
     // This value is added to the dungeon level to determine the final enemy count.
     // e.g., Base=0, Level=1 -> 1-2 enemies. Base=2, Level=1 -> 3-4 enemies.
     [Export(PropertyHint.Range, "0,10,1")]

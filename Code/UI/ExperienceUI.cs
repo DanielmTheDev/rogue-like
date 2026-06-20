@@ -22,7 +22,7 @@ public partial class ExperienceUI : Control
     {
         UpdateDisplay(newLevel, _expSystem.CurrentXP, _expSystem.XPForNextLevel);
     }
-    
+
     private void UpdateDisplay(int currentXP, int xpForNextLevel)
     {
         UpdateDisplay(_expSystem.CurrentLevel, currentXP, xpForNextLevel);

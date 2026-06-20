@@ -10,7 +10,7 @@ public class EntityManager
 {
     private readonly Dictionary<Vector2I, IActor> _actorsByPosition = [];
     private readonly Dictionary<Vector2I, Node2D> _nodesByPosition = [];
-    
+
     // We also keep a flat list for Turn iteration (e.g., iterating all enemies).
     private readonly List<IActor> _allActors = [];
 
@@ -43,7 +43,7 @@ public class EntityManager
 
         _actorsByPosition[newPosition] = actor;
     }
-    
+
     public void RegisterNode(Node2D node, Vector2I position)
     {
         _nodesByPosition[position] = node;
@@ -63,7 +63,7 @@ public class EntityManager
     {
         return _actorsByPosition.GetValueOrDefault(position);
     }
-    
+
     public void ClearAll()
     {
         // We only clear the lookup dictionaries. The nodes themselves will be QueueFree'd from Main.

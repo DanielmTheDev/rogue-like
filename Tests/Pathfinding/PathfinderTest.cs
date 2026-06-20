@@ -91,21 +91,21 @@ public class PathfinderTest
         _grid.SetCell(new Vector2I(0, 6), CellType.Wall);
         _grid.SetCell(new Vector2I(1, 6), CellType.Wall);
         _grid.SetCell(new Vector2I(2, 6), CellType.Wall);
-        
+
         var start = new Vector2I(1, 1);
         var end = new Vector2I(1, 5);
         var path = _pathfinder.FindPath(start, end, _grid);
-        
+
         Assertions.AssertThat(path).IsNull();
     }
-    
+
     [TestCase]
     public void FindPath_StartAndEndAreSame()
     {
         var start = new Vector2I(1, 1);
         var end = new Vector2I(1, 1);
         var path = _pathfinder.FindPath(start, end, _grid);
-        
+
         Assertions.AssertThat(path).IsNotNull();
         Assertions.AssertThat(path.Count).IsEqual(0);
     }

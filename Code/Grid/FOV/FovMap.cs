@@ -17,7 +17,7 @@ public class FovMap
         Width = width;
         Height = height;
         _states = new VisibilityState[width, height];
-        
+
         // Defaults to Unexplored strictly due to C# default enum behavior = 0.
     }
 
@@ -25,7 +25,7 @@ public class FovMap
     {
         if (pos.X < 0 || pos.X >= Width || pos.Y < 0 || pos.Y >= Height)
             return VisibilityState.Unexplored;
-            
+
         return _states[pos.X, pos.Y];
     }
 
@@ -36,7 +36,7 @@ public class FovMap
             _states[pos.X, pos.Y] = state;
         }
     }
-    
+
     /// <summary>
     /// Resets all currently visible tiles to Explored. Call this before computing a new FOV.
     /// </summary>

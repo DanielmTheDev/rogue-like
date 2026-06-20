@@ -43,7 +43,7 @@ public class ArcherAI
     {
         var player = _entityManager.AllActors.FirstOrDefault(a => a.IsPlayer);
         if (player == null) return;
-        
+
         var isPlayerVisible = fovMap.GetVisibility(player.GridPosition) == Code.Grid.FOV.VisibilityState.Visible;
         if (!isPlayerVisible)
         {
@@ -53,7 +53,7 @@ public class ArcherAI
 
         var distance = LineOfSight.ManhattanDistance(_owner.GridPosition, player.GridPosition);
         var hasLos = LineOfSight.HasClearLine(_grid, _owner.GridPosition, player.GridPosition);
-        
+
         if (hasLos && distance <= _range)
         {
             // In range and has a clear line of sight, shoot!

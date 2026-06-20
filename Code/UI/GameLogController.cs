@@ -22,7 +22,7 @@ public partial class GameLogController : Control
         // Subscribe to log events
         GameLog.Instance.OnMessageLogged += AppendMessage;
         GameLog.Instance.OnLogCleared += ClearLog;
-        
+
         // Initial welcome
         GameLog.Instance.Log("[color=green]Welcome to the Dungeon, seeker.[/color]");
     }
