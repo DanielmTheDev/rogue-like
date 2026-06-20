@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using Godot;
+using RogueLike.Code.Domain.Common;
 
 namespace RogueLike.Code.Grid;
 
@@ -42,6 +45,51 @@ public class DungeonGrid
             return false;
 
         return _cells[coord.X, coord.Y] == CellType.Floor;
+    }
+
+    /// <summary>
+    /// True if an unobstructed (no walls) line runs between <paramref name="from"/> and
+    /// <paramref name="to"/>. Both endpoints are excluded from the wall check. Traces the
+    /// line with Bresenham's algorithm over this grid's own cells — line-of-sight is a query
+    /// about the grid, so it lives with the wall data it depends on.
+    /// </summary>
+    public bool HasClearLine(GridPos from, GridPos to)
+    {
+        foreach (var cell in IntermediateCells(from, to))
+        {
+            if (!IsWalkable(new Vector2I(cell.X, cell.Y)))
+                return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Bresenham cells strictly between <paramref name="from"/> and <paramref name="to"/>
+    /// (both endpoints excluded), in order. Empty when the endpoints are equal or adjacent.
+    /// </summary>
+    private static IEnumerable<GridPos> IntermediateCells(GridPos from, GridPos to)
+    {
+        var step = from.DirectionTo(to);
+        var dx = Math.Abs(to.X - from.X);
+        var dy = Math.Abs(to.Y - from.Y);
+        var err = dx - dy;
+
+        var current = from;
+        while (current != to)
+        {
+            var e2 = 2 * err;
+            var stepX = e2 > -dy;
+            var stepY = e2 < dx;
+            if (stepX) err -= dy;
+            if (stepY) err += dx;
+            current = new GridPos(current.X + (stepX ? step.Dx : 0), current.Y + (stepY ? step.Dy : 0));
+
+            if (current == to)
+                yield break;
+
+            yield return current;
+        }
     }
 
     /// <summary>

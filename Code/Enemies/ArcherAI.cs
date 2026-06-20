@@ -1,8 +1,10 @@
 using System.Linq;
 using Godot;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
+using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Player;
 
@@ -39,32 +41,33 @@ public class ArcherAI
         _range = range;
     }
 
-    public void TakeTurn(RogueLike.Code.Grid.FOV.FovMap fovMap)
+    public void TakeTurn(FovMap fovMap)
     {
         var player = _entityManager.AllActors.FirstOrDefault(a => a.IsPlayer);
-        if (player == null) return;
-
-        var isPlayerVisible = fovMap.GetVisibility(player.GridPosition) == Code.Grid.FOV.VisibilityState.Visible;
-        if (!isPlayerVisible)
-        {
-            // Player not visible, do nothing
+        if (player == null || !IsVisible(player, fovMap))
             return;
-        }
 
-        var distance = LineOfSight.ManhattanDistance(_owner.GridPosition, player.GridPosition);
-        var hasLos = LineOfSight.HasClearLine(_grid, _owner.GridPosition, player.GridPosition);
-
-        if (hasLos && distance <= _range)
-        {
-            // In range and has a clear line of sight, shoot!
-            if (_owner is ICombatant attacker && player is ICombatant defender)
-                attacker.TryAttack(defender);
-        }
-        else if (isPlayerVisible)
-        {
-            // Visible (e.g., around a corner) but out of range or LOS, move closer.
+        // Player is visible: shoot if in clear range, otherwise close the distance.
+        if (CanShoot(player))
+            Shoot(player);
+        else
             ChasePlayer(player);
-        }
+    }
+
+    private static bool IsVisible(IActor player, FovMap fovMap)
+        => fovMap.GetVisibility(player.GridPosition) == VisibilityState.Visible;
+
+    private bool CanShoot(IActor player)
+    {
+        var ownerPos = new GridPos(_owner.GridPosition.X, _owner.GridPosition.Y);
+        var playerPos = new GridPos(player.GridPosition.X, player.GridPosition.Y);
+        return _grid.HasClearLine(ownerPos, playerPos) && ownerPos.ManhattanTo(playerPos) <= _range;
+    }
+
+    private void Shoot(IActor player)
+    {
+        if (_owner is ICombatant attacker && player is ICombatant defender)
+            attacker.TryAttack(defender);
     }
 
     private void ChasePlayer(IActor player)

@@ -12,8 +12,8 @@
     - `FovMap`: Pure struct tracking `VisibilityState` of every cell.
     - `IFovAlgorithm`: Interface for algorithms (`Raycaster`) that mutate the `FovMap`.
 - **EnemyAI:** Pure C# decision tree. Finds the player via `EntityManager` and paths towards them. Used by melee Goblins.
-- **ArcherAI:** Pure C# decision tree for ranged enemies. Uses `LineOfSight` to check for clear shots. Behavior: shoot if in LOS + range, chase if in LOS but out of range, idle otherwise.
-- **LineOfSight:** Pure C# utility using Bresenham's line algorithm. Answers "is there an unobstructed path between tile A and tile B?" Shared by `ArcherAI` and potentially future systems.
+- **ArcherAI:** Pure C# decision tree for ranged enemies. Calls `DungeonGrid.HasClearLine` to check for clear shots and `GridPos.ManhattanTo` for range. Behavior: shoot if in LOS + range, chase if in LOS but out of range, idle otherwise.
+- **Line-of-sight:** A query on `DungeonGrid` (`HasClearLine(GridPos, GridPos)`) — the grid owns the walls, so the LOS query lives with that data. Traces with Bresenham over the grid's own cells; endpoints excluded from the wall check.
 - **EnemyController / ArcherController / PlayerController:** Godot `Node2D` classes extending `ActorController`. They delegate logic downward to `GridMover`/`EnemyAI`/`ArcherAI` and only handle visual synchronization and input.
 - **ActorController:** Abstract base class for all grid actors. Centralizes `HealthController`, `[Export]` variables (`BaseHealth`, `BaseAttackDamage`, `HealthBar`), and `Die()` logic.
 - **Spawner:** Static utility handling entity instantiation and placement. Supports multiple enemy types (Goblins and Archers) and alternates them across BSP rooms.
@@ -42,7 +42,7 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 - `Code/Domain/` — pure C#, **never `using Godot;`**. Value Objects, aggregate roots, world/turn logic, domain events.
 - `Code/View/` — Godot nodes only. Render + input, no game rules. A single `GodotConv` bridge converts `Vector2I`↔`GridPos`/`Direction`.
 
-**Domain is organized as vertical slices, not by technical kind.** Each slice owns its types: `Domain/Combat/` (Damage, Health, attack/kill), `Domain/Actors/`, `Domain/Items/`, `Domain/Progression/`, `Domain/World/` (Dungeon, FOV, Pathfinder, LineOfSight). `Domain/Common/` is the **thin shared kernel** — ONLY cross-cutting VOs used by many slices (`GridPos`, `Direction`). A type goes in `Common/` only if multiple slices need it; otherwise it lives in its owning slice.
+**Domain is organized as vertical slices, not by technical kind.** Each slice owns its types: `Domain/Combat/` (Damage, Health, attack/kill), `Domain/Actors/`, `Domain/Items/`, `Domain/Progression/`, `Domain/World/` (Dungeon — which owns the line-of-sight query — FOV, Pathfinder). `Domain/Common/` is the **thin shared kernel** — ONLY cross-cutting VOs used by many slices (`GridPos`, `Direction`). A type goes in `Common/` only if multiple slices need it; otherwise it lives in its owning slice.
 
 **Value Object catalogue** (immutable `readonly record struct`, invariants in ctor, equality-by-value, no setters):
 
@@ -63,13 +63,14 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 | System | Status | Notes |
 |--------|--------|-------|
 | HealthController | 🟡 rich-mutable | clamp/invariants present; to become `Health` VO + events on `Actor` |
-| DungeonGrid | 🟢 rich | pixel math to move to `GodotConv`; `Vector2I`→`GridPos` pending |
+| DungeonGrid | 🟢 rich | ✅ (2.3a) owns the line-of-sight query `HasClearLine(GridPos, GridPos)` (Bresenham over its own cells) — folded in from the deleted `LineOfSight` static class, since the grid owns the walls. Rest still `Vector2I`; pixel math → `GodotConv`, `Vector2I`→`GridPos` pending (2.3c) |
 | GridMover | 🟢 rich | to be absorbed into `Actor.TryMove` |
 | Inventory | 🟢 rich | keep |
 | ExperienceSystem | 🟢 rich | → `ExperienceTrack`, `int`→`XpAmount` |
 | FovMap / Raycaster | 🟢 rich | `Vector2I`→`GridPos` pending |
 | TurnManager | 🟢 rich | → `TurnEngine`, absorb enemy-phase loop |
-| Pathfinder / LineOfSight | 🟢 pure-util | `Vector2I`→`GridPos`, `Mathf`→`Math` |
+| ~~LineOfSight~~ | 🟢 done | ✅ (2.3a) deleted; `HasClearLine` folded onto `DungeonGrid` as a GridPos query (grid owns the walls), `ManhattanDistance` dropped → `GridPos.ManhattanTo` |
+| Pathfinder | 🟢 pure-util | `Vector2I`→`GridPos` (2.3b), `Mathf`→`Math` |
 | ~~CombatSystem~~ | 🟢 done | deleted; attack behavior lives on `ICombatant.TryAttack` + `OnKilled` hook. Callers (`PlayerController`, `EnemyAI`, `ArcherAI`) invoke `attacker.TryAttack(defender)` directly |
 | **EnemyAI / ArcherAI** | 🟡 decision-tree | no longer reference the deleted `CombatSystem`; drive the entity's own verbs (`combatant.TryAttack`, `mover.TryMove`). Test coverage now locks the attack paths (enemy bump, archer ranged shot). Still a separate object from the entity — full absorption into `Enemy`/`Archer` aggregates is Phase 3.3 |
 | **ItemManager** | 🟡 relocating | pickup decision moved onto `IItem.TryPickup` (default interface method); node self-frees via `ItemController.OnPickup`; `ItemManager` now only finds + delegates + unregisters. Still `Vector2I`-typed + named `ItemManager` (→ `FloorItems`/`GridPos` in Phase 2). **Phase-3 target: pickup ownership flips to `Player.TryPickup(item)`** — the actor aggregate owns the acquire + its own inventory; the item keeps only `CanPickup`/`OnPickup`. `item.TryPickup(actor, inventory)` is a transitional placement (an item mutating another aggregate's inventory); the verb belongs to the actor that owns the inventory boundary. |
