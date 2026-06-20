@@ -1,3 +1,4 @@
+using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Services;
 
 namespace RogueLike.Code.Entities.Combat;
@@ -28,8 +29,11 @@ public interface ICombatant : IActor
     bool TryAttack(ICombatant defender)
     {
         if (defender == null) return false;
-        defender.Health.TakeDamage(AttackDamage);
-        GameLog.Instance.LogCombat(DisplayName, defender.DisplayName, AttackDamage);
+        var damage = new Damage(AttackDamage);
+        // TRANSITIONAL (DDD Phase 2.5): unwrap to int because HealthController.TakeDamage still
+        // takes int; becomes Health.Take(Damage) when Health is promoted to a value object.
+        defender.Health.TakeDamage(damage.Amount);
+        GameLog.Instance.LogCombat(DisplayName, defender.DisplayName, damage.Amount);
         if (defender.Health.CurrentHp <= 0) OnKilled(defender);
         return true;
     }

@@ -42,15 +42,19 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 - `Code/Domain/` — pure C#, **never `using Godot;`**. Value Objects, aggregate roots, world/turn logic, domain events.
 - `Code/View/` — Godot nodes only. Render + input, no game rules. A single `GodotConv` bridge converts `Vector2I`↔`GridPos`/`Direction`.
 
+**Domain is organized as vertical slices, not by technical kind.** Each slice owns its types: `Domain/Combat/` (Damage, Health, attack/kill), `Domain/Actors/`, `Domain/Items/`, `Domain/Progression/`, `Domain/World/` (Dungeon, FOV, Pathfinder, LineOfSight). `Domain/Common/` is the **thin shared kernel** — ONLY cross-cutting VOs used by many slices (`GridPos`, `Direction`). A type goes in `Common/` only if multiple slices need it; otherwise it lives in its owning slice.
+
 **Value Object catalogue** (immutable `readonly record struct`, invariants in ctor, equality-by-value, no setters):
 
-| VO | Invariant | Replaces |
-|----|-----------|----------|
-| `GridPos(X,Y)` | none (bounds are the grid's job) | `Vector2I` for positions in the domain |
-| `Direction(Dx,Dy)` | Dx,Dy ∈ {-1,0,1} | raw `Vector2I` direction deltas |
-| `Health(Current,Max)` | Max>0, 0≤Current≤Max | mutable `HealthController` state |
-| `Damage(Amount)` | Amount≥0 | `int AttackDamage` |
-| `XpAmount(Value)` (optional) | Value≥0 | `int` XP |
+| VO | Slice | Invariant | Replaces |
+|----|-------|-----------|----------|
+| `GridPos(X,Y)` | Common | none (bounds are the grid's job) | `Vector2I` for positions in the domain |
+| `Direction(Dx,Dy)` | Common | Dx,Dy ∈ {-1,0,1} | raw `Vector2I` direction deltas |
+| `Health(Current,Max)` | Combat | Max>0, 0≤Current≤Max | mutable `HealthController` state |
+| `Damage(Amount)` ✅ landed (2.1) | Combat | Amount≥0 | `int AttackDamage` |
+| `XpAmount(Value)` (optional) | Progression | Value≥0 | `int` XP |
+
+`Damage` lives at `Code/Domain/Combat/` (`RogueLike.Code.Domain.Combat`) and is constructed inside `ICombatant.TryAttack` (unwrapped to `int` for `HealthController` until the `Health` VO lands in 2.5).
 
 **Aggregate roots** (pure C#, own state + behavior, raise domain events, no public setters): `Actor` (→ `TryMove`, `Attack`, `TakeDamage`), `Player` / `Enemy` / `Archer` (own their turn/decision behavior), plus `Dungeon`, `ActorRegistry`, `Inventory`, `FloorItems`, `ExperienceTrack`, `TurnEngine`. Godot controllers become Views that observe domain events and render.
 
