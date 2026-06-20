@@ -16,7 +16,7 @@ public class GameLog
     public event Action<string> OnMessageLogged;
     public event Action OnLogCleared;
     
-    private readonly List<string> _history = new();
+    private readonly List<string> _history = [];
     public IReadOnlyList<string> History => _history;
 
     public void Clear()

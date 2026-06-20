@@ -8,11 +8,11 @@ namespace RogueLike.Code.Entities;
 /// </summary>
 public class EntityManager
 {
-    private readonly Dictionary<Vector2I, IActor> _actorsByPosition = new();
-    private readonly Dictionary<Vector2I, Node2D> _nodesByPosition = new();
+    private readonly Dictionary<Vector2I, IActor> _actorsByPosition = [];
+    private readonly Dictionary<Vector2I, Node2D> _nodesByPosition = [];
     
     // We also keep a flat list for Turn iteration (e.g., iterating all enemies).
-    private readonly List<IActor> _allActors = new();
+    private readonly List<IActor> _allActors = [];
 
     public IReadOnlyList<IActor> AllActors => _allActors;
 

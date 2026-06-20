@@ -3,7 +3,7 @@ using Godot;
 using RogueLike.Code.Grid;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.tests.Grid;
+namespace RogueLike.Tests.Grid;
 
 [TestSuite]
 public class DungeonGridTest

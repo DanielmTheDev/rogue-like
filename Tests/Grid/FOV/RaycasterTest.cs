@@ -4,7 +4,7 @@ using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.tests.Grid.FOV;
+namespace RogueLike.Tests.Grid.FOV;
 
 [TestSuite]
 public class RaycasterTest

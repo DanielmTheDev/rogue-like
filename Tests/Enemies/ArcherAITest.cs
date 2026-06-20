@@ -8,7 +8,7 @@ using RogueLike.Code.Pathfinding;
 using RogueLike.Code.Entities.Combat;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.tests.Enemies;
+namespace RogueLike.Tests.Enemies;
 
 [TestSuite]
 public class ArcherAITest

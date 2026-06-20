@@ -5,7 +5,7 @@ using RogueLike.Code.Items;
 using RogueLike.Code.Player;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.tests.Items;
+namespace RogueLike.Tests.Items;
 
 [TestSuite]
 public class ItemPickupTest

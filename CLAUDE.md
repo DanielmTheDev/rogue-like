@@ -26,7 +26,7 @@ The core design split: **pure C# logic classes** hold all game rules and are uni
 - **Map generation:** must NEVER live in `DungeonGrid`. Lives in standalone builders (e.g. `BspDungeonGenerator`) operating on a pure `DungeonGrid`.
 - **Spawning:** `Spawner` (static) places entities across BSP rooms; tuned via `LevelSettings` (Godot `Resource`, editable in Inspector).
 
-`namespace RogueLike.<Folder>` mirrors the `Code/` tree exactly. Tests in `tests/` mirror `Code/`.
+`namespace RogueLike.<Folder>` mirrors the `Code/` tree exactly. Tests live in `Tests/` (namespace `RogueLike.Tests.<Folder>`) mirroring `Code/`.
 
 **Read `docs/SYSTEM_DESIGN.md` before any task** — it is the authoritative architecture ledger and must be updated synchronously with any change to Health, Movement, AI, or Map Generation.
 
@@ -61,6 +61,7 @@ The codebase is migrating toward **rich domain models**: behavior lives with the
 - `interface`/`abstract` for multi-variant systems (`IDamageable`, `IAbility`, `ICombatant`, `IActor`, `IItem`).
 - Naming: PascalCase public, `_camelCase` private fields.
 - **Prefer `var` over explicit type in local declarations.** Use the explicit type only when the RHS type is not inferable/obvious from the expression.
+- **Prefer collection expressions (`[]`, `[a, b]`) over `new[]{…}`/`new List<>{…}`, and target-typed `new()` when the type is apparent.** Enforced via `.editorconfig` (severity `error`) + `<EnforceCodeStyleInBuild>`: a violation **fails the build** (`dotnet build` errors on IDE0028/IDE0090/IDE0300…). Scoped to these style rules only — not broad warnings-as-errors.
 - Call `QueueFree()` and dispose C# objects that don't inherit `GodotObject`. Physics in `_PhysicsProcess` using `delta`.
 
 ## Asset pipeline (see `docs/ASSET_PIPELINE.md`)

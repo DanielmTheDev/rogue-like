@@ -2,7 +2,7 @@ using GdUnit4;
 using RogueLike.Code.Domain.Combat;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.tests.Domain.Combat;
+namespace RogueLike.Tests.Domain.Combat;
 
 [TestSuite]
 public class DamageTest

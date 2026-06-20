@@ -5,7 +5,7 @@ using RogueLike.Code.Player;
 using RogueLike.Code.Entities;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.tests.Player;
+namespace RogueLike.Tests.Player;
 
 /// <summary>
 /// Tests for GridMover — the pure movement logic.

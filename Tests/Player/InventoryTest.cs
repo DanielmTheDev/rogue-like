@@ -5,7 +5,7 @@ using RogueLike.Code.Items;
 using RogueLike.Code.Entities;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.tests.Player;
+namespace RogueLike.Tests.Player;
 
 [TestSuite]
 public class InventoryTest

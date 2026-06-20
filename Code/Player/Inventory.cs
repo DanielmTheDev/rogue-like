@@ -11,7 +11,7 @@ namespace RogueLike.Code.Player;
 /// </summary>
 public class Inventory
 {
-    private readonly List<IItem> _items = new();
+    private readonly List<IItem> _items = [];
     public IReadOnlyList<IItem> Items => _items;
     public int MaxSlots { get; }
     public int Count => _items.Count;

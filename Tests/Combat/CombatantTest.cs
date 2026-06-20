@@ -3,7 +3,7 @@ using Godot;
 using RogueLike.Code.Entities.Combat;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.tests.Combat;
+namespace RogueLike.Tests.Combat;
 
 [TestSuite]
 public class CombatantTest

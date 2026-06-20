@@ -4,7 +4,7 @@ using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.Generators;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.tests.Grid.Generators;
+namespace RogueLike.Tests.Grid.Generators;
 
 [TestSuite]
 public class BspDungeonGeneratorTest

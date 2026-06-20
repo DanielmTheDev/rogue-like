@@ -9,7 +9,7 @@ namespace RogueLike.Code.Items;
 /// </summary>
 public class ItemManager
 {
-    private readonly List<IItem> _items = new();
+    private readonly List<IItem> _items = [];
     public IReadOnlyList<IItem> AllItems => _items;
 
     public void RegisterItem(IItem item)

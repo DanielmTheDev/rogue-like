@@ -48,8 +48,8 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 
 | VO | Slice | Invariant | Replaces |
 |----|-------|-----------|----------|
-| `GridPos(X,Y)` | Common | none (bounds are the grid's job) | `Vector2I` for positions in the domain |
-| `Direction(Dx,Dy)` | Common | Dx,Dy ∈ {-1,0,1} | raw `Vector2I` direction deltas |
+| `GridPos(X,Y)` ✅ landed (2.2) | Common | none (bounds are the grid's job) | `Vector2I` for positions in the domain |
+| `Direction(Dx,Dy)` ✅ landed (2.2) | Common | Dx,Dy ∈ {-1,0,1} | raw `Vector2I` direction deltas |
 | `Health(Current,Max)` | Combat | Max>0, 0≤Current≤Max | mutable `HealthController` state |
 | `Damage(Amount)` ✅ landed (2.1) | Combat | Amount≥0 | `int AttackDamage` |
 | `XpAmount(Value)` (optional) | Progression | Value≥0 | `int` XP |
