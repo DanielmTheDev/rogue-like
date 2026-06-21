@@ -10,8 +10,11 @@ namespace RogueLike.Code.Grid;
 /// No Godot Node dependency — easily testable.
 /// </summary>
 /// <remarks>
-/// This file holds the grid's data + topology queries (walkability, corner-cut, line-of-sight,
-/// coordinate conversion). The <c>partial</c> keyword lets the pathfinding slice
+/// This file holds the grid's data + topology queries (walkability, corner-cut, line-of-sight).
+/// All cell queries are <see cref="GridPos"/>-native; thin <c>Vector2I</c> overloads remain as a
+/// transitional edge for callers not yet migrated (removed in 2.4 with the <c>IActor</c> flip).
+/// Pixel↔grid conversion is no longer the grid's concern — it lives on the view side as
+/// <c>GridConversions</c> extensions. The <c>partial</c> keyword lets the pathfinding slice
 /// (<c>FindPath</c> + the hidden A* engine) live in <c>DungeonGrid.Pathfinding.cs</c>.
 /// </remarks>
 public partial class DungeonGrid
@@ -33,7 +36,7 @@ public partial class DungeonGrid
     /// <summary>
     /// Returns true if the coordinate is within the grid bounds.
     /// </summary>
-    public bool IsInBounds(Vector2I coord)
+    public bool IsInBounds(GridPos coord)
     {
         return coord.X >= 0
                && coord.Y >= 0
@@ -44,7 +47,7 @@ public partial class DungeonGrid
     /// <summary>
     /// Returns true if the coordinate is in bounds and the cell is walkable.
     /// </summary>
-    public bool IsWalkable(Vector2I coord)
+    public bool IsWalkable(GridPos coord)
     {
         if (!IsInBounds(coord))
             return false;
@@ -62,25 +65,11 @@ public partial class DungeonGrid
     {
         foreach (var cell in IntermediateCells(from, to))
         {
-            if (!IsWalkable(new Vector2I(cell.X, cell.Y)))
+            if (!IsWalkable(cell))
                 return false;
         }
 
         return true;
-    }
-
-    /// <summary>
-    /// True if moving <paramref name="dir"/> from <paramref name="from"/> is a diagonal step
-    /// that cuts a wall corner. A diagonal is only traversable when both orthogonally-adjacent
-    /// cells are walkable. Cardinal directions are never corner cuts.
-    /// </summary>
-    public bool IsDiagonalCornerCut(Vector2I from, Vector2I dir)
-    {
-        if (dir.X == 0 || dir.Y == 0)
-            return false;
-
-        return !IsWalkable(from + new Vector2I(dir.X, 0))
-            || !IsWalkable(from + new Vector2I(0, dir.Y));
     }
 
     /// <summary>
@@ -89,39 +78,12 @@ public partial class DungeonGrid
     /// Reused by both pathfinding and movement (<c>GridMover</c>).
     /// </summary>
     public bool CanStep(GridPos from, Direction d)
-    {
-        var target = from.Step(d);
-        return IsWalkable(new Vector2I(target.X, target.Y))
-            && !IsDiagonalCornerCut(new Vector2I(from.X, from.Y), new Vector2I(d.Dx, d.Dy));
-    }
-
-    /// <summary>
-    /// Converts a grid coordinate to the world-space center of that tile.
-    /// </summary>
-    public Vector2 GridToWorld(Vector2I coord)
-    {
-        var halfTile = TileSize / 2f;
-        return new Vector2(
-            coord.X * TileSize + halfTile,
-            coord.Y * TileSize + halfTile
-        );
-    }
-
-    /// <summary>
-    /// Converts a world-space position to the corresponding grid coordinate.
-    /// </summary>
-    public Vector2I WorldToGrid(Vector2 worldPos)
-    {
-        return new Vector2I(
-            (int)(worldPos.X / TileSize),
-            (int)(worldPos.Y / TileSize)
-        );
-    }
+        => IsWalkable(from.Step(d)) && !IsDiagonalCornerCut(from, d);
 
     /// <summary>
     /// Sets the cell type at the given coordinate.
     /// </summary>
-    public void SetCell(Vector2I coord, CellType type)
+    public void SetCell(GridPos coord, CellType type)
     {
         if (!IsInBounds(coord))
             return;
@@ -133,12 +95,35 @@ public partial class DungeonGrid
     /// Gets the cell type at the given coordinate.
     /// Returns Wall for out-of-bounds coordinates.
     /// </summary>
-    public CellType GetCell(Vector2I coord)
+    public CellType GetCell(GridPos coord)
     {
         if (!IsInBounds(coord))
             return CellType.Wall;
 
         return _cells[coord.X, coord.Y];
+    }
+
+    // TRANSITIONAL (DDD 2.3c): Vector2I edge for callers not yet on GridPos → removed in 2.4.
+    public bool IsInBounds(Vector2I coord) => IsInBounds(new GridPos(coord.X, coord.Y));
+
+    public bool IsWalkable(Vector2I coord) => IsWalkable(new GridPos(coord.X, coord.Y));
+
+    public void SetCell(Vector2I coord, CellType type) => SetCell(new GridPos(coord.X, coord.Y), type);
+
+    public CellType GetCell(Vector2I coord) => GetCell(new GridPos(coord.X, coord.Y));
+
+    /// <summary>
+    /// True if stepping <paramref name="d"/> from <paramref name="from"/> is a diagonal that cuts a
+    /// wall corner. A diagonal is only traversable when both orthogonally-adjacent cells are
+    /// walkable. Cardinal directions are never corner cuts.
+    /// </summary>
+    private bool IsDiagonalCornerCut(GridPos from, Direction d)
+    {
+        if (d.Dx == 0 || d.Dy == 0)
+            return false;
+
+        return !IsWalkable(from.Step(Direction.FromDelta(d.Dx, 0)))
+            || !IsWalkable(from.Step(Direction.FromDelta(0, d.Dy)));
     }
 
     /// <summary>

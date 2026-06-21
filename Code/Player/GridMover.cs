@@ -2,6 +2,7 @@ using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Entities;
+using RogueLike.Code.View;
 
 namespace RogueLike.Code.Player;
 
@@ -24,7 +25,7 @@ public class GridMover
     /// <summary>
     /// Current position in world-space pixels (center of tile).
     /// </summary>
-    public Vector2 WorldPosition => _grid.GridToWorld(_gridPosition);
+    public Vector2 WorldPosition => _gridPosition.ToGridPos().ToWorldCenter(_grid.TileSize);
 
     /// <summary>
     /// Access to the underlying grid for wall/corner checks.

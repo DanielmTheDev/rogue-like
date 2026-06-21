@@ -1,6 +1,7 @@
 using Godot;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Grid;
+using RogueLike.Code.View;
 
 namespace RogueLike.Code.Enemies;
 /// <summary>
@@ -33,7 +34,7 @@ public partial class EnemyController : ActorController
 
     private void SyncPosition(DungeonGrid grid, Grid.FOV.FovMap fovMap)
     {
-        Position = grid.GridToWorld(GridPosition);
+        Position = GridPosition.ToGridPos().ToWorldCenter(grid.TileSize);
 
         if (fovMap != null)
         {

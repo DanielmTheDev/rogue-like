@@ -6,6 +6,7 @@ using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Player;
 using RogueLike.Code.Items;
 using RogueLike.Code.Resources;
+using RogueLike.Code.View;
 using RogueLike.Code.World;
 
 namespace RogueLike.Code.Entities;
@@ -135,7 +136,7 @@ public static class Spawner
         var position = new Vector2I(room.Position.X + room.Size.X / 2, room.Position.Y + room.Size.Y / 2);
 
         stairs.Initialize(position);
-        stairs.Position = grid.GridToWorld(position);
+        stairs.Position = position.ToGridPos().ToWorldCenter(grid.TileSize);
 
         parent.AddChild(stairs);
         entityManager.RegisterNode(stairs, position);

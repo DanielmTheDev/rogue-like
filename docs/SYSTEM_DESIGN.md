@@ -41,7 +41,7 @@
 The codebase is migrating toward a **rich domain model** under full DDD. Target layering (hard physical split):
 
 - `Code/Domain/` — pure C#, **never `using Godot;`**. Value Objects, aggregate roots, world/turn logic, domain events.
-- `Code/View/` — Godot nodes only. Render + input, no game rules. A single `GodotConv` bridge converts `Vector2I`↔`GridPos`/`Direction`.
+- `Code/View/` — Godot nodes only. Render + input, no game rules. The `GridConversions` extension class is the single bridge: `Vector2I`↔`GridPos` plus pixel↔grid (`ToWorldCenter`/`ToGridPos(world, tileSize)`). Extension methods so conversions read off the value (`coord.ToGridPos()`); domain stays Godot-free.
 
 **Domain is organized as vertical slices, not by technical kind.** Each slice owns its types: `Domain/Combat/` (Damage, Health, attack/kill), `Domain/Actors/`, `Domain/Items/`, `Domain/Progression/`, `Domain/World/` (Dungeon — which owns the line-of-sight **and** pathfinding queries over its own cells — and FOV). Pathfinding is **not** a separate type: it folds onto the Dungeon (see "Where spatial logic lives"). `Domain/Common/` is the **thin shared kernel** — ONLY cross-cutting VOs used by many slices (`GridPos`, `Direction`). A type goes in `Common/` only if multiple slices need it; otherwise it lives in its owning slice.
 
@@ -64,7 +64,7 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 | System | Status | Notes |
 |--------|--------|-------|
 | HealthController | 🟡 rich-mutable | clamp/invariants present; to become `Health` VO + events on `Actor` |
-| DungeonGrid | 🟢 rich | ✅ (2.3a) owns `HasClearLine`; ✅ (2.3b) owns pathfinding — `FindPath`/`CanStep`/`WalkableNeighbors` + hidden `PathSearch`, folded in from the deleted `Pathfinder` class (grid owns the walls). Rest still `Vector2I`; pixel math → `GodotConv`, `Vector2I`→`GridPos` pending (2.3c) |
+| DungeonGrid | 🟢 rich | ✅ (2.3a) owns `HasClearLine`; ✅ (2.3b) owns pathfinding — `FindPath`/`CanStep`/`WalkableNeighbors` + hidden `PathSearch`. ✅ (2.3c) cell API (`IsInBounds`/`IsWalkable`/`GetCell`/`SetCell`) + interior now `GridPos`-native; `IsDiagonalCornerCut` private (`GridPos`/`Direction`); pixel↔grid math **removed** from the grid → lives on the view side as `GridConversions` extensions. Thin `Vector2I` cell overloads kept `// TRANSITIONAL (2.3c)` for un-migrated callers; `Size` stays `Vector2I` (dimension, not a position). Full `Vector2I`→`GridPos` caller flip pending 2.4 |
 | GridMover | 🟢 rich | ✅ (2.3b) now validates via `DungeonGrid.CanStep` (deduped the walkable+corner-cut pair); to be absorbed into `Actor.TryMove` |
 | Inventory | 🟢 rich | keep |
 | ExperienceSystem | 🟢 rich | → `ExperienceTrack`, `int`→`XpAmount` |
