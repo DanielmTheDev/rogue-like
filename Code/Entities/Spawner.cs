@@ -26,7 +26,7 @@ public static class Spawner
         FovMap fovMap)
     {
         var centerPos = new Vector2I(startRoom.Position.X + startRoom.Size.X / 2, startRoom.Position.Y + startRoom.Size.Y / 2);
-        player.PlaceOnLevel(grid, entityManager, fovMap, centerPos);
+        player.PlaceOnLevel(grid, entityManager, fovMap, centerPos.ToGridPos());
     }
 
     public static void SpawnEnemies(
@@ -84,7 +84,7 @@ public static class Spawner
         var enemy = scene.Instantiate<EnemyController>();
         enemy.Name = $"Goblin_{index}";
         parent.AddChild(enemy);
-        enemy.Initialize(grid, entityManager, pos);
+        enemy.Initialize(grid, entityManager, pos.ToGridPos());
     }
 
     public static void SpawnArcher(
@@ -94,7 +94,7 @@ public static class Spawner
         var archer = scene.Instantiate<ArcherController>();
         archer.Name = $"Archer_{index}";
         parent.AddChild(archer);
-        archer.Initialize(grid, entityManager, pos);
+        archer.Initialize(grid, entityManager, pos.ToGridPos());
     }
 
     public static void SpawnHealingPotion(
@@ -139,6 +139,6 @@ public static class Spawner
         stairs.Position = position.ToGridPos().ToWorldCenter(grid.TileSize);
 
         parent.AddChild(stairs);
-        entityManager.RegisterNode(stairs, position);
+        entityManager.RegisterNode(stairs, position.ToGridPos());
     }
 }

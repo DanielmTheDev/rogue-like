@@ -12,7 +12,8 @@ namespace RogueLike.Code.Grid;
 /// <remarks>
 /// This file holds the grid's data + topology queries (walkability, corner-cut, line-of-sight).
 /// All cell queries are <see cref="GridPos"/>-native; thin <c>Vector2I</c> overloads remain as a
-/// transitional edge for callers not yet migrated (removed in 2.4 with the <c>IActor</c> flip).
+/// transitional edge for the still-<c>Vector2I</c> callers (map generators + view renderers); they
+/// retire when those migrate. The actor/movement callers moved to <c>GridPos</c> in 2.4.
 /// Pixel↔grid conversion is no longer the grid's concern — it lives on the view side as
 /// <c>GridConversions</c> extensions. The <c>partial</c> keyword lets the pathfinding slice
 /// (<c>FindPath</c> + the hidden A* engine) live in <c>DungeonGrid.Pathfinding.cs</c>.
@@ -103,7 +104,8 @@ public partial class DungeonGrid
         return _cells[coord.X, coord.Y];
     }
 
-    // TRANSITIONAL (DDD 2.3c): Vector2I edge for callers not yet on GridPos → removed in 2.4.
+    // TRANSITIONAL (DDD 2.3c): Vector2I edge for the still-Vector2I callers (map generators +
+    // view renderers); retires when those migrate. Actor/movement callers moved to GridPos in 2.4.
     public bool IsInBounds(Vector2I coord) => IsInBounds(new GridPos(coord.X, coord.Y));
 
     public bool IsWalkable(Vector2I coord) => IsWalkable(new GridPos(coord.X, coord.Y));

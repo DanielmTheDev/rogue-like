@@ -1,12 +1,10 @@
 using System.Linq;
-using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Player;
-using RogueLike.Code.View;
 
 namespace RogueLike.Code.Enemies;
 
@@ -28,9 +26,9 @@ public class ArcherAI
     private readonly GridMover _mover;
     private readonly int _range;
 
-    public Vector2I GridPosition => _mover.GridPosition;
+    public GridPos GridPosition => _mover.GridPosition;
 
-    public ArcherAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Vector2I startPos, int range = 5)
+    public ArcherAI(IActor owner, DungeonGrid grid, EntityManager entityManager, GridPos startPos, int range = 5)
     {
         _owner = owner;
         _grid = grid;
@@ -53,12 +51,12 @@ public class ArcherAI
     }
 
     private static bool IsVisible(IActor player, FovMap fovMap)
-        => fovMap.GetVisibility(player.GridPosition.ToGridPos()) == VisibilityState.Visible;
+        => fovMap.GetVisibility(player.GridPosition) == VisibilityState.Visible;
 
     private bool CanShoot(IActor player)
     {
-        var ownerPos = new GridPos(_owner.GridPosition.X, _owner.GridPosition.Y);
-        var playerPos = new GridPos(player.GridPosition.X, player.GridPosition.Y);
+        var ownerPos = _owner.GridPosition;
+        var playerPos = player.GridPosition;
         return _grid.HasClearLine(ownerPos, playerPos) && ownerPos.ManhattanTo(playerPos) <= _range;
     }
 
@@ -73,7 +71,7 @@ public class ArcherAI
         var path = _grid.FindPath(_owner.GridPosition, player.GridPosition);
         if (path != null && path.Count > 0)
         {
-            var direction = path[0] - _owner.GridPosition;
+            var direction = _owner.GridPosition.DirectionTo(path[0]);
             _mover.TryMove(direction);
         }
     }

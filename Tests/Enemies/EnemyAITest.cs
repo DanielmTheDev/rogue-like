@@ -1,5 +1,4 @@
 using GdUnit4;
-using Godot;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Entities.Combat;
@@ -15,7 +14,7 @@ public class EnemyAITest
 {
     private class MockPlayer : IActor, ICombatant
     {
-        public Vector2I GridPosition { get; set; }
+        public GridPos GridPosition { get; set; }
         public bool IsPlayer => true;
         public string DisplayName => "Mock Player";
         public HealthController Health { get; set; }
@@ -26,7 +25,7 @@ public class EnemyAITest
 
     private class MockEnemy : IActor, ICombatant
     {
-        public Vector2I GridPosition { get; set; }
+        public GridPos GridPosition { get; set; }
         public bool IsPlayer => false;
         public string DisplayName => "Mock Enemy";
         public HealthController Health { get; set; }
@@ -42,10 +41,10 @@ public class EnemyAITest
         var entityManager = new EntityManager();
         var fovMap = new FovMap(5, 5);
 
-        var player = new MockPlayer { GridPosition = new Vector2I(4, 2) };
+        var player = new MockPlayer { GridPosition = new GridPos(4, 2) };
         entityManager.RegisterActor(player);
 
-        var enemyActor = new MockEnemy { GridPosition = new Vector2I(2, 2) };
+        var enemyActor = new MockEnemy { GridPosition = new GridPos(2, 2) };
         // The mock doesn't get automatically registered by an Initialize method, so do it here.
         entityManager.RegisterActor(enemyActor);
 
@@ -70,11 +69,11 @@ public class EnemyAITest
         var entityManager = new EntityManager();
         var fovMap = new FovMap(5, 5);
 
-        var player = new MockPlayer { GridPosition = new Vector2I(4, 2), Health = new HealthController(10) };
+        var player = new MockPlayer { GridPosition = new GridPos(4, 2), Health = new HealthController(10) };
         entityManager.RegisterActor(player);
 
         // Enemy adjacent to the player: its next path step is the player's (occupied) tile -> attack.
-        var enemyActor = new MockEnemy { GridPosition = new Vector2I(3, 2), Health = new HealthController(10) };
+        var enemyActor = new MockEnemy { GridPosition = new GridPos(3, 2), Health = new HealthController(10) };
         entityManager.RegisterActor(enemyActor);
 
         for (var x = 0; x < 5; x++)

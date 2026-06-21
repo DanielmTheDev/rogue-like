@@ -1,5 +1,6 @@
 using GdUnit4;
 using Godot;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Player;
 using RogueLike.Code.Items;
 using RogueLike.Code.Entities;
@@ -29,7 +30,7 @@ public class InventoryTest
 
     private class MockActor : IActor
     {
-        public Vector2I GridPosition { get; set; }
+        public GridPos GridPosition { get; set; }
         public bool IsPlayer { get; set; }
     }
 

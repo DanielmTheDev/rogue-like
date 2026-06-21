@@ -1,4 +1,5 @@
 using Godot;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Grid;
 using RogueLike.Code.View;
@@ -11,11 +12,11 @@ public partial class EnemyController : ActorController
 {
     private EnemyAI _ai;
 
-    public override Vector2I GridPosition => _ai?.GridPosition ?? Vector2I.Zero;
+    public override GridPos GridPosition => _ai?.GridPosition ?? GridPos.Origin;
     public override bool IsPlayer => false;
     public override int AttackDamage => BaseAttackDamage;
 
-    public void Initialize(DungeonGrid grid, EntityManager entityManager, Vector2I startPos)
+    public void Initialize(DungeonGrid grid, EntityManager entityManager, GridPos startPos)
     {
         InitializeBase(entityManager);
 
@@ -34,11 +35,11 @@ public partial class EnemyController : ActorController
 
     private void SyncPosition(DungeonGrid grid, Grid.FOV.FovMap fovMap)
     {
-        Position = GridPosition.ToGridPos().ToWorldCenter(grid.TileSize);
+        Position = GridPosition.ToWorldCenter(grid.TileSize);
 
         if (fovMap != null)
         {
-            var vis = fovMap.GetVisibility(GridPosition.ToGridPos());
+            var vis = fovMap.GetVisibility(GridPosition);
             Visible = vis == Grid.FOV.VisibilityState.Visible;
         }
     }

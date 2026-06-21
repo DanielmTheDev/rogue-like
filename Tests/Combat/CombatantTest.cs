@@ -1,5 +1,6 @@
 using GdUnit4;
 using Godot;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Entities.Combat;
 using static GdUnit4.Assertions;
 
@@ -69,7 +70,7 @@ public class CombatantTest
         public HealthController Health { get; private set; }
         public int AttackDamage { get; private set; }
         public int XpReward { get; set; } = 10; // Default XP for mocks
-        public Vector2I GridPosition { get; set; }
+        public GridPos GridPosition { get; set; }
         public bool IsPlayer { get; set; }
 
         public bool IsDead { get; private set; } = false;

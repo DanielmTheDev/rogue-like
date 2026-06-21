@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Godot;
 using RogueLike.Code.Domain.Common;
 
 namespace RogueLike.Code.Grid;
@@ -19,16 +18,6 @@ public partial class DungeonGrid
     /// in a hidden per-search object so its mutable state never lives on the grid.
     /// </summary>
     public List<GridPos> FindPath(GridPos from, GridPos to) => new PathSearch(this).Run(from, to);
-
-    /// <summary>
-    /// <c>Vector2I</c> edge for callers that have not yet moved to <see cref="GridPos"/>
-    /// (collapses with the rest of the grid's <c>Vector2I</c> surface in a later batch).
-    /// </summary>
-    public List<Vector2I> FindPath(Vector2I from, Vector2I to)
-    {
-        var path = FindPath(new GridPos(from.X, from.Y), new GridPos(to.X, to.Y));
-        return path?.Select(p => new Vector2I(p.X, p.Y)).ToList();
-    }
 
     /// <summary>The walkable 8-neighbours of <paramref name="p"/> (corner-cuts excluded).</summary>
     private IEnumerable<GridPos> WalkableNeighbors(GridPos p)

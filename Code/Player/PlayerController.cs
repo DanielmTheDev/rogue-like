@@ -1,4 +1,5 @@
 using Godot;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Entities;
@@ -30,7 +31,7 @@ public partial class PlayerController : ActorController
     private int _turnsSinceLastHeal = 0;
     private const int TurnsPerHeal = 5;
 
-    public override Vector2I GridPosition => _mover.GridPosition;
+    public override GridPos GridPosition => _mover.GridPosition;
     public override bool IsPlayer => true;
     public override int AttackDamage => BaseAttackDamage;
     public Inventory Inventory => _inventory;
@@ -47,7 +48,7 @@ public partial class PlayerController : ActorController
         Experience.OnLevelUp += HandleLevelUp;
     }
 
-    public void PlaceOnLevel(DungeonGrid gridMap, EntityManager entityManager, FovMap fovMap, Vector2I startPos)
+    public void PlaceOnLevel(DungeonGrid gridMap, EntityManager entityManager, FovMap fovMap, GridPos startPos)
     {
         InitializeBase(entityManager);
         _mover = new GridMover(this, gridMap, entityManager, startPos);
@@ -60,12 +61,12 @@ public partial class PlayerController : ActorController
     /// Attempts to move the player one tile in the given direction.
     /// Returns true if an action (move or combat) was successfully consumed.
     /// </summary>
-    public bool TryMove(Vector2I direction)
+    public bool TryMove(Direction direction)
     {
         if (_mover == null || _turnManager == null)
             return false;
 
-        var target = GridPosition + direction;
+        var target = GridPosition.Step(direction);
 
         // Check for stairs
         var nodeAtTarget = _entityManager.GetNodeAt(target);
@@ -94,8 +95,9 @@ public partial class PlayerController : ActorController
 
         SyncPosition();
 
-        // CHECK FOR ITEMS (auto-pickup)
-        _itemManager?.CheckForPickup(GridPosition, this, _inventory);
+        // CHECK FOR ITEMS (auto-pickup). Items are still Vector2I-typed (separate track) →
+        // convert at this actor↔item boundary.
+        _itemManager?.CheckForPickup(GridPosition.ToVector2I(), this, _inventory);
 
         return true;
     }
@@ -173,8 +175,11 @@ public partial class PlayerController : ActorController
 
     private void HandleMovementActions(InputEvent @event)
     {
-        var direction = InputMapper.GetDirection(@event);
-        if (direction == Vector2I.Zero) return;
+        var input = InputMapper.GetDirection(@event);
+        if (input == Vector2I.Zero) return;
+
+        // Convert the raw input vector to the domain Direction VO at the view edge.
+        var direction = Direction.FromDelta(input.X, input.Y);
 
         if (Input.IsKeyPressed(Key.Shift))
         {
@@ -242,15 +247,15 @@ public partial class PlayerController : ActorController
     /// - A wall is hit
     /// - The "path" changes (orthogonal walkability changes)
     /// </summary>
-    private void ShiftMove(Vector2I direction)
+    private void ShiftMove(Direction direction)
     {
         // Calculate orthogonal directions for path detection
-        var ortho1 = new Vector2I(-direction.Y, direction.X);
-        var ortho2 = new Vector2I(direction.Y, -direction.X);
+        var ortho1 = Direction.FromDelta(-direction.Dy, direction.Dx);
+        var ortho2 = Direction.FromDelta(direction.Dy, -direction.Dx);
 
         // Record initial walkability of side-tiles
-        var side1WasWalkable = _mover.Grid.IsWalkable(GridPosition + ortho1);
-        var side2WasWalkable = _mover.Grid.IsWalkable(GridPosition + ortho2);
+        var side1WasWalkable = _mover.Grid.IsWalkable(GridPosition.Step(ortho1));
+        var side2WasWalkable = _mover.Grid.IsWalkable(GridPosition.Step(ortho2));
 
         while (true)
         {
@@ -261,9 +266,9 @@ public partial class PlayerController : ActorController
         }
     }
 
-    private bool ShouldShiftMoveStop(Vector2I direction, Vector2I ortho1, Vector2I ortho2, bool side1WasWalkable, bool side2WasWalkable)
+    private bool ShouldShiftMoveStop(Direction direction, Direction ortho1, Direction ortho2, bool side1WasWalkable, bool side2WasWalkable)
     {
-        var nextPos = GridPosition + direction;
+        var nextPos = GridPosition.Step(direction);
 
         if (IsBlocked(nextPos)) return true;
 
@@ -287,7 +292,7 @@ public partial class PlayerController : ActorController
         return false;
     }
 
-    private bool IsBlocked(Vector2I position)
+    private bool IsBlocked(GridPos position)
     {
         if (_mover.Grid.GetCell(position) == CellType.Wall)
         {
@@ -303,10 +308,10 @@ public partial class PlayerController : ActorController
         return false;
     }
 
-    private bool HasPathChanged(Vector2I ortho1, Vector2I ortho2, bool side1WasWalkable, bool side2WasWalkable)
+    private bool HasPathChanged(Direction ortho1, Direction ortho2, bool side1WasWalkable, bool side2WasWalkable)
     {
-        var side1IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho1);
-        var side2IsWalkable = _mover.Grid.IsWalkable(GridPosition + ortho2);
+        var side1IsWalkable = _mover.Grid.IsWalkable(GridPosition.Step(ortho1));
+        var side2IsWalkable = _mover.Grid.IsWalkable(GridPosition.Step(ortho2));
         return side1IsWalkable != side1WasWalkable || side2IsWalkable != side2WasWalkable;
     }
 
@@ -317,7 +322,7 @@ public partial class PlayerController : ActorController
     {
         return _entityManager.AllActors
             .Where(actor => !actor.IsPlayer)
-            .Any(actor => _fovMap.GetVisibility(actor.GridPosition.ToGridPos()) == VisibilityState.Visible);
+            .Any(actor => _fovMap.GetVisibility(actor.GridPosition) == VisibilityState.Visible);
     }
 
     private void HandleLevelUp(int newLevel)

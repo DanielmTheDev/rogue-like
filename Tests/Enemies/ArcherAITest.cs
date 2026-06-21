@@ -5,7 +5,7 @@ using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Entities.Combat;
-using RogueLike.Code.View;
+using RogueLike.Code.Domain.Common;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Enemies;
@@ -15,7 +15,7 @@ public class ArcherAITest
 {
     private class MockPlayer : IActor, ICombatant
     {
-        public Vector2I GridPosition { get; set; }
+        public GridPos GridPosition { get; set; }
         public bool IsPlayer => true;
         public HealthController Health { get; set; }
         public int AttackDamage => 0;
@@ -26,7 +26,7 @@ public class ArcherAITest
 
     private class MockArcher : IActor, ICombatant
     {
-        public Vector2I GridPosition { get; set; }
+        public GridPos GridPosition { get; set; }
         public bool IsPlayer => false;
         public int AttackDamage => 1;
         public string DisplayName => "Mock Archer";
@@ -55,8 +55,8 @@ public class ArcherAITest
         var archer = new MockArcher();
 
         // Place player and archer with a wall between them
-        player.GridPosition = new Vector2I(1, 1);
-        archer.GridPosition = new Vector2I(1, 3);
+        player.GridPosition = new GridPos(1, 1);
+        archer.GridPosition = new GridPos(1, 3);
         _grid.SetCell(new Vector2I(1, 2), CellType.Wall);
 
         // Register actors with EntityManager
@@ -64,7 +64,7 @@ public class ArcherAITest
         _entityManager.RegisterActor(archer);
 
         // Even if the player is "visible" in the FOV map, the archer should not shoot.
-        _fovMap.SetVisibility(player.GridPosition.ToGridPos(), VisibilityState.Visible);
+        _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
 
         // Initialize health
         player.Health = new HealthController(10);
@@ -83,12 +83,12 @@ public class ArcherAITest
     [TestCase]
     public void TakeTurn_InRangeWithClearLos_Shoots()
     {
-        var player = new MockPlayer { GridPosition = new Vector2I(1, 1), Health = new HealthController(10) };
-        var archer = new MockArcher { GridPosition = new Vector2I(1, 3), Health = new HealthController(10) };
+        var player = new MockPlayer { GridPosition = new GridPos(1, 1), Health = new HealthController(10) };
+        var archer = new MockArcher { GridPosition = new GridPos(1, 3), Health = new HealthController(10) };
 
         _entityManager.RegisterActor(player);
         _entityManager.RegisterActor(archer);
-        _fovMap.SetVisibility(player.GridPosition.ToGridPos(), VisibilityState.Visible);
+        _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
 
         var ai = new ArcherAI(archer, _grid, _entityManager, archer.GridPosition);
 

@@ -1,4 +1,5 @@
 using Godot;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Entities.Combat;
 
 using RogueLike.Code.Services;
@@ -18,7 +19,7 @@ public abstract partial class ActorController : Node2D, ICombatant
     public HealthController Health { get; protected set; }
 
     // Abstract properties that specific actors must implement
-    public abstract Vector2I GridPosition { get; }
+    public abstract GridPos GridPosition { get; }
     public abstract bool IsPlayer { get; }
     public abstract int AttackDamage { get; }
 

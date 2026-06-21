@@ -1,10 +1,9 @@
 using System.Linq;
-using Godot;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
-using RogueLike.Code.View;
 
 namespace RogueLike.Code.Enemies;
 
@@ -25,9 +24,9 @@ public class EnemyAI
     /// <summary>
     /// Expose GridMover position to the node.
     /// </summary>
-    public Vector2I GridPosition => _mover.GridPosition;
+    public GridPos GridPosition => _mover.GridPosition;
 
-    public EnemyAI(IActor owner, DungeonGrid grid, EntityManager entityManager, Vector2I startPos)
+    public EnemyAI(IActor owner, DungeonGrid grid, EntityManager entityManager, GridPos startPos)
     {
         _owner = owner;
         _grid = grid;
@@ -45,7 +44,7 @@ public class EnemyAI
 
         // If player is not visible, do nothing for now.
         // Future AI could move towards last known position.
-        if (fovMap.GetVisibility(player.GridPosition.ToGridPos()) != Grid.FOV.VisibilityState.Visible)
+        if (fovMap.GetVisibility(player.GridPosition) != Grid.FOV.VisibilityState.Visible)
         {
             // TODO: Add random wandering later
             return;
@@ -56,9 +55,9 @@ public class EnemyAI
         if (path != null && path.Count > 0)
         {
             var nextStep = path[0];
-            var direction = nextStep - _owner.GridPosition;
+            var direction = _owner.GridPosition.DirectionTo(nextStep);
 
-            var target = _owner.GridPosition + direction;
+            var target = _owner.GridPosition.Step(direction);
             if (_entityManager.IsOccupied(target))
             {
                 var targetActor = _entityManager.GetActorAt(target);

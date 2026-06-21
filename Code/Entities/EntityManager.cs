@@ -1,15 +1,19 @@
 using System.Collections.Generic;
 using Godot;
+using RogueLike.Code.Domain.Common;
 
 namespace RogueLike.Code.Entities;
 
 /// <summary>
 /// Pure C# registry keeping track of all Actors occupying physical tiles on the grid.
 /// </summary>
+// Actor positions are the domain <see cref="GridPos"/>. The node map still stores Godot
+// <c>Node2D</c>s (view concern) keyed by the same <c>GridPos</c>; extracting that node registry
+// to the view side is a separate cleanup.
 public class EntityManager
 {
-    private readonly Dictionary<Vector2I, IActor> _actorsByPosition = [];
-    private readonly Dictionary<Vector2I, Node2D> _nodesByPosition = [];
+    private readonly Dictionary<GridPos, IActor> _actorsByPosition = [];
+    private readonly Dictionary<GridPos, Node2D> _nodesByPosition = [];
 
     // We also keep a flat list for Turn iteration (e.g., iterating all enemies).
     private readonly List<IActor> _allActors = [];
@@ -34,7 +38,7 @@ public class EntityManager
     /// <summary>
     /// Call this whenever an actor successfully moves.
     /// </summary>
-    public void UpdateActorPosition(IActor actor, Vector2I oldPosition, Vector2I newPosition)
+    public void UpdateActorPosition(IActor actor, GridPos oldPosition, GridPos newPosition)
     {
         if (_actorsByPosition.TryGetValue(oldPosition, out var currentActor) && currentActor == actor)
         {
@@ -44,22 +48,22 @@ public class EntityManager
         _actorsByPosition[newPosition] = actor;
     }
 
-    public void RegisterNode(Node2D node, Vector2I position)
+    public void RegisterNode(Node2D node, GridPos position)
     {
         _nodesByPosition[position] = node;
     }
 
-    public bool IsOccupied(Vector2I position)
+    public bool IsOccupied(GridPos position)
     {
         return _actorsByPosition.ContainsKey(position);
     }
 
-    public Node2D GetNodeAt(Vector2I position)
+    public Node2D GetNodeAt(GridPos position)
     {
         return _nodesByPosition.GetValueOrDefault(position);
     }
 
-    public IActor GetActorAt(Vector2I position)
+    public IActor GetActorAt(GridPos position)
     {
         return _actorsByPosition.GetValueOrDefault(position);
     }

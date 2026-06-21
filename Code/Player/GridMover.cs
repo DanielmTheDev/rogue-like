@@ -15,24 +15,24 @@ public class GridMover
     private readonly DungeonGrid _grid;
     private readonly EntityManager _entityManager;
     private readonly IActor _owner;
-    private Vector2I _gridPosition;
+    private GridPos _gridPosition;
 
     /// <summary>
     /// Current position in grid coordinates.
     /// </summary>
-    public Vector2I GridPosition => _gridPosition;
+    public GridPos GridPosition => _gridPosition;
 
     /// <summary>
     /// Current position in world-space pixels (center of tile).
     /// </summary>
-    public Vector2 WorldPosition => _gridPosition.ToGridPos().ToWorldCenter(_grid.TileSize);
+    public Vector2 WorldPosition => _gridPosition.ToWorldCenter(_grid.TileSize);
 
     /// <summary>
     /// Access to the underlying grid for wall/corner checks.
     /// </summary>
     public DungeonGrid Grid => _grid;
 
-    public GridMover(IActor owner, DungeonGrid grid, EntityManager entityManager, Vector2I startPos)
+    public GridMover(IActor owner, DungeonGrid grid, EntityManager entityManager, GridPos startPos)
     {
         _owner = owner;
         _grid = grid;
@@ -44,12 +44,12 @@ public class GridMover
     /// Attempts to move one tile in the given direction.
     /// Returns true if the move was successful, false if blocked.
     /// </summary>
-    public bool TryMove(Vector2I direction)
+    public bool TryMove(Direction direction)
     {
-        var target = _gridPosition + direction;
+        var target = _gridPosition.Step(direction);
 
         // Terrain traversability (walkable + no diagonal corner-cut) is the grid's rule.
-        if (!_grid.CanStep(new GridPos(_gridPosition.X, _gridPosition.Y), Direction.FromDelta(direction.X, direction.Y)))
+        if (!_grid.CanStep(_gridPosition, direction))
             return false;
 
         if (_entityManager.IsOccupied(target))

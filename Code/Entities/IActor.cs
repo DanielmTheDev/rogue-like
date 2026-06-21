@@ -1,4 +1,4 @@
-using Godot;
+using RogueLike.Code.Domain.Common;
 
 namespace RogueLike.Code.Entities;
 
@@ -7,7 +7,7 @@ namespace RogueLike.Code.Entities;
 /// </summary>
 public interface IActor
 {
-    Vector2I GridPosition { get; }
+    GridPos GridPosition { get; }
 
     /// <summary>
     /// Identifies if this actor is the primary player.
