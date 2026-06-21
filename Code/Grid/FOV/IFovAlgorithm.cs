@@ -1,4 +1,4 @@
-using Godot;
+using RogueLike.Code.Domain.Common;
 
 namespace RogueLike.Code.Grid.FOV;
 
@@ -12,5 +12,5 @@ public interface IFovAlgorithm
     /// Computes visibility from a starting position up to a certain radius,
     /// updating the provided FovMap.
     /// </summary>
-    void ComputeFov(FovMap fovMap, DungeonGrid grid, Vector2I origin, int radius);
+    void ComputeFov(FovMap fovMap, DungeonGrid grid, GridPos origin, int radius);
 }

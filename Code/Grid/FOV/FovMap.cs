@@ -1,4 +1,4 @@
-using Godot;
+using RogueLike.Code.Domain.Common;
 
 namespace RogueLike.Code.Grid.FOV;
 
@@ -21,7 +21,7 @@ public class FovMap
         // Defaults to Unexplored strictly due to C# default enum behavior = 0.
     }
 
-    public VisibilityState GetVisibility(Vector2I pos)
+    public VisibilityState GetVisibility(GridPos pos)
     {
         if (pos.X < 0 || pos.X >= Width || pos.Y < 0 || pos.Y >= Height)
             return VisibilityState.Unexplored;
@@ -29,7 +29,7 @@ public class FovMap
         return _states[pos.X, pos.Y];
     }
 
-    public void SetVisibility(Vector2I pos, VisibilityState state)
+    public void SetVisibility(GridPos pos, VisibilityState state)
     {
         if (pos.X >= 0 && pos.X < Width && pos.Y >= 0 && pos.Y < Height)
         {

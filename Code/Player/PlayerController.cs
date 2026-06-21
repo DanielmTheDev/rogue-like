@@ -7,6 +7,7 @@ using RogueLike.Code.TurnContext;
 using RogueLike.Code.Items;
 using RogueLike.Code.Services;
 using RogueLike.Code.Systems;
+using RogueLike.Code.View;
 using System.Linq;
 
 namespace RogueLike.Code.Player;
@@ -316,7 +317,7 @@ public partial class PlayerController : ActorController
     {
         return _entityManager.AllActors
             .Where(actor => !actor.IsPlayer)
-            .Any(actor => _fovMap.GetVisibility(actor.GridPosition) == VisibilityState.Visible);
+            .Any(actor => _fovMap.GetVisibility(actor.GridPosition.ToGridPos()) == VisibilityState.Visible);
     }
 
     private void HandleLevelUp(int newLevel)

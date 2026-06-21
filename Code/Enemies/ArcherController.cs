@@ -42,7 +42,7 @@ public partial class ArcherController : ActorController
 
         if (fovMap != null)
         {
-            var vis = fovMap.GetVisibility(GridPosition);
+            var vis = fovMap.GetVisibility(GridPosition.ToGridPos());
             Visible = vis == Grid.FOV.VisibilityState.Visible;
         }
     }

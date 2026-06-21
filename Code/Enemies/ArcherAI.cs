@@ -6,6 +6,7 @@ using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Player;
+using RogueLike.Code.View;
 
 namespace RogueLike.Code.Enemies;
 
@@ -52,7 +53,7 @@ public class ArcherAI
     }
 
     private static bool IsVisible(IActor player, FovMap fovMap)
-        => fovMap.GetVisibility(player.GridPosition) == VisibilityState.Visible;
+        => fovMap.GetVisibility(player.GridPosition.ToGridPos()) == VisibilityState.Visible;
 
     private bool CanShoot(IActor player)
     {

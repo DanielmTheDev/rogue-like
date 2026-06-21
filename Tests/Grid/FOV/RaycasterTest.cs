@@ -1,5 +1,5 @@
 using GdUnit4;
-using Godot;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using static GdUnit4.Assertions;
@@ -17,14 +17,14 @@ public class RaycasterTest
         var raycaster = new Raycaster();
 
         // compute first time
-        raycaster.ComputeFov(fov, grid, new Vector2I(5, 5), 3);
-        AssertInt((int)fov.GetVisibility(new Vector2I(5, 6))).IsEqual((int)VisibilityState.Visible);
+        raycaster.ComputeFov(fov, grid, new GridPos(5, 5), 3);
+        AssertInt((int)fov.GetVisibility(new GridPos(5, 6))).IsEqual((int)VisibilityState.Visible);
 
         // move away
-        raycaster.ComputeFov(fov, grid, new Vector2I(1, 1), 1);
+        raycaster.ComputeFov(fov, grid, new GridPos(1, 1), 1);
 
         // previous tiles should now be Explored, not Visible
-        AssertInt((int)fov.GetVisibility(new Vector2I(5, 6))).IsEqual((int)VisibilityState.Explored);
+        AssertInt((int)fov.GetVisibility(new GridPos(5, 6))).IsEqual((int)VisibilityState.Explored);
     }
 
     [TestCase]
@@ -35,13 +35,13 @@ public class RaycasterTest
         var raycaster = new Raycaster();
 
         // Place wall right in front of origin
-        grid.SetCell(new Vector2I(5, 4), CellType.Wall);
+        grid.SetCell(new GridPos(5, 4), CellType.Wall);
 
-        raycaster.ComputeFov(fov, grid, new Vector2I(5, 5), 3);
+        raycaster.ComputeFov(fov, grid, new GridPos(5, 5), 3);
 
         // Wall itself is visible
-        AssertInt((int)fov.GetVisibility(new Vector2I(5, 4))).IsEqual((int)VisibilityState.Visible);
+        AssertInt((int)fov.GetVisibility(new GridPos(5, 4))).IsEqual((int)VisibilityState.Visible);
         // Tile behind wall is Unexplored
-        AssertInt((int)fov.GetVisibility(new Vector2I(5, 3))).IsEqual((int)VisibilityState.Unexplored);
+        AssertInt((int)fov.GetVisibility(new GridPos(5, 3))).IsEqual((int)VisibilityState.Unexplored);
     }
 }

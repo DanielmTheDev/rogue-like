@@ -68,7 +68,7 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 | GridMover | 🟢 rich | ✅ (2.3b) now validates via `DungeonGrid.CanStep` (deduped the walkable+corner-cut pair); to be absorbed into `Actor.TryMove` |
 | Inventory | 🟢 rich | keep |
 | ExperienceSystem | 🟢 rich | → `ExperienceTrack`, `int`→`XpAmount` |
-| FovMap / Raycaster | 🟢 rich | `Vector2I`→`GridPos` pending |
+| FovMap / Raycaster | 🟢 rich | ✅ (2.3d) `GridPos`-native + **Godot-free** (`IFovAlgorithm`/`FovMap`/`Raycaster` dropped `using Godot;`); view-side callers convert via `GridConversions.ToGridPos` at the edge. `grid.Size.X/Y` ints kept inline (Size stays `Vector2I`) |
 | TurnManager | 🟢 rich | → `TurnEngine`, absorb enemy-phase loop |
 | ~~LineOfSight~~ | 🟢 done | ✅ (2.3a) deleted; `HasClearLine` folded onto `DungeonGrid` as a GridPos query (grid owns the walls), `ManhattanDistance` dropped → `GridPos.ManhattanTo` |
 | ~~Pathfinder~~ | 🟢 done | ✅ (2.3b) class **deleted**; A* folded onto `DungeonGrid` (hidden `PathSearch`, `GridPos`-native) since pathfinding is a query over the grid's cells. All `new Pathfinder()` DI threading (Main→Spawner→Controllers→AI) removed; AIs call `grid.FindPath`. `WalkableNeighbors`+`CanStep` reuse the grid's walls directly (no `Vector2I` bridge). Public `FindPath` keeps a `Vector2I` edge until callers migrate (2.4) |

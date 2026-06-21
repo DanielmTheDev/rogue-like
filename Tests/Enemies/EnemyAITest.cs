@@ -1,6 +1,7 @@
 using GdUnit4;
 using Godot;
 using RogueLike.Code.Entities;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
@@ -51,7 +52,7 @@ public class EnemyAITest
         // Make the whole map visible for this test
         for (var x = 0; x < 5; x++)
             for (var y = 0; y < 5; y++)
-                fovMap.SetVisibility(new Vector2I(x, y), VisibilityState.Visible);
+                fovMap.SetVisibility(new GridPos(x, y), VisibilityState.Visible);
 
         var ai = new EnemyAI(enemyActor, grid, entityManager, enemyActor.GridPosition);
 
@@ -78,7 +79,7 @@ public class EnemyAITest
 
         for (var x = 0; x < 5; x++)
             for (var y = 0; y < 5; y++)
-                fovMap.SetVisibility(new Vector2I(x, y), VisibilityState.Visible);
+                fovMap.SetVisibility(new GridPos(x, y), VisibilityState.Visible);
 
         var ai = new EnemyAI(enemyActor, grid, entityManager, enemyActor.GridPosition);
 

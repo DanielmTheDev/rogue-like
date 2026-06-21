@@ -1,5 +1,5 @@
 using System;
-using Godot;
+using RogueLike.Code.Domain.Common;
 
 namespace RogueLike.Code.Grid.FOV;
 
@@ -8,7 +8,7 @@ namespace RogueLike.Code.Grid.FOV;
 /// </summary>
 public class Raycaster : IFovAlgorithm
 {
-    public void ComputeFov(FovMap fovMap, DungeonGrid grid, Vector2I origin, int radius)
+    public void ComputeFov(FovMap fovMap, DungeonGrid grid, GridPos origin, int radius)
     {
         fovMap.ResetVisible();
         fovMap.SetVisibility(origin, VisibilityState.Visible);
@@ -16,17 +16,17 @@ public class Raycaster : IFovAlgorithm
         // Raycast across the perimeter of a square bound
         for (var x = -radius; x <= radius; x++)
         {
-            CastRay(fovMap, grid, origin, new Vector2I(origin.X + x, origin.Y - radius), radius);
-            CastRay(fovMap, grid, origin, new Vector2I(origin.X + x, origin.Y + radius), radius);
+            CastRay(fovMap, grid, origin, new GridPos(origin.X + x, origin.Y - radius), radius);
+            CastRay(fovMap, grid, origin, new GridPos(origin.X + x, origin.Y + radius), radius);
         }
         for (var y = -radius + 1; y < radius; y++)
         {
-            CastRay(fovMap, grid, origin, new Vector2I(origin.X - radius, origin.Y + y), radius);
-            CastRay(fovMap, grid, origin, new Vector2I(origin.X + radius, origin.Y + y), radius);
+            CastRay(fovMap, grid, origin, new GridPos(origin.X - radius, origin.Y + y), radius);
+            CastRay(fovMap, grid, origin, new GridPos(origin.X + radius, origin.Y + y), radius);
         }
     }
 
-    private void CastRay(FovMap fovMap, DungeonGrid grid, Vector2I origin, Vector2I target, int radiusRadius)
+    private void CastRay(FovMap fovMap, DungeonGrid grid, GridPos origin, GridPos target, int radiusRadius)
     {
         var dx = Math.Abs(target.X - origin.X);
         var dy = Math.Abs(target.Y - origin.Y);
@@ -48,7 +48,7 @@ public class Raycaster : IFovAlgorithm
             if (distSq > radiusRadius * radiusRadius)
                 break;
 
-            var pos = new Vector2I(cx, cy);
+            var pos = new GridPos(cx, cy);
             fovMap.SetVisibility(pos, VisibilityState.Visible);
 
             // Stop if this tile blocks vision (it's a wall)

@@ -7,6 +7,7 @@ using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Items;
 using RogueLike.Code.Resources;
 using RogueLike.Code.Services;
+using RogueLike.Code.View;
 using System.Linq;
 
 namespace RogueLike.Code;
@@ -95,7 +96,7 @@ public partial class Main : Node2D
     private void UpdateFov()
     {
         var player = GetNode<PlayerController>("Player");
-        _fovAlgorithm.ComputeFov(_fovMap, _gridMap, player.GridPosition, 6); // Radius 6
+        _fovAlgorithm.ComputeFov(_fovMap, _gridMap, player.GridPosition.ToGridPos(), 6); // Radius 6
         _fovTileMap.Render(_fovMap);
         _minimap?.Refresh();
 
@@ -105,7 +106,7 @@ public partial class Main : Node2D
         {
             if (actor is ActorController actorNode && !actor.IsPlayer)
             {
-                var vis = _fovMap.GetVisibility(actor.GridPosition);
+                var vis = _fovMap.GetVisibility(actor.GridPosition.ToGridPos());
                 actorNode.Visible = vis == VisibilityState.Visible;
             }
         }

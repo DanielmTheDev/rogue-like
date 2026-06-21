@@ -38,7 +38,7 @@ public partial class EnemyController : ActorController
 
         if (fovMap != null)
         {
-            var vis = fovMap.GetVisibility(GridPosition);
+            var vis = fovMap.GetVisibility(GridPosition.ToGridPos());
             Visible = vis == Grid.FOV.VisibilityState.Visible;
         }
     }

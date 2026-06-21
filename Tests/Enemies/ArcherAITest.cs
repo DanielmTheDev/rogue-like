@@ -5,6 +5,7 @@ using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Entities.Combat;
+using RogueLike.Code.View;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Enemies;
@@ -63,7 +64,7 @@ public class ArcherAITest
         _entityManager.RegisterActor(archer);
 
         // Even if the player is "visible" in the FOV map, the archer should not shoot.
-        _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
+        _fovMap.SetVisibility(player.GridPosition.ToGridPos(), VisibilityState.Visible);
 
         // Initialize health
         player.Health = new HealthController(10);
@@ -87,7 +88,7 @@ public class ArcherAITest
 
         _entityManager.RegisterActor(player);
         _entityManager.RegisterActor(archer);
-        _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
+        _fovMap.SetVisibility(player.GridPosition.ToGridPos(), VisibilityState.Visible);
 
         var ai = new ArcherAI(archer, _grid, _entityManager, archer.GridPosition);
 

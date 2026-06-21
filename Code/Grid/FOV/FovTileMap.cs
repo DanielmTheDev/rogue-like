@@ -1,4 +1,5 @@
 using Godot;
+using RogueLike.Code.Domain.Common;
 
 namespace RogueLike.Code.Grid.FOV;
 
@@ -38,7 +39,7 @@ public partial class FovTileMap : TileMapLayer
         {
             for (var y = 0; y < map.Height; y++)
             {
-                var state = map.GetVisibility(new Vector2I(x, y));
+                var state = map.GetVisibility(new GridPos(x, y));
                 if (state == VisibilityState.Unexplored)
                 {
                     SetCell(new Vector2I(x, y), SourceUnexplored, new Vector2I(0, 0));

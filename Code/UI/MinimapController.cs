@@ -2,6 +2,7 @@ using Godot;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Grid.FOV;
 using RogueLike.Code.Player;
+using RogueLike.Code.View;
 
 namespace RogueLike.Code.UI;
 
@@ -30,7 +31,7 @@ public partial class MinimapController : Control
             for (var y = 0; y < _grid.Size.Y; y++)
             {
                 var coord = new Vector2I(x, y);
-                var vis = _fov.GetVisibility(coord);
+                var vis = _fov.GetVisibility(coord.ToGridPos());
                 if (vis == VisibilityState.Unexplored) continue;
                 var isWall = _grid.GetCell(coord) == CellType.Wall;
                 var color = vis == VisibilityState.Visible

@@ -4,6 +4,7 @@ using RogueLike.Code.Entities;
 using RogueLike.Code.Entities.Combat;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
+using RogueLike.Code.View;
 
 namespace RogueLike.Code.Enemies;
 
@@ -44,7 +45,7 @@ public class EnemyAI
 
         // If player is not visible, do nothing for now.
         // Future AI could move towards last known position.
-        if (fovMap.GetVisibility(player.GridPosition) != Grid.FOV.VisibilityState.Visible)
+        if (fovMap.GetVisibility(player.GridPosition.ToGridPos()) != Grid.FOV.VisibilityState.Visible)
         {
             // TODO: Add random wandering later
             return;
