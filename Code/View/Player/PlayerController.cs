@@ -203,9 +203,9 @@ public partial class PlayerController : ActorController
         var maxTurns = 200; // Safety break
         var turnsWaited = 0;
 
-        while (Health.CurrentHp < Health.MaxHp && turnsWaited < maxTurns)
+        while (Health.Current < Health.Max && turnsWaited < maxTurns)
         {
-            var hpBefore = Health.CurrentHp;
+            var hpBefore = Health.Current;
 
             // Perform one wait turn
             ProcessTurnAction(logHeal: false);
@@ -214,7 +214,7 @@ public partial class PlayerController : ActorController
             // STOP CONDITIONS
 
             // 1. If we took damage, stop immediately
-            if (Health.CurrentHp < hpBefore)
+            if (Health.Current < hpBefore)
             {
                 GameLog.Instance.Log("[color=orange]You stop resting because you took damage![/color]");
                 break;
@@ -228,7 +228,7 @@ public partial class PlayerController : ActorController
             }
         }
 
-        if (Health.CurrentHp >= Health.MaxHp)
+        if (Health.Current >= Health.Max)
         {
             GameLog.Instance.Log("[color=green]You rest until fully healed.[/color]");
         }
@@ -327,7 +327,7 @@ public partial class PlayerController : ActorController
     {
         // Increase stats
         BaseAttackDamage++;
-        Health.IncreaseMaxHp(5); // Heal to full on level up as a bonus
+        IncreaseMaxHp(5); // Heal to full on level up as a bonus
 
         GameLog.Instance.Log($"[color=purple]You reached Level {newLevel}![/color]");
         GameLog.Instance.Log("[color=green]Your Max HP and Attack Damage increase![/color]");
@@ -338,9 +338,9 @@ public partial class PlayerController : ActorController
         _turnsSinceLastHeal++;
         if (_turnsSinceLastHeal >= TurnsPerHeal)
         {
-            Health.Heal(1);
+            Heal(1);
             _turnsSinceLastHeal = 0;
-            if (logHeal && Health.CurrentHp < Health.MaxHp)
+            if (logHeal && Health.Current < Health.Max)
             {
                 GameLog.Instance.Log("[color=gray]You feel a little better.[/color]");
             }
@@ -360,20 +360,11 @@ public partial class PlayerController : ActorController
         BaseAttackDamage = defaultPlayer.BaseAttackDamage;
         BaseHealth = defaultPlayer.BaseHealth;
 
-        Health = new HealthController(BaseHealth);
-        Health.OnDied += Die;
+        InitializeHealth();
 
         // Reset systems
         Inventory.Clear();
         Experience = new ExperienceSystem();
         Experience.OnLevelUp += HandleLevelUp;
-
-        // Re-link health bar in case it was disconnected
-        if (HealthBar != null)
-        {
-            HealthBar.MaxValue = Health.MaxHp;
-            HealthBar.Value = Health.CurrentHp;
-            Health.OnHealthChanged += (current, max) => HealthBar.Value = current;
-        }
     }
 }

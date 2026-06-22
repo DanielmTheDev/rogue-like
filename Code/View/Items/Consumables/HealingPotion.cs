@@ -23,7 +23,7 @@ public partial class HealingPotion : ItemController
     {
         if (actor is ICombatant combatant)
         {
-            combatant.Health.Heal(HealAmount);
+            combatant.Heal(HealAmount);
             GameLog.Instance.Log($"[color=green]You drink the Healing Potion and recover {HealAmount} HP![/color]");
             return true;
         }

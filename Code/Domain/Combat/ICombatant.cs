@@ -9,7 +9,7 @@ namespace RogueLike.Code.Domain.Combat;
 public interface ICombatant : IActor
 {
     string DisplayName { get; }
-    HealthController Health { get; }
+    Health Health { get; }
     int AttackDamage { get; }
     int XpReward { get; }
 
@@ -17,6 +17,12 @@ public interface ICombatant : IActor
     /// Invoked when the entity dies, allowing the logic layer to instruct the engine to erase the node.
     /// </summary>
     void Die();
+
+    /// <summary>Apply <paramref name="damage"/> to this combatant's own health, raising its change/death events.</summary>
+    void ReceiveDamage(Damage damage);
+
+    /// <summary>Restore HP on this combatant (clamped to Max; the dead cannot be healed).</summary>
+    void Heal(int amount);
 
     /// <summary>
     /// This combatant attacks the defender: deals its damage, logs the action, and—if the
@@ -30,11 +36,9 @@ public interface ICombatant : IActor
     {
         if (defender == null) return false;
         var damage = new Damage(AttackDamage);
-        // TRANSITIONAL (DDD Phase 2.5): unwrap to int because HealthController.TakeDamage still
-        // takes int; becomes Health.Take(Damage) when Health is promoted to a value object.
-        defender.Health.TakeDamage(damage.Amount);
+        defender.ReceiveDamage(damage);
         GameLog.Instance.LogCombat(DisplayName, defender.DisplayName, damage.Amount);
-        if (defender.Health.CurrentHp <= 0) OnKilled(defender);
+        if (defender.Health.IsDead) OnKilled(defender);
         return true;
     }
 

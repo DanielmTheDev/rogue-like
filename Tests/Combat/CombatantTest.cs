@@ -17,8 +17,8 @@ public class CombatantTest
         var hit = attacker.TryAttack(defender);
 
         AssertBool(hit).IsTrue();
-        AssertInt(defender.Health.CurrentHp).IsEqual(7);
-        AssertInt(((MockCombatant)attacker).Health.CurrentHp).IsEqual(10); // attacker takes no damage
+        AssertInt(defender.Health.Current).IsEqual(7);
+        AssertInt(((MockCombatant)attacker).Health.Current).IsEqual(10); // attacker takes no damage
     }
 
     [TestCase]
@@ -37,7 +37,7 @@ public class CombatantTest
 
         attacker.TryAttack(defender);
 
-        AssertInt(defender.Health.CurrentHp).IsEqual(0);
+        AssertInt(defender.Health.Current).IsEqual(0);
         AssertBool(defender.IsDead).IsTrue();
     }
 
@@ -66,7 +66,7 @@ public class CombatantTest
     private class MockCombatant : ICombatant
     {
         public string DisplayName { get; set; } = "Mock";
-        public HealthController Health { get; private set; }
+        public Health Health { get; private set; }
         public int AttackDamage { get; private set; }
         public int XpReward { get; set; } = 10; // Default XP for mocks
         public GridPos GridPosition { get; set; }
@@ -79,10 +79,17 @@ public class CombatantTest
 
         public MockCombatant(int hp, int damage)
         {
-            Health = new HealthController(hp);
-            Health.OnDied += Die;
+            Health = new Health(hp, hp);
             AttackDamage = damage;
         }
+
+        public void ReceiveDamage(Damage damage)
+        {
+            Health = Health.TakeDamage(damage.Amount);
+            if (Health.IsDead) Die();
+        }
+
+        public void Heal(int amount) => Health = Health.Heal(amount);
 
         public void Die()
         {

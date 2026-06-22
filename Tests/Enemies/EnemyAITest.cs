@@ -17,10 +17,18 @@ public class EnemyAITest
         public GridPos GridPosition { get; set; }
         public bool IsPlayer => true;
         public string DisplayName => "Mock Player";
-        public HealthController Health { get; set; }
+        public Health Health { get; set; }
         public int AttackDamage => 0;
         public int XpReward => 0;
         public void Die() { }
+
+        public void ReceiveDamage(Damage damage)
+        {
+            Health = Health.TakeDamage(damage.Amount);
+            if (Health.IsDead) Die();
+        }
+
+        public void Heal(int amount) => Health = Health.Heal(amount);
     }
 
     private class MockEnemy : IActor, ICombatant
@@ -28,10 +36,18 @@ public class EnemyAITest
         public GridPos GridPosition { get; set; }
         public bool IsPlayer => false;
         public string DisplayName => "Mock Enemy";
-        public HealthController Health { get; set; }
+        public Health Health { get; set; }
         public int AttackDamage => 3;
         public int XpReward => 10;
         public void Die() { }
+
+        public void ReceiveDamage(Damage damage)
+        {
+            Health = Health.TakeDamage(damage.Amount);
+            if (Health.IsDead) Die();
+        }
+
+        public void Heal(int amount) => Health = Health.Heal(amount);
     }
 
     [TestCase]
@@ -69,11 +85,11 @@ public class EnemyAITest
         var entityManager = new EntityManager();
         var fovMap = new FovMap(5, 5);
 
-        var player = new MockPlayer { GridPosition = new GridPos(4, 2), Health = new HealthController(10) };
+        var player = new MockPlayer { GridPosition = new GridPos(4, 2), Health = new Health(10, 10) };
         entityManager.RegisterActor(player);
 
         // Enemy adjacent to the player: its next path step is the player's (occupied) tile -> attack.
-        var enemyActor = new MockEnemy { GridPosition = new GridPos(3, 2), Health = new HealthController(10) };
+        var enemyActor = new MockEnemy { GridPosition = new GridPos(3, 2), Health = new Health(10, 10) };
         entityManager.RegisterActor(enemyActor);
 
         for (var x = 0; x < 5; x++)
@@ -85,7 +101,7 @@ public class EnemyAITest
         ai.TakeTurn(fovMap);
 
         // The AI drove the enemy's own TryAttack verb: player took the enemy's damage, enemy did not move.
-        AssertInt(player.Health.CurrentHp).IsEqual(7);
+        AssertInt(player.Health.Current).IsEqual(7);
         AssertInt(ai.GridPosition.X).IsEqual(3);
         AssertInt(ai.GridPosition.Y).IsEqual(2);
     }

@@ -17,11 +17,19 @@ public class ArcherAITest
     {
         public GridPos GridPosition { get; set; }
         public bool IsPlayer => true;
-        public HealthController Health { get; set; }
+        public Health Health { get; set; }
         public int AttackDamage => 0;
         public string DisplayName => "Mock Player";
         public int XpReward => 0;
         public void Die() { }
+
+        public void ReceiveDamage(Damage damage)
+        {
+            Health = Health.TakeDamage(damage.Amount);
+            if (Health.IsDead) Die();
+        }
+
+        public void Heal(int amount) => Health = Health.Heal(amount);
     }
 
     private class MockArcher : IActor, ICombatant
@@ -30,9 +38,17 @@ public class ArcherAITest
         public bool IsPlayer => false;
         public int AttackDamage => 1;
         public string DisplayName => "Mock Archer";
-        public HealthController Health { get; set; }
+        public Health Health { get; set; }
         public int XpReward => 10;
         public void Die() { }
+
+        public void ReceiveDamage(Damage damage)
+        {
+            Health = Health.TakeDamage(damage.Amount);
+            if (Health.IsDead) Die();
+        }
+
+        public void Heal(int amount) => Health = Health.Heal(amount);
     }
 
     private DungeonGrid _grid;
@@ -67,8 +83,8 @@ public class ArcherAITest
         _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
 
         // Initialize health
-        player.Health = new HealthController(10);
-        archer.Health = new HealthController(10);
+        player.Health = new Health(10, 10);
+        archer.Health = new Health(10, 10);
 
         // The player should NOT have taken damage because there is a wall in the way.
         var ai = new ArcherAI(archer, _grid, _entityManager, archer.GridPosition);
@@ -77,14 +93,14 @@ public class ArcherAITest
         ai.TakeTurn(_fovMap);
 
         // Assert
-        AssertThat(player.Health.CurrentHp).IsEqual(10);
+        AssertThat(player.Health.Current).IsEqual(10);
     }
 
     [TestCase]
     public void TakeTurn_InRangeWithClearLos_Shoots()
     {
-        var player = new MockPlayer { GridPosition = new GridPos(1, 1), Health = new HealthController(10) };
-        var archer = new MockArcher { GridPosition = new GridPos(1, 3), Health = new HealthController(10) };
+        var player = new MockPlayer { GridPosition = new GridPos(1, 1), Health = new Health(10, 10) };
+        var archer = new MockArcher { GridPosition = new GridPos(1, 3), Health = new Health(10, 10) };
 
         _entityManager.RegisterActor(player);
         _entityManager.RegisterActor(archer);
@@ -95,6 +111,6 @@ public class ArcherAITest
         // Distance 2, no wall, within range -> the AI drives the archer's TryAttack verb.
         ai.TakeTurn(_fovMap);
 
-        AssertThat(player.Health.CurrentHp).IsEqual(9); // archer AttackDamage == 1
+        AssertThat(player.Health.Current).IsEqual(9); // archer AttackDamage == 1
     }
 }

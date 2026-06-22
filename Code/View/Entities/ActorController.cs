@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Common;
@@ -9,7 +10,8 @@ namespace RogueLike.Code.View.Entities;
 
 /// <summary>
 /// Base class for all Grid Actors that can engage in combat.
-/// Centralizes Health and grid registration logic.
+/// Owns the actor's <see cref="Health"/> value object and grid registration logic; combat verbs
+/// (<see cref="ReceiveDamage"/>/<see cref="Heal"/>) mutate the owned health and raise its events.
 /// </summary>
 public abstract partial class ActorController : Node2D, ICombatant
 {
@@ -17,7 +19,10 @@ public abstract partial class ActorController : Node2D, ICombatant
 
     public string DisplayName => Name.ToString();
 
-    public HealthController Health { get; protected set; }
+    public Health Health { get; private set; }
+
+    /// <summary>Domain event for decoupled UI: fired on every health change with (current, max).</summary>
+    public event Action<int, int> OnHealthChanged;
 
     // Abstract properties that specific actors must implement
     public abstract GridPos GridPosition { get; }
@@ -35,16 +40,31 @@ public abstract partial class ActorController : Node2D, ICombatant
     public virtual void InitializeBase(EntityManager entityManager)
     {
         _entityManager = entityManager;
-        Health = new HealthController(BaseHealth);
-        Health.OnDied += Die;
+        InitializeHealth();
+    }
 
-        // Link to Godot inspector node if exists
-        if (HealthBar != null)
-        {
-            HealthBar.MaxValue = Health.MaxHp;
-            HealthBar.Value = Health.CurrentHp;
-            Health.OnHealthChanged += (current, max) => HealthBar.Value = current;
-        }
+    public void ReceiveDamage(Damage damage)
+    {
+        if (Health.IsDead) return;
+        Health = Health.TakeDamage(damage.Amount);
+        OnHealthChanged?.Invoke(Health.Current, Health.Max);
+        SyncHealthBar();
+        if (Health.IsDead) Die();
+    }
+
+    public void Heal(int amount)
+    {
+        if (Health.IsDead) return;
+        Health = Health.Heal(amount);
+        OnHealthChanged?.Invoke(Health.Current, Health.Max);
+        SyncHealthBar();
+    }
+
+    public void IncreaseMaxHp(int amount)
+    {
+        Health = Health.WithIncreasedMax(amount);
+        OnHealthChanged?.Invoke(Health.Current, Health.Max);
+        SyncHealthBar();
     }
 
     public virtual void Die()
@@ -52,5 +72,19 @@ public abstract partial class ActorController : Node2D, ICombatant
         GameLog.Instance.LogDeath(DisplayName);
         _entityManager?.UnregisterActor(this);
         QueueFree();
+    }
+
+    /// <summary>(Re)sets health to full from <see cref="BaseHealth"/> and syncs the bar. Used on spawn and reset.</summary>
+    protected void InitializeHealth()
+    {
+        Health = new Health(BaseHealth, BaseHealth);
+        SyncHealthBar();
+    }
+
+    private void SyncHealthBar()
+    {
+        if (HealthBar == null) return;
+        HealthBar.MaxValue = Health.Max;
+        HealthBar.Value = Health.Current;
     }
 }

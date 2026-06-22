@@ -5,7 +5,7 @@
 - **Map Generators:** Procedural generation MUST NEVER reside in `DungeonGrid`. Complex mapping logic must be extracted into static or standalone builder classes (e.g., `BspDungeonGenerator`) that operate on a pure `DungeonGrid`.
 - **DungeonGrid:** Pure C# data structure. Maps grid indices to Walkability and tracks out-of-bounds. Default constructor yields a blank featureless floor.
 - **EntityManager/IActor:** The core dynamic Entity registry. `GridMover` coordinates with `EntityManager` to ensure no two `IActor` instances overlap.
-- **Combat & HealthController:** Pure C# logic. `ICombatant` extends `IActor` to carry `HealthController`. Attack behavior lives on the combatant itself: `ICombatant.TryAttack(defender)` (default interface method) deals damage + logs, and invokes the `OnKilled(victim)` kill-reaction hook on death (the player overrides it to gain XP). The old static `CombatSystem` service has been removed (rich-domain migration); callers invoke `attacker.TryAttack(defender)` directly.
+- **Combat & Health:** Pure C# logic. `ICombatant` extends `IActor` to carry an immutable `Health` value object plus the combat verbs that mutate the owner's own health (`ReceiveDamage(Damage)`/`Heal(int)`). Attack behavior lives on the combatant itself: `ICombatant.TryAttack(defender)` (default interface method) calls `defender.ReceiveDamage`, logs, and invokes the `OnKilled(victim)` kill-reaction hook on death (the player overrides it to gain XP). The old static `CombatSystem` service has been removed (rich-domain migration); callers invoke `attacker.TryAttack(defender)` directly.
 - **GridMover:** Pure C# movement logic. Supports 8-directional movement. Validates each step via `DungeonGrid.CanStep` (the shared terrain rule), then adds its own occupancy check via `EntityManager`.
 - **DungeonGrid traversability:** The terrain rule lives on `DungeonGrid` as `CanStep(GridPos, Direction)` = walkable target **and** not a diagonal corner-cut (built on `IsWalkable` + `IsDiagonalCornerCut`). It is a query over grid topology, so the grid owns it. Reused by both `GridMover` (actual moves) and pathfinding (planned paths), so plans never include steps the mover would reject. Occupancy is **not** part of `CanStep` — that's the mover's concern (the grid knows walls, not actors).
 - **Where spatial logic lives (decided principle):** single-impl topology queries that read the grid's own cells fold **onto** `DungeonGrid` (line-of-sight, pathfinding) — the grid owns the walls, so the query lives with the data. Pluggable/swappable algorithms stay **separate injected interfaces** (FOV keeps `IFovAlgorithm`, selected in `Main`). This is the line that keeps the grid cohesive rather than a dumping ground.
@@ -16,7 +16,7 @@
 - **ArcherAI:** Pure C# decision tree for ranged enemies. Calls `DungeonGrid.HasClearLine` to check for clear shots and `GridPos.ManhattanTo` for range. Behavior: shoot if in LOS + range, chase if in LOS but out of range, idle otherwise.
 - **Line-of-sight:** A query on `DungeonGrid` (`HasClearLine(GridPos, GridPos)`) — the grid owns the walls, so the LOS query lives with that data. Traces with Bresenham over the grid's own cells; endpoints excluded from the wall check.
 - **EnemyController / ArcherController / PlayerController:** Godot `Node2D` classes extending `ActorController`. They delegate logic downward to `GridMover`/`EnemyAI`/`ArcherAI` and only handle visual synchronization and input.
-- **ActorController:** Abstract base class for all grid actors. Centralizes `HealthController`, `[Export]` variables (`BaseHealth`, `BaseAttackDamage`, `HealthBar`), and `Die()` logic.
+- **ActorController:** Abstract base class for all grid actors. Owns the `Health` VO field + `ReceiveDamage`/`Heal`/`IncreaseMaxHp` verbs + `OnHealthChanged` event, `[Export]` variables (`BaseHealth`, `BaseAttackDamage`, `HealthBar`), and `Die()` logic.
 - **Spawner:** Static utility handling entity instantiation and placement. Supports multiple enemy types (Goblins and Archers) and alternates them across BSP rooms.
 - **TurnManager:** Pure C# state machine. Enforces sequential game loop (Player Action -> Enemy Action -> Repeat).
 - **GameLog:** Pure C# service managing message history. Decoupled from UI via events.
@@ -53,11 +53,11 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 |----|-------|-----------|----------|
 | `GridPos(X,Y)` ✅ landed (2.2) | Common | none (bounds are the grid's job) | `Vector2I` for positions in the domain |
 | `Direction(Dx,Dy)` ✅ landed (2.2) | Common | Dx,Dy ∈ {-1,0,1} | raw `Vector2I` direction deltas |
-| `Health(Current,Max)` | Combat | Max>0, 0≤Current≤Max | mutable `HealthController` state |
+| `Health(Current,Max)` ✅ landed (2.5) | Combat | Max>0, 0≤Current≤Max | mutable `HealthController` state |
 | `Damage(Amount)` ✅ landed (2.1) | Combat | Amount≥0 | `int AttackDamage` |
 | `XpAmount(Value)` (optional) | Progression | Value≥0 | `int` XP |
 
-`Damage` lives at `Code/Domain/Combat/` (`RogueLike.Code.Domain.Combat`) and is constructed inside `ICombatant.TryAttack` (unwrapped to `int` for `HealthController` until the `Health` VO lands in 2.5).
+`Damage` lives at `Code/Domain/Combat/` (`RogueLike.Code.Domain.Combat`) and is constructed inside `ICombatant.TryAttack`, which calls `defender.ReceiveDamage(damage)` — the combatant applies it to its own `Health` VO (2.5; the old `int` unwrap to `HealthController` is gone).
 
 **Aggregate roots** (pure C#, own state + behavior, raise domain events, no public setters): `Actor` (→ `TryMove`, `Attack`, `TakeDamage`), `Player` / `Enemy` / `Archer` (own their turn/decision behavior), plus `Dungeon`, `ActorRegistry`, `Inventory`, `FloorItems`, `ExperienceTrack`, `TurnEngine`. Godot controllers become Views that observe domain events and render.
 
@@ -65,7 +65,7 @@ The codebase is migrating toward a **rich domain model** under full DDD. Target 
 
 | System | Status | Notes |
 |--------|--------|-------|
-| HealthController | 🟡 rich-mutable | clamp/invariants present; to become `Health` VO + events on `Actor` |
+| Health | 🟢 VO | ✅ (2.5) `HealthController` (mutable class) **deleted** → immutable `Health` value object (`readonly record struct`, validated ctor, ops return new). Health behavior + `OnHealthChanged` event now live on the entity: `ActorController` owns the `Health` field and exposes `ReceiveDamage(Damage)`/`Heal(int)`/`IncreaseMaxHp(int)`; `ICombatant.TryAttack` calls `defender.ReceiveDamage`. Moves onto the pure `Actor` aggregate in Phase 3 (controllers→Views). |
 | DungeonGrid | 🟢 rich | ✅ (2.3a) owns `HasClearLine`; ✅ (2.3b) owns pathfinding — `FindPath`/`CanStep`/`WalkableNeighbors` + hidden `PathSearch`. ✅ (2.3c) cell API (`IsInBounds`/`IsWalkable`/`GetCell`/`SetCell`) + interior now `GridPos`-native; `IsDiagonalCornerCut` private (`GridPos`/`Direction`); pixel↔grid math **removed** from the grid → lives on the view side as `GridConversions` extensions. ✅ (2.4) `FindPath` is `GridPos`-only (the `Vector2I` edge deleted); actor/movement callers flipped to `GridPos`. Thin `Vector2I` cell overloads (`IsInBounds`/`IsWalkable`/`GetCell`/`SetCell`) **remain** `// TRANSITIONAL` for the still-`Vector2I` callers (map generators + view renderers + their tests) — retire when those migrate; `Size` stays `Vector2I` (dimension, not a position) |
 | GridMover | 🟢 rich | ✅ (2.3b) validates via `DungeonGrid.CanStep`; ✅ (2.4) position is `GridPos` and `TryMove(Direction)` takes the `Direction` VO (`_gridPosition.Step(direction)`) — no `Vector2I` left. To be absorbed into `Actor.TryMove` |
 | Inventory | 🟢 rich | keep |
