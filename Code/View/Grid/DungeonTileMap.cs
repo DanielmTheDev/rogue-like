@@ -1,5 +1,6 @@
 using Godot;
-using RogueLike.Code.Grid;
+using RogueLike.Code.Domain.Grid;
+using RogueLike.Code.View;
 
 namespace RogueLike.Code.View.Grid;
 
@@ -24,12 +25,12 @@ public partial class DungeonTileMap : TileMapLayer
     {
         Clear();
 
-        for (var x = 0; x < gridMap.Size.X; x++)
+        for (var x = 0; x < gridMap.Width; x++)
         {
-            for (var y = 0; y < gridMap.Size.Y; y++)
+            for (var y = 0; y < gridMap.Height; y++)
             {
                 var coord = new Vector2I(x, y);
-                var cellType = gridMap.GetCell(coord);
+                var cellType = gridMap.GetCell(coord.ToGridPos());
 
                 if (cellType == CellType.Floor)
                 {

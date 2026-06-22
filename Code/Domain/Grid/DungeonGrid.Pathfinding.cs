@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RogueLike.Code.Domain.Common;
 
-namespace RogueLike.Code.Grid;
+namespace RogueLike.Code.Domain.Grid;
 
 /// <summary>
 /// Pathfinding slice of <see cref="DungeonGrid"/> — navigation is a query over the grid's own

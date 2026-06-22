@@ -1,6 +1,6 @@
 using System;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Grid;
+using RogueLike.Code.Domain.Grid;
 
 namespace RogueLike.Code.Domain.Grid.FOV;
 
@@ -41,7 +41,7 @@ public class Raycaster : IFovAlgorithm
         while (true)
         {
             // Stop if outside map bounds
-            if (cx < 0 || cy < 0 || cx >= grid.Size.X || cy >= grid.Size.Y)
+            if (cx < 0 || cy < 0 || cx >= grid.Width || cy >= grid.Height)
                 break;
 
             // Stop if we exceed the physical radius distance

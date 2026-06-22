@@ -1,6 +1,6 @@
 using GdUnit4;
-using Godot;
-using RogueLike.Code.Grid;
+using RogueLike.Code.Domain.Common;
+using RogueLike.Code.Domain.Grid;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Grid;
@@ -13,9 +13,9 @@ public class DungeonGridTest
     {
         var grid = new DungeonGrid(10, 8);
 
-        AssertBool(grid.IsInBounds(new Vector2I(0, 0))).IsTrue();
-        AssertBool(grid.IsInBounds(new Vector2I(5, 4))).IsTrue();
-        AssertBool(grid.IsInBounds(new Vector2I(9, 7))).IsTrue();
+        AssertBool(grid.IsInBounds(new GridPos(0, 0))).IsTrue();
+        AssertBool(grid.IsInBounds(new GridPos(5, 4))).IsTrue();
+        AssertBool(grid.IsInBounds(new GridPos(9, 7))).IsTrue();
     }
 
     [TestCase]
@@ -23,10 +23,10 @@ public class DungeonGridTest
     {
         var grid = new DungeonGrid(10, 8);
 
-        AssertBool(grid.IsInBounds(new Vector2I(-1, 0))).IsFalse();
-        AssertBool(grid.IsInBounds(new Vector2I(0, -1))).IsFalse();
-        AssertBool(grid.IsInBounds(new Vector2I(10, 0))).IsFalse();
-        AssertBool(grid.IsInBounds(new Vector2I(0, 8))).IsFalse();
+        AssertBool(grid.IsInBounds(new GridPos(-1, 0))).IsFalse();
+        AssertBool(grid.IsInBounds(new GridPos(0, -1))).IsFalse();
+        AssertBool(grid.IsInBounds(new GridPos(10, 0))).IsFalse();
+        AssertBool(grid.IsInBounds(new GridPos(0, 8))).IsFalse();
     }
 
     [TestCase]
@@ -35,16 +35,16 @@ public class DungeonGridTest
         var grid = new DungeonGrid(10, 8);
 
         // Default fill is Floor
-        AssertBool(grid.IsWalkable(new Vector2I(3, 3))).IsTrue();
+        AssertBool(grid.IsWalkable(new GridPos(3, 3))).IsTrue();
     }
 
     [TestCase]
     public void IsWalkable_WallCell_ReturnsFalse()
     {
         var grid = new DungeonGrid(10, 8);
-        grid.SetCell(new Vector2I(3, 3), CellType.Wall);
+        grid.SetCell(new GridPos(3, 3), CellType.Wall);
 
-        AssertBool(grid.IsWalkable(new Vector2I(3, 3))).IsFalse();
+        AssertBool(grid.IsWalkable(new GridPos(3, 3))).IsFalse();
     }
 
     [TestCase]
@@ -52,8 +52,8 @@ public class DungeonGridTest
     {
         var grid = new DungeonGrid(10, 8);
 
-        AssertBool(grid.IsWalkable(new Vector2I(-1, 0))).IsFalse();
-        AssertBool(grid.IsWalkable(new Vector2I(10, 0))).IsFalse();
+        AssertBool(grid.IsWalkable(new GridPos(-1, 0))).IsFalse();
+        AssertBool(grid.IsWalkable(new GridPos(10, 0))).IsFalse();
     }
 
     [TestCase]
@@ -61,7 +61,7 @@ public class DungeonGridTest
     {
         var grid = new DungeonGrid(10, 8);
 
-        AssertObject(grid.GetCell(new Vector2I(-1, 0)))
+        AssertObject(grid.GetCell(new GridPos(-1, 0)))
             .IsEqual(CellType.Wall);
     }
 
@@ -69,9 +69,9 @@ public class DungeonGridTest
     public void SetCell_ThenGetCell_ReturnsCorrectType()
     {
         var grid = new DungeonGrid(10, 8);
-        grid.SetCell(new Vector2I(2, 3), CellType.Wall);
+        grid.SetCell(new GridPos(2, 3), CellType.Wall);
 
-        AssertObject(grid.GetCell(new Vector2I(2, 3)))
+        AssertObject(grid.GetCell(new GridPos(2, 3)))
             .IsEqual(CellType.Wall);
     }
 }

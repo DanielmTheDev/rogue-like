@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Godot;
 using RogueLike.Code.Domain.Common;
 
-namespace RogueLike.Code.Grid;
+namespace RogueLike.Code.Domain.Grid;
 
 /// <summary>
 /// Pure data representation of the dungeon grid.
@@ -11,23 +10,24 @@ namespace RogueLike.Code.Grid;
 /// </summary>
 /// <remarks>
 /// This file holds the grid's data + topology queries (walkability, corner-cut, line-of-sight).
-/// All cell queries are <see cref="GridPos"/>-native; thin <c>Vector2I</c> overloads remain as a
-/// transitional edge for the still-<c>Vector2I</c> callers (map generators + view renderers); they
-/// retire when those migrate. The actor/movement callers moved to <c>GridPos</c> in 2.4.
-/// Pixel↔grid conversion is no longer the grid's concern — it lives on the view side as
+/// All cell queries are <see cref="GridPos"/>-native and the grid is Godot-free: dimensions are
+/// plain <c>Width</c>/<c>Height</c> ints (a size, not a position) and there are no <c>Vector2I</c>
+/// overloads. Pixel↔grid conversion is no longer the grid's concern — it lives on the view side as
 /// <c>GridConversions</c> extensions. The <c>partial</c> keyword lets the pathfinding slice
 /// (<c>FindPath</c> + the hidden A* engine) live in <c>DungeonGrid.Pathfinding.cs</c>.
 /// </remarks>
 public partial class DungeonGrid
 {
-    public Vector2I Size { get; }
+    public int Width { get; }
+    public int Height { get; }
     public int TileSize { get; }
 
     private readonly CellType[,] _cells;
 
     public DungeonGrid(int width, int height, int tileSize = 32)
     {
-        Size = new Vector2I(width, height);
+        Width = width;
+        Height = height;
         TileSize = tileSize;
         _cells = new CellType[width, height];
 
@@ -41,8 +41,8 @@ public partial class DungeonGrid
     {
         return coord.X >= 0
                && coord.Y >= 0
-               && coord.X < Size.X
-               && coord.Y < Size.Y;
+               && coord.X < Width
+               && coord.Y < Height;
     }
 
     /// <summary>
@@ -104,16 +104,6 @@ public partial class DungeonGrid
         return _cells[coord.X, coord.Y];
     }
 
-    // TRANSITIONAL (DDD 2.3c): Vector2I edge for the still-Vector2I callers (map generators +
-    // view renderers); retires when those migrate. Actor/movement callers moved to GridPos in 2.4.
-    public bool IsInBounds(Vector2I coord) => IsInBounds(new GridPos(coord.X, coord.Y));
-
-    public bool IsWalkable(Vector2I coord) => IsWalkable(new GridPos(coord.X, coord.Y));
-
-    public void SetCell(Vector2I coord, CellType type) => SetCell(new GridPos(coord.X, coord.Y), type);
-
-    public CellType GetCell(Vector2I coord) => GetCell(new GridPos(coord.X, coord.Y));
-
     /// <summary>
     /// True if stepping <paramref name="d"/> from <paramref name="from"/> is a diagonal that cuts a
     /// wall corner. A diagonal is only traversable when both orthogonally-adjacent cells are
@@ -158,9 +148,9 @@ public partial class DungeonGrid
 
     private void FillWith(CellType type)
     {
-        for (var x = 0; x < Size.X; x++)
+        for (var x = 0; x < Width; x++)
         {
-            for (var y = 0; y < Size.Y; y++)
+            for (var y = 0; y < Height; y++)
             {
                 _cells[x, y] = type;
             }

@@ -1,4 +1,4 @@
-namespace RogueLike.Code.Grid;
+namespace RogueLike.Code.Domain.Grid;
 
 /// <summary>
 /// Represents the type of a cell in the dungeon grid.

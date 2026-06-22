@@ -1,7 +1,7 @@
 using GdUnit4;
 using Godot;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Grid;
+using RogueLike.Code.Domain.Grid;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Grid;
@@ -27,7 +27,7 @@ public class LineOfSightTest
     public void HasClearLine_WhenWallBlocksRow_ReturnsFalse()
     {
         var grid = OpenGrid();
-        grid.SetCell(new Vector2I(4, 5), CellType.Wall);
+        grid.SetCell(new GridPos(4, 5), CellType.Wall);
 
         AssertBool(grid.HasClearLine(new GridPos(1, 5), new GridPos(8, 5))).IsFalse();
     }
@@ -53,7 +53,7 @@ public class LineOfSightTest
     {
         // Endpoints are excluded from the wall check.
         var grid = OpenGrid();
-        grid.SetCell(new Vector2I(8, 5), CellType.Wall);
+        grid.SetCell(new GridPos(8, 5), CellType.Wall);
 
         AssertBool(grid.HasClearLine(new GridPos(1, 5), new GridPos(8, 5))).IsTrue();
     }
@@ -70,7 +70,7 @@ public class LineOfSightTest
     public void HasClearLine_WallOnDiagonalPath_ReturnsFalse()
     {
         var grid = OpenGrid();
-        grid.SetCell(new Vector2I(3, 3), CellType.Wall);
+        grid.SetCell(new GridPos(3, 3), CellType.Wall);
 
         AssertBool(grid.HasClearLine(new GridPos(1, 1), new GridPos(5, 5))).IsFalse();
     }

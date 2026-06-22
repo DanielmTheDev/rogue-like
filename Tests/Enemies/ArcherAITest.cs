@@ -1,7 +1,7 @@
 using GdUnit4;
 using Godot;
 using RogueLike.Code.Domain.Actors;
-using RogueLike.Code.Grid;
+using RogueLike.Code.Domain.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
 using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Domain.Common;
@@ -72,7 +72,7 @@ public class ArcherAITest
         // Place player and archer with a wall between them
         player.GridPosition = new GridPos(1, 1);
         archer.GridPosition = new GridPos(1, 3);
-        _grid.SetCell(new Vector2I(1, 2), CellType.Wall);
+        _grid.SetCell(new GridPos(1, 2), CellType.Wall);
 
         // Register actors with ActorRegistry
         _actorRegistry.RegisterActor(player);

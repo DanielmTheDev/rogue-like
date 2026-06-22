@@ -1,6 +1,7 @@
 using Godot;
-using RogueLike.Code.Grid;
-using RogueLike.Code.Grid.Generators;
+using RogueLike.Code.Domain.Common;
+using RogueLike.Code.Domain.Grid;
+using RogueLike.Code.Domain.Grid.Generators;
 using RogueLike.Code.View.Grid;
 using RogueLike.Code.View.Items;
 using RogueLike.Code.View.Player;
@@ -38,7 +39,7 @@ public partial class Main : Node2D
     private FovTileMap _fovTileMap;
     private UI.MinimapController _minimap;
 
-    private System.Collections.Generic.List<Rect2I> _rooms;
+    private System.Collections.Generic.List<GridRect> _rooms;
     private int _dungeonLevel = 1;
 
     public override void _Ready()

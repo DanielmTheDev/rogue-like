@@ -1,7 +1,7 @@
 using GdUnit4;
 using Godot;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Grid;
+using RogueLike.Code.Domain.Grid;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Grid;
@@ -29,7 +29,7 @@ public class DungeonGridPathfindingTest
     public void CanStep_IntoWall_ReturnsFalse()
     {
         var grid = OpenGrid();
-        grid.SetCell(new Vector2I(6, 5), CellType.Wall);
+        grid.SetCell(new GridPos(6, 5), CellType.Wall);
 
         AssertBool(grid.CanStep(new GridPos(5, 5), Direction.Right)).IsFalse();
     }
@@ -39,7 +39,7 @@ public class DungeonGridPathfindingTest
     {
         var grid = OpenGrid();
         // Wall on one orthogonal side of the (1,1)->(2,2) diagonal.
-        grid.SetCell(new Vector2I(2, 1), CellType.Wall);
+        grid.SetCell(new GridPos(2, 1), CellType.Wall);
 
         AssertBool(grid.CanStep(new GridPos(1, 1), Direction.DownRight)).IsFalse();
     }
@@ -69,7 +69,7 @@ public class DungeonGridPathfindingTest
     public void FindPath_AroundWall()
     {
         var grid = OpenGrid();
-        grid.SetCell(new Vector2I(1, 3), CellType.Wall);
+        grid.SetCell(new GridPos(1, 3), CellType.Wall);
 
         var path = grid.FindPath(new GridPos(1, 1), new GridPos(1, 5));
 
@@ -98,7 +98,7 @@ public class DungeonGridPathfindingTest
     {
         var grid = OpenGrid();
         // Wall on one orthogonal side of the (1,1)->(2,2) diagonal.
-        grid.SetCell(new Vector2I(2, 1), CellType.Wall);
+        grid.SetCell(new GridPos(2, 1), CellType.Wall);
 
         var path = grid.FindPath(new GridPos(1, 1), new GridPos(2, 2));
 
@@ -114,14 +114,14 @@ public class DungeonGridPathfindingTest
     {
         var grid = OpenGrid();
         // Wall off the target completely.
-        grid.SetCell(new Vector2I(0, 4), CellType.Wall);
-        grid.SetCell(new Vector2I(1, 4), CellType.Wall);
-        grid.SetCell(new Vector2I(2, 4), CellType.Wall);
-        grid.SetCell(new Vector2I(0, 5), CellType.Wall);
-        grid.SetCell(new Vector2I(2, 5), CellType.Wall);
-        grid.SetCell(new Vector2I(0, 6), CellType.Wall);
-        grid.SetCell(new Vector2I(1, 6), CellType.Wall);
-        grid.SetCell(new Vector2I(2, 6), CellType.Wall);
+        grid.SetCell(new GridPos(0, 4), CellType.Wall);
+        grid.SetCell(new GridPos(1, 4), CellType.Wall);
+        grid.SetCell(new GridPos(2, 4), CellType.Wall);
+        grid.SetCell(new GridPos(0, 5), CellType.Wall);
+        grid.SetCell(new GridPos(2, 5), CellType.Wall);
+        grid.SetCell(new GridPos(0, 6), CellType.Wall);
+        grid.SetCell(new GridPos(1, 6), CellType.Wall);
+        grid.SetCell(new GridPos(2, 6), CellType.Wall);
 
         var path = grid.FindPath(new GridPos(1, 1), new GridPos(1, 5));
 

@@ -1,20 +1,20 @@
-using Godot;
+using RogueLike.Code.Domain.Common;
 
-namespace RogueLike.Code.Grid.Generators;
+namespace RogueLike.Code.Domain.Grid.Generators;
 
 /// <summary>
 /// A node representing a partitioned space in the BSP dungeon tree.
 /// </summary>
 public class BspNode
 {
-    public Rect2I Bounds { get; }
+    public GridRect Bounds { get; }
     public BspNode LeftChild { get; set; }
     public BspNode RightChild { get; set; }
 
     // The physical floor carved out inside these bounds
-    public Rect2I? Room { get; set; }
+    public GridRect? Room { get; set; }
 
-    public BspNode(Rect2I bounds)
+    public BspNode(GridRect bounds)
     {
         Bounds = bounds;
     }

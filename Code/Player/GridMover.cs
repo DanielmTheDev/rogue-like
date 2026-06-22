@@ -1,6 +1,6 @@
 using Godot;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Grid;
+using RogueLike.Code.Domain.Grid;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.View;
 

@@ -1,7 +1,7 @@
 using GdUnit4;
 using Godot;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Grid;
+using RogueLike.Code.Domain.Grid;
 using RogueLike.Code.Player;
 using RogueLike.Code.Domain.Actors;
 using static GdUnit4.Assertions;
@@ -19,7 +19,7 @@ public class PlayerMovementTest
     {
         // 5x5 grid, all floor, with a wall at (2,0)
         var grid = new DungeonGrid(5, 5);
-        grid.SetCell(new Vector2I(2, 0), CellType.Wall);
+        grid.SetCell(new GridPos(2, 0), CellType.Wall);
         return grid;
     }
 
@@ -134,7 +134,7 @@ public class PlayerMovementTest
     public void TryMove_DiagonalCornerCut_ReturnsFalse()
     {
         var grid = CreateTestGrid();
-        grid.SetCell(new Vector2I(3, 2), CellType.Wall); // block one orthogonal side
+        grid.SetCell(new GridPos(3, 2), CellType.Wall); // block one orthogonal side
         var mover = CreateMover(grid, new GridPos(2, 2), out _);
 
         // Down-right target (3,3) is floor, but it would cut the corner past wall (3,2).

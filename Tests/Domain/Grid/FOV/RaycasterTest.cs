@@ -1,6 +1,6 @@
 using GdUnit4;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Grid;
+using RogueLike.Code.Domain.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
 using static GdUnit4.Assertions;
 
