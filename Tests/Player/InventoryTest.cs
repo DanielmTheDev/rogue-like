@@ -1,10 +1,6 @@
 using GdUnit4;
-using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Items;
-using RogueLike.Code.Player;
-using RogueLike.Code.Items;
-using RogueLike.Code.View.Entities;
 using RogueLike.Code.Domain.Actors;
 using static GdUnit4.Assertions;
 
@@ -16,7 +12,7 @@ public class InventoryTest
     private class MockItem : IItem
     {
         public string DisplayName { get; set; } = "MockItem";
-        public Vector2I GridPosition { get; set; }
+        public GridPos GridPosition { get; set; }
         public bool IsConsumable { get; set; } = true;
         public bool UseWasCalled { get; private set; } = false;
 

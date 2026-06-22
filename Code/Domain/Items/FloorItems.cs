@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using Godot;
+using RogueLike.Code.Domain.Common;
 
-namespace RogueLike.Code.Items;
+namespace RogueLike.Code.Domain.Items;
 
 /// <summary>
-/// Pure C# manager tracking items on the grid.
+/// Pure C# registry tracking items lying on the dungeon floor.
 /// </summary>
-public class ItemManager
+public class FloorItems
 {
     private readonly List<IItem> _items = [];
     public IReadOnlyList<IItem> AllItems => _items;
@@ -34,7 +34,7 @@ public class ItemManager
     /// If there is an item at the given position, delegates the pickup decision to the item
     /// (see <see cref="IItem.TryPickup"/>) and unregisters it from the floor if it was taken.
     /// </summary>
-    public void CheckForPickup(Vector2I position, Domain.Actors.IActor actor, Domain.Items.Inventory inventory)
+    public void CheckForPickup(GridPos position, Actors.IActor actor, Inventory inventory)
     {
         var item = _items.FirstOrDefault(i => i.GridPosition == position);
         if (item == null)

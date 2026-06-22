@@ -5,9 +5,8 @@ using RogueLike.Code.View.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
 using RogueLike.Code.View.Player;
-using RogueLike.Code.Items;
+using RogueLike.Code.Domain.Items;
 using RogueLike.Code.View.Resources;
-using RogueLike.Code.View;
 using RogueLike.Code.View.World;
 
 namespace RogueLike.Code.View.Entities;
@@ -100,11 +99,11 @@ public static class Spawner
 
     public static void SpawnHealingPotion(
         Node parent, PackedScene potionScene, DungeonGrid grid,
-        ItemManager itemManager, Vector2I pos)
+        FloorItems floorItems, Vector2I pos)
     {
         var potion = potionScene.Instantiate<Items.Consumables.HealingPotion>();
         parent.AddChild(potion);
-        potion.Initialize(itemManager, pos);
+        potion.Initialize(floorItems, pos.ToGridPos());
     }
 
     public static void SpawnPotions(
@@ -112,7 +111,7 @@ public static class Spawner
         PackedScene potionScene,
         List<Rect2I> rooms,
         DungeonGrid grid,
-        ItemManager itemManager)
+        FloorItems floorItems)
     {
         // Spawn 1-2 potions per dungeon in random rooms (skip first room where player starts)
         var potionCount = _rng.Next(1, 3);
@@ -120,7 +119,7 @@ public static class Spawner
         {
             var room = rooms[_rng.Next(1, rooms.Count)];
             var spawnPos = RandomFloorTile(room);
-            SpawnHealingPotion(parentNode, potionScene, grid, itemManager, spawnPos);
+            SpawnHealingPotion(parentNode, potionScene, grid, floorItems, spawnPos);
         }
     }
 

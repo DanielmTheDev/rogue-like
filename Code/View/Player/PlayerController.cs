@@ -8,8 +8,6 @@ using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Domain.Flow;
 using RogueLike.Code.Domain.Items;
-using RogueLike.Code.Items;
-using RogueLike.Code.View;
 using System.Linq;
 
 namespace RogueLike.Code.View.Player;
@@ -22,7 +20,7 @@ public partial class PlayerController : ActorController
 {
     private GridMover _mover;
     private TurnManager _turnManager;
-    private ItemManager _itemManager;
+    private FloorItems _floorItems;
     private Inventory _inventory;
     private FovMap _fovMap;
     private Main _main; // Reference to Main to trigger level changes
@@ -38,11 +36,11 @@ public partial class PlayerController : ActorController
     public Inventory Inventory => _inventory;
     public ExperienceSystem Experience { get; private set; }
 
-    public void Initialize(Main main, TurnManager turnManager, ItemManager itemManager)
+    public void Initialize(Main main, TurnManager turnManager, FloorItems floorItems)
     {
         _main = main;
         _turnManager = turnManager;
-        _itemManager = itemManager;
+        _floorItems = floorItems;
 
         _inventory = new Inventory(maxSlots: 10);
         Experience = new ExperienceSystem();
@@ -96,9 +94,8 @@ public partial class PlayerController : ActorController
 
         SyncPosition();
 
-        // CHECK FOR ITEMS (auto-pickup). Items are still Vector2I-typed (separate track) →
-        // convert at this actor↔item boundary.
-        _itemManager?.CheckForPickup(GridPosition.ToVector2I(), this, _inventory);
+        // CHECK FOR ITEMS (auto-pickup). Items are GridPos-native — no conversion needed.
+        _floorItems?.CheckForPickup(GridPosition, this, _inventory);
 
         return true;
     }

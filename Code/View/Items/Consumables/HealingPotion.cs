@@ -1,5 +1,5 @@
-using RogueLike.Code.View.Entities;
-using RogueLike.Code.Items;
+using RogueLike.Code.Domain.Items;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Domain.Flow;
@@ -13,10 +13,10 @@ public partial class HealingPotion : ItemController
 {
     [Godot.Export] public int HealAmount { get; set; } = 5;
 
-    public override void Initialize(ItemManager itemManager, Godot.Vector2I position)
+    public override void Initialize(FloorItems floorItems, GridPos position)
     {
         ItemName = "Healing Potion";
-        base.Initialize(itemManager, position);
+        base.Initialize(floorItems, position);
     }
 
     public override bool Use(IActor actor)

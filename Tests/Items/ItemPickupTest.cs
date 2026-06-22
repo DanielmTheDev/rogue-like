@@ -1,11 +1,7 @@
 using GdUnit4;
-using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Items;
-using RogueLike.Code.View.Entities;
 using RogueLike.Code.Domain.Actors;
-using RogueLike.Code.Items;
-using RogueLike.Code.Player;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Items;
@@ -60,10 +56,40 @@ public class ItemPickupTest
         AssertBool(((IItem)item).TryPickup(new MockActor(), null)).IsFalse();
     }
 
+    [TestCase]
+    public void CheckForPickup_ItemAtPosition_PicksUpAndUnregisters()
+    {
+        var manager = new FloorItems();
+        var pos = new GridPos(3, 4);
+        var item = new MockItem { GridPosition = pos };
+        manager.RegisterItem(item);
+        var inventory = new Inventory(maxSlots: 5);
+
+        manager.CheckForPickup(pos, new MockActor(), inventory);
+
+        AssertInt(inventory.Count).IsEqual(1);
+        AssertBool(item.OnPickupCalled).IsTrue();
+        AssertInt(manager.AllItems.Count).IsEqual(0);
+    }
+
+    [TestCase]
+    public void CheckForPickup_NoItemAtPosition_LeavesItemOnFloor()
+    {
+        var manager = new FloorItems();
+        var item = new MockItem { GridPosition = new GridPos(3, 4) };
+        manager.RegisterItem(item);
+        var inventory = new Inventory(maxSlots: 5);
+
+        manager.CheckForPickup(new GridPos(0, 0), new MockActor(), inventory);
+
+        AssertInt(inventory.Count).IsEqual(0);
+        AssertInt(manager.AllItems.Count).IsEqual(1);
+    }
+
     private class MockItem : IItem
     {
         public string DisplayName { get; set; } = "MockItem";
-        public Vector2I GridPosition { get; set; }
+        public GridPos GridPosition { get; set; }
         public bool IsConsumable { get; set; } = true;
         public bool Pickable { get; set; } = true;
         public bool OnPickupCalled { get; private set; }

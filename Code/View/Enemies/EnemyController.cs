@@ -1,10 +1,8 @@
-using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.View.Entities;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Grid;
-using RogueLike.Code.View;
 
 namespace RogueLike.Code.View.Enemies;
 /// <summary>

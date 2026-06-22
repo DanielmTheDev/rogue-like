@@ -2,7 +2,6 @@ using GdUnit4;
 using Godot;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Actors;
-using RogueLike.Code.View.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
 using RogueLike.Code.Domain.Combat;

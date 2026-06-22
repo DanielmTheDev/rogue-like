@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RogueLike.Code.Items;
 
 namespace RogueLike.Code.Domain.Items;
 

@@ -1,6 +1,6 @@
-using Godot;
+using RogueLike.Code.Domain.Common;
 
-namespace RogueLike.Code.Items;
+namespace RogueLike.Code.Domain.Items;
 
 /// <summary>
 /// Interface for all floor items.
@@ -9,25 +9,25 @@ namespace RogueLike.Code.Items;
 public interface IItem
 {
     string DisplayName { get; }
-    Vector2I GridPosition { get; }
+    GridPos GridPosition { get; }
     bool IsConsumable { get; } // Should item disappear after use?
 
     /// <summary>
     /// Can this item be picked up by the given actor?
     /// </summary>
-    bool CanPickup(Domain.Actors.IActor actor);
+    bool CanPickup(Actors.IActor actor);
 
     /// <summary>
     /// Called when the item is successfully picked up.
     /// Use for logging or effects.
     /// </summary>
-    void OnPickup(Domain.Actors.IActor actor);
+    void OnPickup(Actors.IActor actor);
 
     /// <summary>
     /// Use the item from inventory.
     /// Returns true if the item was successfully used.
     /// </summary>
-    bool Use(Domain.Actors.IActor actor);
+    bool Use(Actors.IActor actor);
 
     /// <summary>
     /// Attempts to pick this item up into the given inventory. Returns true if it was taken —
@@ -36,13 +36,13 @@ public interface IItem
     /// </summary>
     // TRANSITIONAL (DDD Phase 3): the item should not reach into the actor's inventory aggregate.
     // Target: Player.TryPickup(item) — the actor owns the acquire; the item keeps only CanPickup/OnPickup.
-    bool TryPickup(Domain.Actors.IActor actor, Domain.Items.Inventory inventory)
+    bool TryPickup(Actors.IActor actor, Inventory inventory)
     {
         if (!CanPickup(actor)) return false;
         if (inventory == null) return false;
         if (!inventory.AddItem(this))
         {
-            Domain.Flow.GameLog.Instance.Log("[color=orange]Your inventory is full![/color]");
+            Flow.GameLog.Instance.Log("[color=orange]Your inventory is full![/color]");
             return false;
         }
         OnPickup(actor);

@@ -1,6 +1,6 @@
 using Godot;
-using RogueLike.Code.Items;
-using RogueLike.Code.View.Entities;
+using RogueLike.Code.Domain.Items;
+using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Domain.Flow;
 
@@ -13,17 +13,17 @@ public partial class ItemController : Node2D, IItem
 {
     [Export] public string ItemName { get; set; } = "Generic Item";
     public string DisplayName => ItemName;
-    public Vector2I GridPosition { get; private set; }
+    public GridPos GridPosition { get; private set; }
     public virtual bool IsConsumable => true;
 
-    protected ItemManager _itemManager;
+    protected FloorItems _floorItems;
 
-    public virtual void Initialize(ItemManager itemManager, Vector2I position)
+    public virtual void Initialize(FloorItems floorItems, GridPos position)
     {
-        _itemManager = itemManager;
+        _floorItems = floorItems;
         GridPosition = position;
-        Position = new Vector2(position.X * 32 + 16, position.Y * 32 + 16);
-        _itemManager.RegisterItem(this);
+        Position = position.ToWorldCenter(32);
+        _floorItems.RegisterItem(this);
     }
 
     public virtual bool CanPickup(IActor actor)

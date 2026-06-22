@@ -9,7 +9,7 @@ using RogueLike.Code.View.Entities;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Grid.FOV;
 using RogueLike.Code.View.Grid.FOV;
-using RogueLike.Code.Items;
+using RogueLike.Code.Domain.Items;
 using RogueLike.Code.View.Resources;
 using System.Linq;
 
@@ -30,7 +30,7 @@ public partial class Main : Node2D
     private DungeonGrid _gridMap;
     private EntityManager _entityManager;
     private TurnManager _turnManager;
-    private ItemManager _itemManager;
+    private FloorItems _floorItems;
 
     private FovMap _fovMap;
     private IFovAlgorithm _fovAlgorithm;
@@ -44,14 +44,14 @@ public partial class Main : Node2D
     {
         _gridMap = new DungeonGrid(GridWidth, GridHeight);
         _entityManager = new EntityManager();
-        _itemManager = new ItemManager();
+        _floorItems = new FloorItems();
         _fovMap = new FovMap(GridWidth, GridHeight);
         _fovAlgorithm = new Raycaster();
         _turnManager = new TurnManager();
         _turnManager.OnTurnChanged += OnTurnChanged;
 
         var player = GetNode<PlayerController>("Player");
-        player.Initialize(this, _turnManager, _itemManager);
+        player.Initialize(this, _turnManager, _floorItems);
 
         SetupFovTileMap();
         SetupLevel();
@@ -82,7 +82,7 @@ public partial class Main : Node2D
         var stairsScene = GD.Load<PackedScene>("res://Scenes/StairsDown.tscn");
 
         Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager, _dungeonLevel, LevelSettings);
-        Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _itemManager);
+        Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _floorItems);
         Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _entityManager, _gridMap);
 
         // 4. Initial FOV Compute
@@ -161,7 +161,7 @@ public partial class Main : Node2D
 
         // 2. Clear registries
         _entityManager.ClearAll();
-        _itemManager.Clear();
+        _floorItems.Clear();
 
         // 3. Generate and setup new level
         _gridMap = new DungeonGrid(GridWidth, GridHeight);
