@@ -1,7 +1,9 @@
 using Godot;
+using RogueLike.Code.Player;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
+using RogueLike.Code.View.Entities;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Domain.Flow;
@@ -10,7 +12,7 @@ using RogueLike.Code.Items;
 using RogueLike.Code.View;
 using System.Linq;
 
-namespace RogueLike.Code.Player;
+namespace RogueLike.Code.View.Player;
 
 /// <summary>
 /// Handles player input and grid-based movement.

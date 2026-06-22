@@ -1,15 +1,19 @@
 using Godot;
 using RogueLike.Code.Grid;
-using RogueLike.Code.Player;
+using RogueLike.Code.Grid.Generators;
+using RogueLike.Code.View.Grid;
+using RogueLike.Code.View.Items;
+using RogueLike.Code.View.Player;
 using RogueLike.Code.Domain.Flow;
+using RogueLike.Code.View.Entities;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Grid.FOV;
-using RogueLike.Code.Grid.FOV;
+using RogueLike.Code.View.Grid.FOV;
 using RogueLike.Code.Items;
-using RogueLike.Code.Resources;
+using RogueLike.Code.View.Resources;
 using System.Linq;
 
-namespace RogueLike.Code;
+namespace RogueLike.Code.View;
 
 /// <summary>
 /// Main scene controller. Creates the grid, renders the tilemap,
@@ -64,7 +68,7 @@ public partial class Main : Node2D
     private void SetupLevel()
     {
         // 1. Generate map layout
-        _rooms = Grid.Generators.BspDungeonGenerator.Generate(_gridMap);
+        _rooms = BspDungeonGenerator.Generate(_gridMap);
         SetupTileMap();
 
         // 2. Place player

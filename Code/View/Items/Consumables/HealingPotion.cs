@@ -1,9 +1,10 @@
-using RogueLike.Code.Entities;
+using RogueLike.Code.View.Entities;
+using RogueLike.Code.Items;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Domain.Flow;
 
-namespace RogueLike.Code.Items.Consumables;
+namespace RogueLike.Code.View.Items.Consumables;
 
 /// <summary>
 /// A specific item that heals the player when walked over.

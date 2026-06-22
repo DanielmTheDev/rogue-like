@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bgacm0vsedlkr"]
 
-[ext_resource type="Script" uid="uid://bhemhhtah4hs3" path="res://Code/Main.cs" id="1_main_script"]
-[ext_resource type="Script" uid="uid://bv50eriaqtt0k" path="res://Code/Grid/DungeonTileMap.cs" id="2_tilemap_script"]
+[ext_resource type="Script" uid="uid://bhemhhtah4hs3" path="res://Code/View/Main.cs" id="1_main_script"]
+[ext_resource type="Script" uid="uid://bv50eriaqtt0k" path="res://Code/View/Grid/DungeonTileMap.cs" id="2_tilemap_script"]
 [ext_resource type="TileSet" uid="uid://dwxypcwtmq8qo" path="res://Assets/Tiles/dungeon_tileset.tres" id="3_tileset"]
 [ext_resource type="PackedScene" uid="uid://dptunjmwcwqqp" path="res://Scenes/Player.tscn" id="4_player_scene"]
 [ext_resource type="PackedScene" uid="uid://b8k1m5n2p2q4u" path="res://Scenes/GameLogUI.tscn" id="5_gamelog_scene"]

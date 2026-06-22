@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://d17dciga5sjjs"]
 
-[ext_resource type="Script" uid="uid://bftrg78afxcy2" path="res://Code/Enemies/EnemyController.cs" id="1_enemy_script"]
+[ext_resource type="Script" uid="uid://bftrg78afxcy2" path="res://Code/View/Enemies/EnemyController.cs" id="1_enemy_script"]
 [ext_resource type="Texture2D" uid="uid://3rqfac6fcj1c" path="res://Assets/Enemy/enemy.png" id="2_enemy_tex"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]

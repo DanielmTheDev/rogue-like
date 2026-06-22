@@ -1,7 +1,7 @@
 using Godot;
 using RogueLike.Code.Domain.Flow;
 
-namespace RogueLike.Code.UI;
+namespace RogueLike.Code.View.UI;
 
 public partial class ExperienceUI : Control
 {

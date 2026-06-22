@@ -1,17 +1,22 @@
 using Godot;
 using RogueLike.Code.Domain.Common;
+using RogueLike.Code.View.Entities;
 using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Grid;
 using RogueLike.Code.View;
 
-namespace RogueLike.Code.Enemies;
+namespace RogueLike.Code.View.Enemies;
+
 /// <summary>
-/// Godot node representing the enemy visually.
+/// Godot node representing the Skeleton Archer visually.
+/// Delegates all decision-making to ArcherAI.
 /// </summary>
-public partial class EnemyController : ActorController
+public partial class ArcherController : ActorController
 {
-    private EnemyAI _ai;
+    private ArcherAI _ai;
+
+    [Export] public int Range { get; set; } = 5;
 
     public override GridPos GridPosition => _ai?.GridPosition ?? GridPos.Origin;
     public override bool IsPlayer => false;
@@ -21,7 +26,7 @@ public partial class EnemyController : ActorController
     {
         InitializeBase(entityManager);
 
-        _ai = new EnemyAI(this, grid, entityManager, startPos);
+        _ai = new ArcherAI(this, grid, entityManager, startPos, Range);
         entityManager.RegisterActor(this);
         SyncPosition(grid, null);
     }

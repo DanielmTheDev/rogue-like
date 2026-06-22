@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bmwudi06xxjt2"]
 
-[ext_resource type="Script" uid="uid://bl6vj72pso5r8" path="res://Code/Enemies/ArcherController.cs" id="1_archer_script"]
+[ext_resource type="Script" uid="uid://bl6vj72pso5r8" path="res://Code/View/Enemies/ArcherController.cs" id="1_archer_script"]
 [ext_resource type="Texture2D" uid="uid://bjk4wl0hldafm" path="res://Assets/Archer/archer.png" id="2_archer_tex"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]

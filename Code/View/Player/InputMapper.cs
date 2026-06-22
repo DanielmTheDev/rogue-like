@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace RogueLike.Code.Player;
+namespace RogueLike.Code.View.Player;
 
 /// <summary>
 /// Static utility to map Godot Input strings to grid vector directions.

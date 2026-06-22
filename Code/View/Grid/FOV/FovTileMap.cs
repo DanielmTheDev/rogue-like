@@ -2,7 +2,7 @@ using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Grid.FOV;
 
-namespace RogueLike.Code.Grid.FOV;
+namespace RogueLike.Code.View.Grid.FOV;
 
 /// <summary>
 /// A TileMapLayer responsible strictly for drawing shadows over the view.

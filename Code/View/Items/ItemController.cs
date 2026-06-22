@@ -1,9 +1,10 @@
 using Godot;
-using RogueLike.Code.Entities;
+using RogueLike.Code.Items;
+using RogueLike.Code.View.Entities;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Domain.Flow;
 
-namespace RogueLike.Code.Items;
+namespace RogueLike.Code.View.Items;
 
 /// <summary>
 /// Base Godot node for all floor items.

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://b8k1m5n2p2q4u"]
 
-[ext_resource type="Script" path="res://Code/UI/GameLogController.cs" id="1_log_script"]
+[ext_resource type="Script" path="res://Code/View/UI/GameLogController.cs" id="1_log_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0, 0, 0, 0.470588)

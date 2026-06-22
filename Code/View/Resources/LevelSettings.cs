@@ -1,6 +1,6 @@
 using Godot;
 
-namespace RogueLike.Code.Resources;
+namespace RogueLike.Code.View.Resources;
 
 /// <summary>
 /// A Godot Resource to hold tunable parameters for dungeon level generation.

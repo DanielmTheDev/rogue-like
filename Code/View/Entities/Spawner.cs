@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using Godot;
-using RogueLike.Code.Enemies;
+using RogueLike.Code.Entities;
+using RogueLike.Code.View.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
-using RogueLike.Code.Player;
+using RogueLike.Code.View.Player;
 using RogueLike.Code.Items;
-using RogueLike.Code.Resources;
+using RogueLike.Code.View.Resources;
 using RogueLike.Code.View;
-using RogueLike.Code.World;
+using RogueLike.Code.View.World;
 
-namespace RogueLike.Code.Entities;
+namespace RogueLike.Code.View.Entities;
 
 /// <summary>
 /// Static utility handling the safe instantiation and placement of entities on the grid.

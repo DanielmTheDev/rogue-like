@@ -1,6 +1,7 @@
 using Godot;
+using RogueLike.Code.Grid;
 
-namespace RogueLike.Code.Grid;
+namespace RogueLike.Code.View.Grid;
 
 /// <summary>
 /// Renders a DungeonGrid as a checkerboard pattern using Godot's TileMapLayer.

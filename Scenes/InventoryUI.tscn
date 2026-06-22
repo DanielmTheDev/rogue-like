@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://d8m3n5p7q9r2s"]
 
-[ext_resource type="Script" path="res://Code/UI/InventoryUI.cs" id="1_inventory_script"]
+[ext_resource type="Script" path="res://Code/View/UI/InventoryUI.cs" id="1_inventory_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0, 0, 0, 0.6)

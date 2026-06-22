@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c5h3a8l9m4n2p"]
 
-[ext_resource type="Script" path="res://Code/Items/Consumables/HealingPotion.cs" id="1_potion_script"]
+[ext_resource type="Script" path="res://Code/View/Items/Consumables/HealingPotion.cs" id="1_potion_script"]
 [ext_resource type="Texture2D" path="res://Assets/Potion/potion.png" id="2_potion_texture"]
 
 [node name="HealingPotion" type="Node2D"]

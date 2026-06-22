@@ -1,6 +1,6 @@
 using Godot;
 
-namespace RogueLike.Code.World;
+namespace RogueLike.Code.View.World;
 
 /// <summary>
 /// A marker class to identify the stairs node in the scene.

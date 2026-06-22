@@ -2,7 +2,7 @@ using Godot;
 using RogueLike.Code.Domain.Items;
 using RogueLike.Code.Player;
 
-namespace RogueLike.Code.UI;
+namespace RogueLike.Code.View.UI;
 
 /// <summary>
 /// Displays the player's inventory as a simple text list.

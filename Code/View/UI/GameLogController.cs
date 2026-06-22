@@ -1,7 +1,7 @@
 using Godot;
 using RogueLike.Code.Domain.Flow;
 
-namespace RogueLike.Code.UI;
+namespace RogueLike.Code.View.UI;
 
 /// <summary>
 /// Godot controller for the message log UI.

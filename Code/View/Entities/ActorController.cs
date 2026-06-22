@@ -1,10 +1,11 @@
 using Godot;
+using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Combat;
 
 using RogueLike.Code.Domain.Flow;
 
-namespace RogueLike.Code.Entities;
+namespace RogueLike.Code.View.Entities;
 
 /// <summary>
 /// Base class for all Grid Actors that can engage in combat.
