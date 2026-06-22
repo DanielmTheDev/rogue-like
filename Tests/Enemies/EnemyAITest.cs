@@ -1,10 +1,11 @@
 using GdUnit4;
 using RogueLike.Code.Entities;
+using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Entities.Combat;
+using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
-using RogueLike.Code.Grid.FOV;
+using RogueLike.Code.Domain.Grid.FOV;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Enemies;

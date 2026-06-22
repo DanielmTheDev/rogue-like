@@ -2,6 +2,7 @@ using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Entities;
+using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.View;
 
 namespace RogueLike.Code.Player;

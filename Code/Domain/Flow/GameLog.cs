@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace RogueLike.Code.Services;
+namespace RogueLike.Code.Domain.Flow;
 
 /// <summary>
 /// Pure C# service for managing the game's message log history.

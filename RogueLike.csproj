@@ -11,4 +11,15 @@
     <PackageReference Include="gdUnit4.api" Version="5.0.*" />
     <PackageReference Include="gdUnit4.test.adapter" Version="3.0.*" />
   </ItemGroup>
+  <!-- Rich-domain guard (DDD): Code/Domain/ is the Godot-free layer. Any `using Godot;` there
+       fails the build. Godot types belong on the view edge + the single GridConversions bridge. -->
+  <Target Name="GuardDomainGodotFree" BeforeTargets="CoreCompile">
+    <Exec Command="if grep -rnE '^using Godot' Code/Domain --include=*.cs; then exit 1; fi"
+          WorkingDirectory="$(MSBuildProjectDirectory)"
+          IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="_DomainGodotGuardExit" />
+    </Exec>
+    <Error Condition="'$(_DomainGodotGuardExit)' != '0'"
+           Text="Rich-domain rule: Code/Domain must not contain 'using Godot;' (the domain layer is Godot-free). Keep Godot types at the view edge / GridConversions bridge." />
+  </Target>
 </Project>

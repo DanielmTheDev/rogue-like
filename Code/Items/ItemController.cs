@@ -1,6 +1,7 @@
 using Godot;
 using RogueLike.Code.Entities;
-using RogueLike.Code.Services;
+using RogueLike.Code.Domain.Actors;
+using RogueLike.Code.Domain.Flow;
 
 namespace RogueLike.Code.Items;
 

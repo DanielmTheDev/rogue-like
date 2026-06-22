@@ -1,10 +1,10 @@
 using GdUnit4;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
-using RogueLike.Code.Grid.FOV;
+using RogueLike.Code.Domain.Grid.FOV;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.Tests.Grid.FOV;
+namespace RogueLike.Tests.Domain.Grid.FOV;
 
 [TestSuite]
 public class RaycasterTest

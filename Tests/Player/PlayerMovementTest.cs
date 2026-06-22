@@ -4,6 +4,7 @@ using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
 using RogueLike.Code.Entities;
+using RogueLike.Code.Domain.Actors;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Player;

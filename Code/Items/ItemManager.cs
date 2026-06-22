@@ -34,7 +34,7 @@ public class ItemManager
     /// If there is an item at the given position, delegates the pickup decision to the item
     /// (see <see cref="IItem.TryPickup"/>) and unregisters it from the floor if it was taken.
     /// </summary>
-    public void CheckForPickup(Vector2I position, Entities.IActor actor, Player.Inventory inventory)
+    public void CheckForPickup(Vector2I position, Domain.Actors.IActor actor, Domain.Items.Inventory inventory)
     {
         var item = _items.FirstOrDefault(i => i.GridPosition == position);
         if (item == null)

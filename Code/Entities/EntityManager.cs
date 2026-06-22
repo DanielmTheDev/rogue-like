@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 using RogueLike.Code.Domain.Common;
+using RogueLike.Code.Domain.Actors;
 
 namespace RogueLike.Code.Entities;
 

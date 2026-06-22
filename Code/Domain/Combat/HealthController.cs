@@ -1,6 +1,6 @@
 using System;
 
-namespace RogueLike.Code.Entities.Combat;
+namespace RogueLike.Code.Domain.Combat;
 
 /// <summary>
 /// Pure C# class managing health state and events.

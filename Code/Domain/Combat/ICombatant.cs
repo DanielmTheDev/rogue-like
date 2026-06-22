@@ -1,7 +1,7 @@
-using RogueLike.Code.Domain.Combat;
-using RogueLike.Code.Services;
+using RogueLike.Code.Domain.Actors;
+using RogueLike.Code.Domain.Flow;
 
-namespace RogueLike.Code.Entities.Combat;
+namespace RogueLike.Code.Domain.Combat;
 
 /// <summary>
 /// A dynamic entity that has a physical presence on the board and can participate in combat.

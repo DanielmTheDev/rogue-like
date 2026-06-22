@@ -1,8 +1,8 @@
 using Godot;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Entities.Combat;
+using RogueLike.Code.Domain.Combat;
 
-using RogueLike.Code.Services;
+using RogueLike.Code.Domain.Flow;
 
 namespace RogueLike.Code.Entities;
 

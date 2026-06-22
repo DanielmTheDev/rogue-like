@@ -1,5 +1,6 @@
 using Godot;
 using RogueLike.Code.Domain.Common;
+using RogueLike.Code.Domain.Grid.FOV;
 
 namespace RogueLike.Code.Grid.FOV;
 

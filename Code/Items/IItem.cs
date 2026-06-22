@@ -15,19 +15,19 @@ public interface IItem
     /// <summary>
     /// Can this item be picked up by the given actor?
     /// </summary>
-    bool CanPickup(Entities.IActor actor);
+    bool CanPickup(Domain.Actors.IActor actor);
 
     /// <summary>
     /// Called when the item is successfully picked up.
     /// Use for logging or effects.
     /// </summary>
-    void OnPickup(Entities.IActor actor);
+    void OnPickup(Domain.Actors.IActor actor);
 
     /// <summary>
     /// Use the item from inventory.
     /// Returns true if the item was successfully used.
     /// </summary>
-    bool Use(Entities.IActor actor);
+    bool Use(Domain.Actors.IActor actor);
 
     /// <summary>
     /// Attempts to pick this item up into the given inventory. Returns true if it was taken —
@@ -36,13 +36,13 @@ public interface IItem
     /// </summary>
     // TRANSITIONAL (DDD Phase 3): the item should not reach into the actor's inventory aggregate.
     // Target: Player.TryPickup(item) — the actor owns the acquire; the item keeps only CanPickup/OnPickup.
-    bool TryPickup(Entities.IActor actor, Player.Inventory inventory)
+    bool TryPickup(Domain.Actors.IActor actor, Domain.Items.Inventory inventory)
     {
         if (!CanPickup(actor)) return false;
         if (inventory == null) return false;
         if (!inventory.AddItem(this))
         {
-            Services.GameLog.Instance.Log("[color=orange]Your inventory is full![/color]");
+            Domain.Flow.GameLog.Instance.Log("[color=orange]Your inventory is full![/color]");
             return false;
         }
         OnPickup(actor);

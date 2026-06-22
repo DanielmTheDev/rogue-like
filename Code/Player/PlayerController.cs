@@ -1,13 +1,12 @@
 using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
-using RogueLike.Code.Grid.FOV;
+using RogueLike.Code.Domain.Grid.FOV;
 using RogueLike.Code.Entities;
-using RogueLike.Code.Entities.Combat;
-using RogueLike.Code.TurnContext;
+using RogueLike.Code.Domain.Combat;
+using RogueLike.Code.Domain.Flow;
+using RogueLike.Code.Domain.Items;
 using RogueLike.Code.Items;
-using RogueLike.Code.Services;
-using RogueLike.Code.Systems;
 using RogueLike.Code.View;
 using System.Linq;
 

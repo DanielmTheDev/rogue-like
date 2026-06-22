@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RogueLike.Code.Items;
 
-namespace RogueLike.Code.Player;
+namespace RogueLike.Code.Domain.Items;
 
 /// <summary>
 /// Pure C# inventory logic for storing and using items.
@@ -42,7 +42,7 @@ public class Inventory
     /// Uses the item at the given slot index.
     /// Returns true if the item was successfully used.
     /// </summary>
-    public bool UseItem(int index, Entities.IActor user)
+    public bool UseItem(int index, Actors.IActor user)
     {
         if (index < 0 || index >= _items.Count)
             return false;
@@ -105,7 +105,7 @@ public class Inventory
     /// Uses the first item matching the given group index.
     /// Group index corresponds to the grouped display (0 = first unique item type, etc.)
     /// </summary>
-    public bool UseItemByGroup(int groupIndex, Entities.IActor user)
+    public bool UseItemByGroup(int groupIndex, Actors.IActor user)
     {
         var grouped = GetGroupedItems();
         if (groupIndex < 0 || groupIndex >= grouped.Count)

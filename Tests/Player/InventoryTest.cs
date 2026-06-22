@@ -1,9 +1,11 @@
 using GdUnit4;
 using Godot;
 using RogueLike.Code.Domain.Common;
+using RogueLike.Code.Domain.Items;
 using RogueLike.Code.Player;
 using RogueLike.Code.Items;
 using RogueLike.Code.Entities;
+using RogueLike.Code.Domain.Actors;
 using static GdUnit4.Assertions;
 
 namespace RogueLike.Tests.Player;

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Godot;
 using RogueLike.Code.Enemies;
 using RogueLike.Code.Grid;
-using RogueLike.Code.Grid.FOV;
+using RogueLike.Code.Domain.Grid.FOV;
 using RogueLike.Code.Player;
 using RogueLike.Code.Items;
 using RogueLike.Code.Resources;

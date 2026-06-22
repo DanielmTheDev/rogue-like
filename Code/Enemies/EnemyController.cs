@@ -1,6 +1,7 @@
 using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Entities;
+using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Grid;
 using RogueLike.Code.View;
 
@@ -25,7 +26,7 @@ public partial class EnemyController : ActorController
         SyncPosition(grid, null);
     }
 
-    public void TakeTurn(DungeonGrid grid, Grid.FOV.FovMap fovMap)
+    public void TakeTurn(DungeonGrid grid, Domain.Grid.FOV.FovMap fovMap)
     {
         if (_ai == null) return;
 
@@ -33,14 +34,14 @@ public partial class EnemyController : ActorController
         SyncPosition(grid, fovMap);
     }
 
-    private void SyncPosition(DungeonGrid grid, Grid.FOV.FovMap fovMap)
+    private void SyncPosition(DungeonGrid grid, Domain.Grid.FOV.FovMap fovMap)
     {
         Position = GridPosition.ToWorldCenter(grid.TileSize);
 
         if (fovMap != null)
         {
             var vis = fovMap.GetVisibility(GridPosition);
-            Visible = vis == Grid.FOV.VisibilityState.Visible;
+            Visible = vis == Domain.Grid.FOV.VisibilityState.Visible;
         }
     }
 }
