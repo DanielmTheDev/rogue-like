@@ -1,6 +1,5 @@
 using System.Linq;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
@@ -18,7 +17,7 @@ public class EnemyAI
 {
     private readonly IActor _owner;
     private readonly DungeonGrid _grid;
-    private readonly EntityManager _entityManager;
+    private readonly ActorRegistry _actorRegistry;
     private readonly GridMover _mover;
 
     /// <summary>
@@ -26,12 +25,12 @@ public class EnemyAI
     /// </summary>
     public GridPos GridPosition => _mover.GridPosition;
 
-    public EnemyAI(IActor owner, DungeonGrid grid, EntityManager entityManager, GridPos startPos)
+    public EnemyAI(IActor owner, DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos)
     {
         _owner = owner;
         _grid = grid;
-        _entityManager = entityManager;
-        _mover = new GridMover(owner, grid, entityManager, startPos);
+        _actorRegistry = actorRegistry;
+        _mover = new GridMover(owner, grid, actorRegistry, startPos);
     }
 
     /// <summary>
@@ -39,7 +38,7 @@ public class EnemyAI
     /// </summary>
     public void TakeTurn(Grid.FOV.FovMap fovMap)
     {
-        var player = _entityManager.AllActors.FirstOrDefault(a => a.IsPlayer);
+        var player = _actorRegistry.AllActors.FirstOrDefault(a => a.IsPlayer);
         if (player == null) return;
 
         // If player is not visible, do nothing for now.
@@ -58,9 +57,9 @@ public class EnemyAI
             var direction = _owner.GridPosition.DirectionTo(nextStep);
 
             var target = _owner.GridPosition.Step(direction);
-            if (_entityManager.IsOccupied(target))
+            if (_actorRegistry.IsOccupied(target))
             {
-                var targetActor = _entityManager.GetActorAt(target);
+                var targetActor = _actorRegistry.GetActorAt(target);
                 if (targetActor.IsPlayer && targetActor is ICombatant playerCombatant && _owner is ICombatant enemyCombatant)
                 {
                     enemyCombatant.TryAttack(playerCombatant);

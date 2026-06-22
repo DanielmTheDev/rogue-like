@@ -1,22 +1,19 @@
 using System.Collections.Generic;
-using Godot;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Domain.Actors;
 
-namespace RogueLike.Code.Entities;
+namespace RogueLike.Code.Domain.Actors;
 
 /// <summary>
-/// Pure C# registry keeping track of all Actors occupying physical tiles on the grid.
+/// Pure C# (Godot-free) registry of all actors occupying tiles on the grid, keyed by
+/// <see cref="GridPos"/>. Guards single-occupancy and exposes a flat list for turn iteration.
+/// The Godot <c>Node2D</c> lookup that used to live alongside this is now the view-side
+/// <c>NodeRegistry</c>.
 /// </summary>
-// Actor positions are the domain <see cref="GridPos"/>. The node map still stores Godot
-// <c>Node2D</c>s (view concern) keyed by the same <c>GridPos</c>; extracting that node registry
-// to the view side is a separate cleanup.
-public class EntityManager
+public class ActorRegistry
 {
     private readonly Dictionary<GridPos, IActor> _actorsByPosition = [];
-    private readonly Dictionary<GridPos, Node2D> _nodesByPosition = [];
 
-    // We also keep a flat list for Turn iteration (e.g., iterating all enemies).
+    // A flat list for turn iteration (e.g. iterating all enemies).
     private readonly List<IActor> _allActors = [];
 
     public IReadOnlyList<IActor> AllActors => _allActors;
@@ -49,19 +46,9 @@ public class EntityManager
         _actorsByPosition[newPosition] = actor;
     }
 
-    public void RegisterNode(Node2D node, GridPos position)
-    {
-        _nodesByPosition[position] = node;
-    }
-
     public bool IsOccupied(GridPos position)
     {
         return _actorsByPosition.ContainsKey(position);
-    }
-
-    public Node2D GetNodeAt(GridPos position)
-    {
-        return _nodesByPosition.GetValueOrDefault(position);
     }
 
     public IActor GetActorAt(GridPos position)
@@ -71,9 +58,7 @@ public class EntityManager
 
     public void ClearAll()
     {
-        // We only clear the lookup dictionaries. The nodes themselves will be QueueFree'd from Main.
         _allActors.Clear();
         _actorsByPosition.Clear();
-        _nodesByPosition.Clear();
     }
 }

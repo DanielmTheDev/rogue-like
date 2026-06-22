@@ -1,6 +1,5 @@
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.View.Entities;
-using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Grid;
 
@@ -16,12 +15,12 @@ public partial class EnemyController : ActorController
     public override bool IsPlayer => false;
     public override int AttackDamage => BaseAttackDamage;
 
-    public void Initialize(DungeonGrid grid, EntityManager entityManager, GridPos startPos)
+    public void Initialize(DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos)
     {
-        InitializeBase(entityManager);
+        InitializeBase(actorRegistry);
 
-        _ai = new EnemyAI(this, grid, entityManager, startPos);
-        entityManager.RegisterActor(this);
+        _ai = new EnemyAI(this, grid, actorRegistry, startPos);
+        actorRegistry.RegisterActor(this);
         SyncPosition(grid, null);
     }
 

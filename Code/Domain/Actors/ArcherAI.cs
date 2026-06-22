@@ -1,6 +1,5 @@
 using System.Linq;
 using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
@@ -22,24 +21,24 @@ public class ArcherAI
 {
     private readonly IActor _owner;
     private readonly DungeonGrid _grid;
-    private readonly EntityManager _entityManager;
+    private readonly ActorRegistry _actorRegistry;
     private readonly GridMover _mover;
     private readonly int _range;
 
     public GridPos GridPosition => _mover.GridPosition;
 
-    public ArcherAI(IActor owner, DungeonGrid grid, EntityManager entityManager, GridPos startPos, int range = 5)
+    public ArcherAI(IActor owner, DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos, int range = 5)
     {
         _owner = owner;
         _grid = grid;
-        _entityManager = entityManager;
-        _mover = new GridMover(owner, grid, entityManager, startPos);
+        _actorRegistry = actorRegistry;
+        _mover = new GridMover(owner, grid, actorRegistry, startPos);
         _range = range;
     }
 
     public void TakeTurn(FovMap fovMap)
     {
-        var player = _entityManager.AllActors.FirstOrDefault(a => a.IsPlayer);
+        var player = _actorRegistry.AllActors.FirstOrDefault(a => a.IsPlayer);
         if (player == null || !IsVisible(player, fovMap))
             return;
 

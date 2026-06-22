@@ -3,7 +3,6 @@ using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Player;
-using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Actors;
 using static GdUnit4.Assertions;
 
@@ -31,12 +30,12 @@ public class PlayerMovementTest
     }
 
     private GridMover CreateMover(
-        DungeonGrid grid, GridPos startPos, out EntityManager entityManager)
+        DungeonGrid grid, GridPos startPos, out ActorRegistry actorRegistry)
     {
-        entityManager = new EntityManager();
+        actorRegistry = new ActorRegistry();
         var actor = new MockActor { GridPosition = startPos };
-        entityManager.RegisterActor(actor);
-        return new GridMover(actor, grid, entityManager, startPos);
+        actorRegistry.RegisterActor(actor);
+        return new GridMover(actor, grid, actorRegistry, startPos);
     }
 
     [TestCase]

@@ -1,5 +1,4 @@
 using GdUnit4;
-using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Combat;
@@ -54,22 +53,22 @@ public class EnemyAITest
     public void TakeTurn_MovesTowardsPlayer()
     {
         var grid = new DungeonGrid(5, 5);
-        var entityManager = new EntityManager();
+        var actorRegistry = new ActorRegistry();
         var fovMap = new FovMap(5, 5);
 
         var player = new MockPlayer { GridPosition = new GridPos(4, 2) };
-        entityManager.RegisterActor(player);
+        actorRegistry.RegisterActor(player);
 
         var enemyActor = new MockEnemy { GridPosition = new GridPos(2, 2) };
         // The mock doesn't get automatically registered by an Initialize method, so do it here.
-        entityManager.RegisterActor(enemyActor);
+        actorRegistry.RegisterActor(enemyActor);
 
         // Make the whole map visible for this test
         for (var x = 0; x < 5; x++)
             for (var y = 0; y < 5; y++)
                 fovMap.SetVisibility(new GridPos(x, y), VisibilityState.Visible);
 
-        var ai = new EnemyAI(enemyActor, grid, entityManager, enemyActor.GridPosition);
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
 
         // Enemy should find a path and move towards (3,2)
         ai.TakeTurn(fovMap);
@@ -82,21 +81,21 @@ public class EnemyAITest
     public void TakeTurn_AdjacentToPlayer_Attacks()
     {
         var grid = new DungeonGrid(5, 5);
-        var entityManager = new EntityManager();
+        var actorRegistry = new ActorRegistry();
         var fovMap = new FovMap(5, 5);
 
         var player = new MockPlayer { GridPosition = new GridPos(4, 2), Health = new Health(10, 10) };
-        entityManager.RegisterActor(player);
+        actorRegistry.RegisterActor(player);
 
         // Enemy adjacent to the player: its next path step is the player's (occupied) tile -> attack.
         var enemyActor = new MockEnemy { GridPosition = new GridPos(3, 2), Health = new Health(10, 10) };
-        entityManager.RegisterActor(enemyActor);
+        actorRegistry.RegisterActor(enemyActor);
 
         for (var x = 0; x < 5; x++)
             for (var y = 0; y < 5; y++)
                 fovMap.SetVisibility(new GridPos(x, y), VisibilityState.Visible);
 
-        var ai = new EnemyAI(enemyActor, grid, entityManager, enemyActor.GridPosition);
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
 
         ai.TakeTurn(fovMap);
 

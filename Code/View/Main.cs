@@ -6,8 +6,8 @@ using RogueLike.Code.View.Items;
 using RogueLike.Code.View.Player;
 using RogueLike.Code.Domain.Flow;
 using RogueLike.Code.View.Entities;
-using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Grid.FOV;
+using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.View.Grid.FOV;
 using RogueLike.Code.Domain.Items;
 using RogueLike.Code.View.Resources;
@@ -28,7 +28,8 @@ public partial class Main : Node2D
     private const int GridHeight = 50;
 
     private DungeonGrid _gridMap;
-    private EntityManager _entityManager;
+    private ActorRegistry _actorRegistry;
+    private NodeRegistry _nodeRegistry;
     private TurnManager _turnManager;
     private FloorItems _floorItems;
 
@@ -43,7 +44,8 @@ public partial class Main : Node2D
     public override void _Ready()
     {
         _gridMap = new DungeonGrid(GridWidth, GridHeight);
-        _entityManager = new EntityManager();
+        _actorRegistry = new ActorRegistry();
+        _nodeRegistry = new NodeRegistry();
         _floorItems = new FloorItems();
         _fovMap = new FovMap(GridWidth, GridHeight);
         _fovAlgorithm = new Raycaster();
@@ -73,7 +75,7 @@ public partial class Main : Node2D
 
         // 2. Place player
         var player = GetNode<PlayerController>("Player");
-        Spawner.PlacePlayerOnLevel(player, _rooms[0], _gridMap, _entityManager, _fovMap);
+        Spawner.PlacePlayerOnLevel(player, _rooms[0], _gridMap, _actorRegistry, _fovMap, _nodeRegistry);
 
         // 3. Spawn entities
         var goblinScene = GD.Load<PackedScene>("res://Scenes/Enemy.tscn");
@@ -81,9 +83,9 @@ public partial class Main : Node2D
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");
         var stairsScene = GD.Load<PackedScene>("res://Scenes/StairsDown.tscn");
 
-        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _entityManager, _dungeonLevel, LevelSettings);
+        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _actorRegistry, _dungeonLevel, LevelSettings);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _floorItems);
-        Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _entityManager, _gridMap);
+        Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _nodeRegistry, _gridMap);
 
         // 4. Initial FOV Compute
         UpdateFov();
@@ -105,7 +107,7 @@ public partial class Main : Node2D
 
         // Sync visibility of all non-player actors
         // Use ToList() snapshot to avoid "Collection was modified" if entities change during sync
-        foreach (var actor in _entityManager.AllActors.ToList())
+        foreach (var actor in _actorRegistry.AllActors.ToList())
         {
             if (actor is ActorController actorNode && !actor.IsPlayer)
             {
@@ -128,7 +130,7 @@ public partial class Main : Node2D
     {
         // Iterate over a snapshot (ToList) because enemies (or the player)
         // might die and unregister themselves during this loop.
-        foreach (var actor in _entityManager.AllActors.ToList())
+        foreach (var actor in _actorRegistry.AllActors.ToList())
         {
             if (actor is Enemies.EnemyController goblin)
                 goblin.TakeTurn(_gridMap, _fovMap);
@@ -160,7 +162,8 @@ public partial class Main : Node2D
         }
 
         // 2. Clear registries
-        _entityManager.ClearAll();
+        _actorRegistry.ClearAll();
+        _nodeRegistry.Clear();
         _floorItems.Clear();
 
         // 3. Generate and setup new level

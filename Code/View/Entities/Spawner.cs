@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Godot;
-using RogueLike.Code.Entities;
 using RogueLike.Code.View.Enemies;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
+using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.View.Player;
 using RogueLike.Code.Domain.Items;
 using RogueLike.Code.View.Resources;
@@ -22,11 +22,12 @@ public static class Spawner
         PlayerController player,
         Rect2I startRoom,
         DungeonGrid grid,
-        EntityManager entityManager,
-        FovMap fovMap)
+        ActorRegistry actorRegistry,
+        FovMap fovMap,
+        NodeRegistry nodeRegistry)
     {
         var centerPos = new Vector2I(startRoom.Position.X + startRoom.Size.X / 2, startRoom.Position.Y + startRoom.Size.Y / 2);
-        player.PlaceOnLevel(grid, entityManager, fovMap, centerPos.ToGridPos());
+        player.PlaceOnLevel(grid, actorRegistry, fovMap, nodeRegistry, centerPos.ToGridPos());
     }
 
     public static void SpawnEnemies(
@@ -35,7 +36,7 @@ public static class Spawner
         PackedScene archerScene,
         List<Rect2I> rooms,
         DungeonGrid grid,
-        EntityManager entityManager,
+        ActorRegistry actorRegistry,
         int dungeonLevel,
         LevelSettings levelSettings)
     {
@@ -70,31 +71,31 @@ public static class Spawner
 
                 // Alternate enemy types
                 if (j % 2 == 0)
-                    SpawnGoblin(parentNode, goblinScene, grid, entityManager, spawnPos, i * 10 + j);
+                    SpawnGoblin(parentNode, goblinScene, grid, actorRegistry, spawnPos, i * 10 + j);
                 else
-                    SpawnArcher(parentNode, archerScene, grid, entityManager, spawnPos, i * 10 + j);
+                    SpawnArcher(parentNode, archerScene, grid, actorRegistry, spawnPos, i * 10 + j);
             }
         }
     }
 
     public static void SpawnGoblin(
         Node parent, PackedScene scene, DungeonGrid grid,
-        EntityManager entityManager, Vector2I pos, int index)
+        ActorRegistry actorRegistry, Vector2I pos, int index)
     {
         var enemy = scene.Instantiate<EnemyController>();
         enemy.Name = $"Goblin_{index}";
         parent.AddChild(enemy);
-        enemy.Initialize(grid, entityManager, pos.ToGridPos());
+        enemy.Initialize(grid, actorRegistry, pos.ToGridPos());
     }
 
     public static void SpawnArcher(
         Node parent, PackedScene scene, DungeonGrid grid,
-        EntityManager entityManager, Vector2I pos, int index)
+        ActorRegistry actorRegistry, Vector2I pos, int index)
     {
         var archer = scene.Instantiate<ArcherController>();
         archer.Name = $"Archer_{index}";
         parent.AddChild(archer);
-        archer.Initialize(grid, entityManager, pos.ToGridPos());
+        archer.Initialize(grid, actorRegistry, pos.ToGridPos());
     }
 
     public static void SpawnHealingPotion(
@@ -130,7 +131,7 @@ public static class Spawner
         return new Vector2I(rx, ry);
     }
 
-    public static void SpawnStairs(Node parent, PackedScene scene, Rect2I room, EntityManager entityManager, DungeonGrid grid)
+    public static void SpawnStairs(Node parent, PackedScene scene, Rect2I room, NodeRegistry nodeRegistry, DungeonGrid grid)
     {
         var stairs = scene.Instantiate<StairsController>();
         var position = new Vector2I(room.Position.X + room.Size.X / 2, room.Position.Y + room.Size.Y / 2);
@@ -139,6 +140,6 @@ public static class Spawner
         stairs.Position = position.ToGridPos().ToWorldCenter(grid.TileSize);
 
         parent.AddChild(stairs);
-        entityManager.RegisterNode(stairs, position.ToGridPos());
+        nodeRegistry.RegisterNode(stairs, position.ToGridPos());
     }
 }

@@ -1,8 +1,8 @@
 using System;
 using Godot;
-using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Combat;
+using RogueLike.Code.Domain.Actors;
 
 using RogueLike.Code.Domain.Flow;
 
@@ -15,7 +15,7 @@ namespace RogueLike.Code.View.Entities;
 /// </summary>
 public abstract partial class ActorController : Node2D, ICombatant
 {
-    protected EntityManager _entityManager;
+    protected ActorRegistry _actorRegistry;
 
     public string DisplayName => Name.ToString();
 
@@ -37,9 +37,9 @@ public abstract partial class ActorController : Node2D, ICombatant
     /// <summary>
     /// Base initialization. Sets up health and UI mapping.
     /// </summary>
-    public virtual void InitializeBase(EntityManager entityManager)
+    public virtual void InitializeBase(ActorRegistry actorRegistry)
     {
-        _entityManager = entityManager;
+        _actorRegistry = actorRegistry;
         InitializeHealth();
     }
 
@@ -70,7 +70,7 @@ public abstract partial class ActorController : Node2D, ICombatant
     public virtual void Die()
     {
         GameLog.Instance.LogDeath(DisplayName);
-        _entityManager?.UnregisterActor(this);
+        _actorRegistry?.UnregisterActor(this);
         QueueFree();
     }
 

@@ -4,7 +4,7 @@ using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
 using RogueLike.Code.View.Entities;
-using RogueLike.Code.Entities;
+using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Domain.Flow;
 using RogueLike.Code.Domain.Items;
@@ -23,6 +23,7 @@ public partial class PlayerController : ActorController
     private FloorItems _floorItems;
     private Inventory _inventory;
     private FovMap _fovMap;
+    private NodeRegistry _nodeRegistry;
     private Main _main; // Reference to Main to trigger level changes
 
     public bool IsDead { get; private set; } = false;
@@ -47,13 +48,14 @@ public partial class PlayerController : ActorController
         Experience.OnLevelUp += HandleLevelUp;
     }
 
-    public void PlaceOnLevel(DungeonGrid gridMap, EntityManager entityManager, FovMap fovMap, GridPos startPos)
+    public void PlaceOnLevel(DungeonGrid gridMap, ActorRegistry actorRegistry, FovMap fovMap, NodeRegistry nodeRegistry, GridPos startPos)
     {
-        InitializeBase(entityManager);
-        _mover = new GridMover(this, gridMap, entityManager, startPos);
+        InitializeBase(actorRegistry);
+        _mover = new GridMover(this, gridMap, actorRegistry, startPos);
         _fovMap = fovMap;
+        _nodeRegistry = nodeRegistry;
         SyncPosition();
-        entityManager.RegisterActor(this);
+        actorRegistry.RegisterActor(this);
     }
 
     /// <summary>
@@ -68,7 +70,7 @@ public partial class PlayerController : ActorController
         var target = GridPosition.Step(direction);
 
         // Check for stairs
-        var nodeAtTarget = _entityManager.GetNodeAt(target);
+        var nodeAtTarget = _nodeRegistry.GetNodeAt(target);
         if (nodeAtTarget is World.StairsController)
         {
             _main.DescendLevel();
@@ -76,9 +78,9 @@ public partial class PlayerController : ActorController
         }
 
         // If an actor is there, bump attack!
-        if (_entityManager.IsOccupied(target))
+        if (_actorRegistry.IsOccupied(target))
         {
-            var targetActor = _entityManager.GetActorAt(target);
+            var targetActor = _actorRegistry.GetActorAt(target);
             if (targetActor is ICombatant targetCombatant)
             {
                 // TRANSITIONAL (DDD Phase 3): cast needed because TryAttack is a default interface
@@ -298,7 +300,7 @@ public partial class PlayerController : ActorController
             return true;
         }
 
-        if (_entityManager.IsOccupied(position))
+        if (_actorRegistry.IsOccupied(position))
         {
             GameLog.Instance.Log("[color=gray]You stop near an entity.[/color]");
             return true;
@@ -318,7 +320,7 @@ public partial class PlayerController : ActorController
     /// </summary>
     private bool IsEnemyVisible()
     {
-        return _entityManager.AllActors
+        return _actorRegistry.AllActors
             .Where(actor => !actor.IsPlayer)
             .Any(actor => _fovMap.GetVisibility(actor.GridPosition) == VisibilityState.Visible);
     }

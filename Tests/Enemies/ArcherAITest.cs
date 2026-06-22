@@ -1,6 +1,5 @@
 using GdUnit4;
 using Godot;
-using RogueLike.Code.Entities;
 using RogueLike.Code.Domain.Actors;
 using RogueLike.Code.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
@@ -52,14 +51,14 @@ public class ArcherAITest
     }
 
     private DungeonGrid _grid;
-    private EntityManager _entityManager;
+    private ActorRegistry _actorRegistry;
     private FovMap _fovMap;
 
     [BeforeTest]
     public void Setup()
     {
         _grid = new DungeonGrid(10, 10);
-        _entityManager = new EntityManager();
+        _actorRegistry = new ActorRegistry();
         _fovMap = new FovMap(10, 10);
     }
 
@@ -75,9 +74,9 @@ public class ArcherAITest
         archer.GridPosition = new GridPos(1, 3);
         _grid.SetCell(new Vector2I(1, 2), CellType.Wall);
 
-        // Register actors with EntityManager
-        _entityManager.RegisterActor(player);
-        _entityManager.RegisterActor(archer);
+        // Register actors with ActorRegistry
+        _actorRegistry.RegisterActor(player);
+        _actorRegistry.RegisterActor(archer);
 
         // Even if the player is "visible" in the FOV map, the archer should not shoot.
         _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
@@ -87,7 +86,7 @@ public class ArcherAITest
         archer.Health = new Health(10, 10);
 
         // The player should NOT have taken damage because there is a wall in the way.
-        var ai = new ArcherAI(archer, _grid, _entityManager, archer.GridPosition);
+        var ai = new ArcherAI(archer, _grid, _actorRegistry, archer.GridPosition);
 
         // Act
         ai.TakeTurn(_fovMap);
@@ -102,11 +101,11 @@ public class ArcherAITest
         var player = new MockPlayer { GridPosition = new GridPos(1, 1), Health = new Health(10, 10) };
         var archer = new MockArcher { GridPosition = new GridPos(1, 3), Health = new Health(10, 10) };
 
-        _entityManager.RegisterActor(player);
-        _entityManager.RegisterActor(archer);
+        _actorRegistry.RegisterActor(player);
+        _actorRegistry.RegisterActor(archer);
         _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
 
-        var ai = new ArcherAI(archer, _grid, _entityManager, archer.GridPosition);
+        var ai = new ArcherAI(archer, _grid, _actorRegistry, archer.GridPosition);
 
         // Distance 2, no wall, within range -> the AI drives the archer's TryAttack verb.
         ai.TakeTurn(_fovMap);
