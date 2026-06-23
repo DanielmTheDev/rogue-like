@@ -1,6 +1,6 @@
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Grid.FOV;
+namespace RogueLike.Domain.Grid.FOV;
 
 /// <summary>
 /// A pure C# map overlay tracking the visibility state of every cell.

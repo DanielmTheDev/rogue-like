@@ -1,16 +1,16 @@
 using Godot;
-using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Domain.Grid;
-using RogueLike.Code.Domain.Grid.Generators;
+using RogueLike.Domain.Common;
+using RogueLike.Domain.Grid;
+using RogueLike.Domain.Grid.Generators;
 using RogueLike.Code.View.Grid;
 using RogueLike.Code.View.Items;
 using RogueLike.Code.View.Player;
-using RogueLike.Code.Domain.Flow;
+using RogueLike.Domain.Flow;
 using RogueLike.Code.View.Entities;
-using RogueLike.Code.Domain.Grid.FOV;
-using RogueLike.Code.Domain.Actors;
+using RogueLike.Domain.Grid.FOV;
+using RogueLike.Domain.Actors;
 using RogueLike.Code.View.Grid.FOV;
-using RogueLike.Code.Domain.Items;
+using RogueLike.Domain.Items;
 using RogueLike.Code.View.Resources;
 using System.Linq;
 

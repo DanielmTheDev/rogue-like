@@ -1,0 +1,23 @@
+<Project Sdk="Godot.NET.Sdk/4.6.2">
+  <!-- EXPERIMENT: standalone gdUnit4 view-test project. Godot.NET.Sdk (needs GodotSharp at
+       runtime), references the Godot game project for the types under test (GridConversions).
+       The csproj lives at Code/View.Tests/, but project.godot is at the repo root, so point
+       GodotProjectDir there. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <GodotProjectDir>$(MSBuildProjectDirectory)/../../</GodotProjectDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="gdUnit4.api" Version="5.0.*" />
+    <PackageReference Include="gdUnit4.test.adapter" Version="3.0.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../RogueLike.csproj" />
+  </ItemGroup>
+</Project>

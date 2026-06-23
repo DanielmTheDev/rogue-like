@@ -1,6 +1,6 @@
 using System;
 
-namespace RogueLike.Code.Domain.Flow;
+namespace RogueLike.Domain.Flow;
 
 /// <summary>
 /// A strict state-machine that tracks whose turn it is.

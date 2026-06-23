@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Grid.Generators;
+namespace RogueLike.Domain.Grid.Generators;
 
 /// <summary>
 /// Generates a dungeon using Binary Space Partitioning.

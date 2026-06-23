@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Grid;
+namespace RogueLike.Domain.Grid;
 
 /// <summary>
 /// Pathfinding slice of <see cref="DungeonGrid"/> — navigation is a query over the grid's own

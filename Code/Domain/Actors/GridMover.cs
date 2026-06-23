@@ -1,7 +1,7 @@
-using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Domain.Grid;
+using RogueLike.Domain.Common;
+using RogueLike.Domain.Grid;
 
-namespace RogueLike.Code.Domain.Actors;
+namespace RogueLike.Domain.Actors;
 
 /// <summary>
 /// Pure (Godot-free) movement logic for a grid-based entity. Holds the actor's grid position and

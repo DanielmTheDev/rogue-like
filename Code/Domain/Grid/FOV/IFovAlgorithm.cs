@@ -1,7 +1,6 @@
-using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Domain.Grid;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Grid.FOV;
+namespace RogueLike.Domain.Grid.FOV;
 
 /// <summary>
 /// Interface for Fog of War calculation algorithms.

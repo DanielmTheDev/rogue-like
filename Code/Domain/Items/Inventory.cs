@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RogueLike.Code.Domain.Items;
+namespace RogueLike.Domain.Items;
 
 /// <summary>
 /// Pure C# inventory logic for storing and using items.

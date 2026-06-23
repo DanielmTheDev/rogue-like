@@ -8,12 +8,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 dotnet build                                              # MUST be 0 errors before finishing any change
-dotnet test                                               # run all gdUnit4 tests (headless Godot via test.runsettings)
+dotnet test                                               # run ALL tests: xUnit domain (Godot-free) + gdUnit4 view (headless Godot)
+dotnet test Code/Domain.Tests/RogueLike.Domain.Tests.csproj # domain tests only — fast, NO Godot/GODOT_BIN
 dotnet test --filter "FullyQualifiedName~TurnManagerTest" # run one suite
 dotnet test --filter "FullyQualifiedName~TurnManagerTest.MethodName" # run one test
 ```
 
-- Tests run headless Godot — configured in `test.runsettings` (`--headless`, stdout capture).
+- **Three projects per layer, each with its own test project:**
+  - **Domain** — `Code/Domain/RogueLike.Domain.csproj` (lib) + `Code/Domain.Tests/RogueLike.Domain.Tests.csproj` (**xUnit**, plain `Microsoft.NET.Sdk`, **no Godot ref** — the test-side of the Godot-free wall; runs via plain `dotnet test`).
+  - **View** — `RogueLike.csproj` (the Godot game, at repo root) + `Code/View.Tests/RogueLike.View.Tests.csproj` (**gdUnit4**, `Godot.NET.Sdk`, references the game project, runs **headless Godot** via `test.runsettings`).
+  - The game project (`RogueLike.csproj`) is NOT a test project — it carries no test packages.
+- **A standalone gdUnit4 test project IS supported** (gdUnit4Net v5 / adapter v3): a `Godot.NET.Sdk` test project that references the game and sets `<GodotProjectDir>` to the repo root (where `project.godot` lives) — gdUnit4 boots Godot against that project and loads the test assembly. (Earlier belief that view tests had to live inside the game project was wrong.)
+- **Solution folders** group each layer with its tests: `Domain/` { RogueLike.Domain, RogueLike.Domain.Tests }, `View/` { RogueLike, RogueLike.View.Tests }.
 - Run the game from the Godot editor; main scene is `Scenes/Main.tscn`.
 
 ## Big-picture architecture
@@ -26,7 +32,12 @@ The core design split: **pure C# logic classes** hold all game rules and are uni
 - **Map generation:** must NEVER live in `DungeonGrid`. Lives in standalone builders (e.g. `BspDungeonGenerator`) operating on a pure `DungeonGrid`.
 - **Spawning:** `Spawner` (static) places entities across BSP rooms; tuned via `LevelSettings` (Godot `Resource`, editable in Inspector).
 
-`namespace RogueLike.<Folder>` mirrors the `Code/` tree exactly. Tests live in `Tests/` (namespace `RogueLike.Tests.<Folder>`) mirroring `Code/`.
+**Namespaces mirror each project's folder, relative to its `.csproj` (not the repo root) — the segment above a project's csproj never appears in the namespace:**
+- **Domain** (`Code/Domain/RogueLike.Domain.csproj`) → `RogueLike.Domain.<Folder>` (the `Code/` container sits above the csproj, so it drops out).
+- **View** (the Godot game `RogueLike.csproj`, pinned at the repo root by `project.godot`) → `RogueLike.Code.View.<Folder>` (its source is `Code/View/**` *relative to the root csproj*, so `Code.View` stays — and that's correct, not a bug).
+- **Domain tests** (`Code/Domain.Tests/RogueLike.Domain.Tests.csproj`) → `RogueLike.Domain.Tests.<Folder>`; **view tests** (`Code/View.Tests/RogueLike.View.Tests.csproj`, its own project rooted at that folder) → `RogueLike.View.Tests.<Folder>`. Both test projects drop `Code` for the same reason Domain does — their csproj sits inside `Code/`. (A view test referencing the game's `GridConversions` needs an explicit `using RogueLike.Code.View;` now that it's no longer a child namespace of it.)
+
+Domain test classes/methods use xUnit `[Fact]`/`[Theory]` (Rider recognizes these as used). gdUnit4 `[TestSuite]`/`[TestCase]` are reflection-invoked, so Rider false-flags them "never used"; suppressed via a scoped `[Code/View.Tests/**.cs]` section in `.editorconfig` (`resharper_*_global_highlighting = none`) — scoped to the gdUnit4 folder only, not global. (Rider 2026.1 removed the External-Annotations folder UI, so editorconfig is the version-controlled, no-UI route.)
 
 **Read `docs/SYSTEM_DESIGN.md` before any task** — it is the authoritative architecture ledger and must be updated synchronously with any change to Health, Movement, AI, or Map Generation.
 

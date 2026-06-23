@@ -3,18 +3,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="gdUnit4.api" Version="5.0.*" />
-    <PackageReference Include="gdUnit4.test.adapter" Version="3.0.*" />
-  </ItemGroup>
-  <!-- The Godot-free domain layer is its own assembly (Code/Domain/RogueLike.Domain.csproj). Its
-       .cs files are owned by that project, so remove them from this Godot project's compile glob. -->
+  <!-- Pure Godot game/View project. Tests live in their OWN projects: Code/Domain.Tests (xUnit,
+       Godot-free) and Code/View.Tests (gdUnit4, Godot.NET.Sdk, references this project). So this
+       project carries no test packages and is not IsTestProject — it just renders + delegates. -->
   <ItemGroup>
     <Compile Remove="Code/Domain/**/*.cs" />
+    <Compile Remove="Code/Domain.Tests/**/*.cs" />
+    <Compile Remove="Code/View.Tests/**/*.cs" />
     <ProjectReference Include="Code/Domain/RogueLike.Domain.csproj" />
   </ItemGroup>
   <!-- The old grep-based GuardDomainGodotFree target is gone: RogueLike.Domain.csproj has no Godot

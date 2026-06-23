@@ -42,3 +42,14 @@ dotnet_diagnostic.IDE0007.severity = warning
 # ternaries): each branch on its own line, with ? and : at the start of the wrapped line.
 resharper_csharp_wrap_before_ternary_opsign = true
 resharper_wrap_ternary_expr_style = chop_always
+
+# gdUnit4 [TestSuite]/[TestCase] are invoked by reflection, so Rider's solution-wide usage
+# analysis can't see the call sites and false-flags every gdUnit4 test class/method as
+# "Class is never instantiated" / "Member is never used". Turn those off for the gdUnit4
+# view-test folder ONLY (scoped, not global). The xUnit domain tests need nothing — Rider
+# recognizes [Fact]/[Theory] natively. (Rider 2026.1 removed the External-Annotations folder
+# UI, so this scoped .editorconfig is the version-controlled, no-UI way to suppress them.)
+[Code/View.Tests/**.cs]
+resharper_class_never_instantiated_global_highlighting = none
+resharper_unused_member_global_highlighting = none
+resharper_unused_type_global_highlighting = none

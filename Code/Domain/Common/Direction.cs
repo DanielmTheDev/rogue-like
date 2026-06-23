@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace RogueLike.Code.Domain.Common;
+namespace RogueLike.Domain.Common;
 
 /// <summary>
 /// Value object for a single grid step. Immutable, equality-by-value, and closed: the constructor

@@ -1,6 +1,6 @@
 using System;
 
-namespace RogueLike.Code.Domain.Combat;
+namespace RogueLike.Domain.Combat;
 
 /// <summary>
 /// Value object for an amount of combat damage. Immutable, equality-by-value, self-validating:

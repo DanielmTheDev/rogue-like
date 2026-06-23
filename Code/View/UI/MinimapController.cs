@@ -1,6 +1,6 @@
 using Godot;
-using RogueLike.Code.Domain.Grid;
-using RogueLike.Code.Domain.Grid.FOV;
+using RogueLike.Domain.Grid;
+using RogueLike.Domain.Grid.FOV;
 using RogueLike.Code.View.Player;
 
 namespace RogueLike.Code.View.UI;

@@ -1,6 +1,6 @@
 using System;
 
-namespace RogueLike.Code.Domain.Common;
+namespace RogueLike.Domain.Common;
 
 /// <summary>
 /// Immutable axis-aligned integer rectangle on the grid (origin + size). Used for dungeon rooms

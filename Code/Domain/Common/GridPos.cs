@@ -1,6 +1,6 @@
 using System;
 
-namespace RogueLike.Code.Domain.Common;
+namespace RogueLike.Domain.Common;
 
 /// <summary>
 /// Value object for a position on the dungeon grid. Immutable, equality-by-value (so it works

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using Godot;
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 using RogueLike.Code.View.Enemies;
-using RogueLike.Code.Domain.Grid;
-using RogueLike.Code.Domain.Grid.FOV;
-using RogueLike.Code.Domain.Actors;
+using RogueLike.Domain.Grid;
+using RogueLike.Domain.Grid.FOV;
+using RogueLike.Domain.Actors;
 using RogueLike.Code.View.Player;
-using RogueLike.Code.Domain.Items;
+using RogueLike.Domain.Items;
 using RogueLike.Code.View.Resources;
 using RogueLike.Code.View.World;
 

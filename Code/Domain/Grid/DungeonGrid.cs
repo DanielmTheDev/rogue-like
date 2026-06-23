@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Grid;
+namespace RogueLike.Domain.Grid;
 
 /// <summary>
 /// Pure data representation of the dungeon grid.

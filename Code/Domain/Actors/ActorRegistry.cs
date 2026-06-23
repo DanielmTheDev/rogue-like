@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Actors;
+namespace RogueLike.Domain.Actors;
 
 /// <summary>
 /// Pure C# (Godot-free) registry of all actors occupying tiles on the grid, keyed by

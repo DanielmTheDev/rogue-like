@@ -1,9 +1,9 @@
 using System.Linq;
-using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Domain.Combat;
-using RogueLike.Code.Domain.Grid;
+using RogueLike.Domain.Common;
+using RogueLike.Domain.Combat;
+using RogueLike.Domain.Grid;
 
-namespace RogueLike.Code.Domain.Actors;
+namespace RogueLike.Domain.Actors;
 
 /// <summary>
 /// Pure C# class representing the AI decision making for an Enemy.

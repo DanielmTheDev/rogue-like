@@ -1,6 +1,6 @@
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Items;
+namespace RogueLike.Domain.Items;
 
 /// <summary>
 /// Interface for all floor items.

@@ -1,6 +1,6 @@
 using System;
 
-namespace RogueLike.Code.Domain.Flow;
+namespace RogueLike.Domain.Flow;
 
 /// <summary>
 /// A pure C# class to manage experience points, levels, and player progression.

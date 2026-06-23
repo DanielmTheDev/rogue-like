@@ -1,4 +1,4 @@
-namespace RogueLike.Code.Domain.Flow;
+namespace RogueLike.Domain.Flow;
 
 /// <summary>
 /// Represents the current phase of the turn sequence.

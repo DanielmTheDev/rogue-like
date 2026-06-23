@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Godot;
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
 namespace RogueLike.Code.View.Entities;
 

@@ -1,8 +1,8 @@
-using RogueLike.Code.Domain.Items;
-using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Domain.Actors;
-using RogueLike.Code.Domain.Combat;
-using RogueLike.Code.Domain.Flow;
+using RogueLike.Domain.Items;
+using RogueLike.Domain.Common;
+using RogueLike.Domain.Actors;
+using RogueLike.Domain.Combat;
+using RogueLike.Domain.Flow;
 
 namespace RogueLike.Code.View.Items.Consumables;
 

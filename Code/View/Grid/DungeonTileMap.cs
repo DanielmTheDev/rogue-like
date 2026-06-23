@@ -1,6 +1,5 @@
 using Godot;
-using RogueLike.Code.Domain.Grid;
-using RogueLike.Code.View;
+using RogueLike.Domain.Grid;
 
 namespace RogueLike.Code.View.Grid;
 

@@ -1,6 +1,6 @@
 using System;
 
-namespace RogueLike.Code.Domain.Combat;
+namespace RogueLike.Domain.Combat;
 
 /// <summary>
 /// Immutable health value object: current/max HP with invariants (0 ≤ Current ≤ Max, Max &gt; 0).

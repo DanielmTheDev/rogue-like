@@ -1,7 +1,7 @@
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 using RogueLike.Code.View.Entities;
-using RogueLike.Code.Domain.Actors;
-using RogueLike.Code.Domain.Grid;
+using RogueLike.Domain.Actors;
+using RogueLike.Domain.Grid;
 
 namespace RogueLike.Code.View.Enemies;
 /// <summary>

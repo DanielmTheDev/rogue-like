@@ -1,8 +1,7 @@
 using System;
-using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Domain.Grid;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Grid.FOV;
+namespace RogueLike.Domain.Grid.FOV;
 
 /// <summary>
 /// Uses Bresenham's line algorithm to shoot rays in a 360-degree circle.

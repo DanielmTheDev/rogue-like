@@ -1,6 +1,6 @@
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Grid.Generators;
+namespace RogueLike.Domain.Grid.Generators;
 
 /// <summary>
 /// A node representing a partitioned space in the BSP dungeon tree.

@@ -1,10 +1,10 @@
 using System.Linq;
-using RogueLike.Code.Domain.Common;
-using RogueLike.Code.Domain.Combat;
-using RogueLike.Code.Domain.Grid;
-using RogueLike.Code.Domain.Grid.FOV;
+using RogueLike.Domain.Common;
+using RogueLike.Domain.Combat;
+using RogueLike.Domain.Grid;
+using RogueLike.Domain.Grid.FOV;
 
-namespace RogueLike.Code.Domain.Actors;
+namespace RogueLike.Domain.Actors;
 
 /// <summary>
 /// Pure C# AI for the Skeleton Archer.

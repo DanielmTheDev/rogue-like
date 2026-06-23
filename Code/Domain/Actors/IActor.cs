@@ -1,6 +1,6 @@
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Actors;
+namespace RogueLike.Domain.Actors;
 
 /// <summary>
 /// Interface for any dynamic entity residing on the grid (Player, Enemy).

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using RogueLike.Code.Domain.Common;
+using RogueLike.Domain.Common;
 
-namespace RogueLike.Code.Domain.Items;
+namespace RogueLike.Domain.Items;
 
 /// <summary>
 /// Pure C# registry tracking items lying on the dungeon floor.

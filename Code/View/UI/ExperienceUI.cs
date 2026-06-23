@@ -1,5 +1,5 @@
 using Godot;
-using RogueLike.Code.Domain.Flow;
+using RogueLike.Domain.Flow;
 
 namespace RogueLike.Code.View.UI;
 
