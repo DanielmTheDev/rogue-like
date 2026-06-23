@@ -11,15 +11,12 @@
     <PackageReference Include="gdUnit4.api" Version="5.0.*" />
     <PackageReference Include="gdUnit4.test.adapter" Version="3.0.*" />
   </ItemGroup>
-  <!-- Rich-domain guard (DDD): Code/Domain/ is the Godot-free layer. Any `using Godot;` there
-       fails the build. Godot types belong on the view edge + the single GridConversions bridge. -->
-  <Target Name="GuardDomainGodotFree" BeforeTargets="CoreCompile">
-    <Exec Command="if grep -rnE '^using Godot' Code/Domain --include=*.cs; then exit 1; fi"
-          WorkingDirectory="$(MSBuildProjectDirectory)"
-          IgnoreExitCode="true">
-      <Output TaskParameter="ExitCode" PropertyName="_DomainGodotGuardExit" />
-    </Exec>
-    <Error Condition="'$(_DomainGodotGuardExit)' != '0'"
-           Text="Rich-domain rule: Code/Domain must not contain 'using Godot;' (the domain layer is Godot-free). Keep Godot types at the view edge / GridConversions bridge." />
-  </Target>
+  <!-- The Godot-free domain layer is its own assembly (Code/Domain/RogueLike.Domain.csproj). Its
+       .cs files are owned by that project, so remove them from this Godot project's compile glob. -->
+  <ItemGroup>
+    <Compile Remove="Code/Domain/**/*.cs" />
+    <ProjectReference Include="Code/Domain/RogueLike.Domain.csproj" />
+  </ItemGroup>
+  <!-- The old grep-based GuardDomainGodotFree target is gone: RogueLike.Domain.csproj has no Godot
+       reference, so a `using Godot;` in the domain is now a compile-time error (a real wall). -->
 </Project>

@@ -2,3 +2,7 @@
 .godot/
 /android/
 .idea/
+
+# .NET build output (e.g. the RogueLike.Domain library project)
+**/bin/
+**/obj/

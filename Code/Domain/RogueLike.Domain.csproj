@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The Godot-free domain layer as its OWN assembly. It is a plain Microsoft.NET.Sdk library
+       with NO reference to Godot/GodotSharp, so a `using Godot;` here is a COMPILE error, not a
+       grep-guard warning. The Godot game project (RogueLike.csproj) references this; EnableDynamicLoading
+       lets Godot load it at runtime alongside the game assembly. Globs Code/Domain/**/*.cs (its own dir). -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <IsPackable>false</IsPackable>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+</Project>
