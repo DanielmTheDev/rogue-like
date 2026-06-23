@@ -2,7 +2,6 @@ using GdUnit4;
 using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Grid;
-using RogueLike.Code.Player;
 using RogueLike.Code.Domain.Actors;
 using static GdUnit4.Assertions;
 

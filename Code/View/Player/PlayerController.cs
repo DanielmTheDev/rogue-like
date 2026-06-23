@@ -1,5 +1,4 @@
 using Godot;
-using RogueLike.Code.Player;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
@@ -194,7 +193,7 @@ public partial class PlayerController : ActorController
     private void SyncPosition()
     {
         if (_mover != null)
-            Position = _mover.WorldPosition;
+            Position = _mover.GridPosition.ToWorldCenter(_mover.Grid.TileSize);
     }
 
     /// <summary>

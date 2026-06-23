@@ -3,7 +3,6 @@ using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Combat;
 using RogueLike.Code.Domain.Grid;
 using RogueLike.Code.Domain.Grid.FOV;
-using RogueLike.Code.Player;
 
 namespace RogueLike.Code.Domain.Actors;
 

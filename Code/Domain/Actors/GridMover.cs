@@ -1,14 +1,13 @@
-using Godot;
 using RogueLike.Code.Domain.Common;
 using RogueLike.Code.Domain.Grid;
-using RogueLike.Code.Domain.Actors;
-using RogueLike.Code.View;
 
-namespace RogueLike.Code.Player;
+namespace RogueLike.Code.Domain.Actors;
 
 /// <summary>
-/// Pure movement logic for a grid-based entity.
-/// No Godot Node dependency — easily testable.
+/// Pure (Godot-free) movement logic for a grid-based entity. Holds the actor's grid position and
+/// validates each step against terrain (<see cref="DungeonGrid.CanStep"/>) + occupancy
+/// (<see cref="ActorRegistry"/>). World-space pixel projection is a view concern — the view reads
+/// <see cref="GridPosition"/> and converts via <c>GridConversions.ToWorldCenter</c>.
 /// </summary>
 public class GridMover
 {
@@ -21,11 +20,6 @@ public class GridMover
     /// Current position in grid coordinates.
     /// </summary>
     public GridPos GridPosition => _gridPosition;
-
-    /// <summary>
-    /// Current position in world-space pixels (center of tile).
-    /// </summary>
-    public Vector2 WorldPosition => _gridPosition.ToWorldCenter(_grid.TileSize);
 
     /// <summary>
     /// Access to the underlying grid for wall/corner checks.
