@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # Fast, Godot-free signal: pure-C# domain + integration tests (xUnit).
+  domain-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Test (domain + integration)
+        run: dotnet test Code/Domain.Tests/RogueLike.Domain.Tests.csproj --configuration Release
+
+  # Full gate: gdUnit4 view + ISceneRunner scene tests. Needs a Godot 4.6.2 mono binary.
+  view-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Installs a .NET-enabled (mono) Godot and puts `godot` on PATH.
+      - name: Setup Godot (mono)
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.6.2
+          use-dotnet: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      # gdUnit4 test adapter reads GODOT_BIN; setup-godot exports GODOT/GODOT4, not GODOT_BIN.
+      - name: Export GODOT_BIN
+        run: echo "GODOT_BIN=$(which godot)" >> "$GITHUB_ENV"
+
+      # 0 warnings/0 errors: EnforceCodeStyleInBuild makes style violations fail the build (lint gate).
+      - name: Build
+        run: dotnet build --configuration Release -warnaserror
+
+      # One-time asset import after a clean checkout (required before headless tests run).
+      - name: Godot import
+        run: '"$GODOT_BIN" --headless --import'
+
+      - name: Test (view + scene, headless)
+        run: dotnet test RogueLike.csproj --configuration Release
