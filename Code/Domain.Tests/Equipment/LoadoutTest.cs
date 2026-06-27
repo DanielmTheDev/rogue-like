@@ -87,4 +87,40 @@ public class LoadoutTest
 
         Assert.Equal(0, fired);
     }
+
+    [Fact]
+    public void Clear_RemovesWeapon_AndResetsBonus()
+    {
+        var loadout = new Loadout();
+        loadout.TryEquip(new Weapon("Sword +2", 2));
+
+        loadout.Clear();
+
+        Assert.Null(loadout.EquippedWeapon);
+        Assert.Equal(0, loadout.DamageBonus);
+    }
+
+    [Fact]
+    public void Clear_FiresEquipmentChanged_WhenWeaponWasEquipped()
+    {
+        var loadout = new Loadout();
+        loadout.TryEquip(new Weapon("Sword +1", 1));
+        var fired = 0;
+        loadout.OnEquipmentChanged += () => fired++;
+
+        loadout.Clear();
+
+        Assert.Equal(1, fired);
+    }
+
+    [Fact]
+    public void Clear_WhenEmpty_IsSafe()
+    {
+        var loadout = new Loadout();
+
+        loadout.Clear();
+
+        Assert.Null(loadout.EquippedWeapon);
+        Assert.Equal(0, loadout.DamageBonus);
+    }
 }

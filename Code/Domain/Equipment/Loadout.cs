@@ -28,4 +28,13 @@ public sealed class Loadout
         OnEquipmentChanged?.Invoke();
         return true;
     }
+
+    /// <summary>
+    /// Unequips everything (e.g. on a new game) and notifies listeners.
+    /// </summary>
+    public void Clear()
+    {
+        EquippedWeapon = null;
+        OnEquipmentChanged?.Invoke();
+    }
 }

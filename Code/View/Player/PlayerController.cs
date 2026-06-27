@@ -367,6 +367,7 @@ public partial class PlayerController : ActorController, IEquipmentHolder
 
         // Reset systems
         Inventory.Clear();
+        Loadout.Clear();
         Experience = new ExperienceSystem();
         Experience.OnLevelUp += HandleLevelUp;
     }

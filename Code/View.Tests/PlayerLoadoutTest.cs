@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using GdUnit4;
 using RogueLike.Code.View.Player;
 using RogueLike.Domain.Equipment;
@@ -32,5 +33,20 @@ public class PlayerLoadoutTest
         player.Loadout.TryEquip(new Weapon("Sword +1", 1));
 
         AssertInt(player.AttackDamage).IsEqual(4);
+    }
+
+    // Reset() touches the player's fully-wired systems (inventory, experience,
+    // health), so it needs the live scene rather than a bare node.
+    [TestCase]
+    public async Task Reset_ClearsEquippedWeapon()
+    {
+        using var runner = ISceneRunner.Load("res://Scenes/Main.tscn", true);
+        await runner.AwaitIdleFrame();
+        var player = runner.Scene().GetNode<PlayerController>("Player");
+        player.Loadout.TryEquip(new Weapon("Sword +1", 1));
+
+        player.Reset();
+
+        AssertObject(player.Loadout.EquippedWeapon).IsNull();
     }
 }
