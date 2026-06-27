@@ -9,14 +9,15 @@ namespace RogueLike.Domain.Grid.Generators;
 /// </summary>
 public static class BspDungeonGenerator
 {
-    private static readonly Random _rng = new();
-
     /// <summary>
     /// Executes the complete BSP algorithm on the grid map.
     /// Fills the grid with walls, carves out interconnected rooms, and returns the rooms.
     /// </summary>
-    public static List<GridRect> Generate(DungeonGrid grid, int minSplitSize = 10)
+    /// <param name="seed">When set, produces a deterministic, reproducible layout; null = random.</param>
+    public static List<GridRect> Generate(DungeonGrid grid, int? seed = null, int minSplitSize = 10)
     {
+        var rng = seed is { } s ? new Random(s) : new Random();
+
         // 1. Fill completely with rock
         for (var x = 0; x < grid.Width; x++)
         {
@@ -29,23 +30,23 @@ public static class BspDungeonGenerator
         // 2. Partition
         var rootBounds = new GridRect(1, 1, grid.Width - 2, grid.Height - 2); // Leave 1 tile padded edge
         var root = new BspNode(rootBounds);
-        Partition(root, minSplitSize);
+        Partition(root, minSplitSize, rng);
 
         // 3. Carve & Link
         var rooms = new List<GridRect>();
-        CarveRooms(root, rooms, grid);
+        CarveRooms(root, rooms, grid, rng);
 
         return rooms;
     }
 
-    private static void Partition(BspNode node, int minSplitSize)
+    private static void Partition(BspNode node, int minSplitSize, Random rng)
     {
         // Recursion stop if space is too small to split
         if (node.Bounds.Width < minSplitSize * 2 || node.Bounds.Height < minSplitSize * 2)
             return;
 
         // Try split
-        var splitHorizontal = _rng.NextDouble() > 0.5;
+        var splitHorizontal = rng.NextDouble() > 0.5;
 
         // If width > 25% bigger than height, force vertical split
         if (node.Bounds.Width > node.Bounds.Height * 1.25)
@@ -56,7 +57,7 @@ public static class BspDungeonGenerator
         var max = (splitHorizontal ? node.Bounds.Height : node.Bounds.Width) - minSplitSize;
         if (max <= minSplitSize) return;
 
-        var splitPoint = _rng.Next(minSplitSize, max);
+        var splitPoint = rng.Next(minSplitSize, max);
 
         if (splitHorizontal)
         {
@@ -69,19 +70,19 @@ public static class BspDungeonGenerator
             node.RightChild = new BspNode(new GridRect(node.Bounds.X + splitPoint, node.Bounds.Y, node.Bounds.Width - splitPoint, node.Bounds.Height));
         }
 
-        Partition(node.LeftChild, minSplitSize);
-        Partition(node.RightChild, minSplitSize);
+        Partition(node.LeftChild, minSplitSize, rng);
+        Partition(node.RightChild, minSplitSize, rng);
     }
 
-    private static void CarveRooms(BspNode node, List<GridRect> roomsList, DungeonGrid grid)
+    private static void CarveRooms(BspNode node, List<GridRect> roomsList, DungeonGrid grid, Random rng)
     {
         if (node.IsLeaf)
         {
             // Randomly carve a room inside this space
-            var w = _rng.Next(4, node.Bounds.Width - 2);
-            var h = _rng.Next(4, node.Bounds.Height - 2);
-            var x = _rng.Next(node.Bounds.X + 1, node.Bounds.X + node.Bounds.Width - w - 1);
-            var y = _rng.Next(node.Bounds.Y + 1, node.Bounds.Y + node.Bounds.Height - h - 1);
+            var w = rng.Next(4, node.Bounds.Width - 2);
+            var h = rng.Next(4, node.Bounds.Height - 2);
+            var x = rng.Next(node.Bounds.X + 1, node.Bounds.X + node.Bounds.Width - w - 1);
+            var y = rng.Next(node.Bounds.Y + 1, node.Bounds.Y + node.Bounds.Height - h - 1);
 
             var room = new GridRect(x, y, w, h);
             node.Room = room;
@@ -99,26 +100,26 @@ public static class BspDungeonGenerator
         else
         {
             // Post-order traversal
-            CarveRooms(node.LeftChild, roomsList, grid);
-            CarveRooms(node.RightChild, roomsList, grid);
+            CarveRooms(node.LeftChild, roomsList, grid, rng);
+            CarveRooms(node.RightChild, roomsList, grid, rng);
 
             // Link children
             if (node.LeftChild?.Room != null && node.RightChild?.Room != null)
             {
-                ConnectRooms(grid, node.LeftChild.Room.Value, node.RightChild.Room.Value);
+                ConnectRooms(grid, node.LeftChild.Room.Value, node.RightChild.Room.Value, rng);
                 // Parent inherits room connection for bubbling up
                 node.Room = node.LeftChild.Room;
             }
         }
     }
 
-    private static void ConnectRooms(DungeonGrid grid, GridRect room1, GridRect room2)
+    private static void ConnectRooms(DungeonGrid grid, GridRect room1, GridRect room2, Random rng)
     {
         var center1 = room1.Center;
         var center2 = room2.Center;
 
         // Carve L-shaped corridor
-        if (_rng.NextDouble() > 0.5)
+        if (rng.NextDouble() > 0.5)
         {
             CarveHorizontalTunn(grid, center1.X, center2.X, center1.Y);
             CarveVerticalTunn(grid, center1.Y, center2.Y, center2.X);

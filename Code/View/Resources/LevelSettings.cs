@@ -22,4 +22,8 @@ public partial class LevelSettings : Resource
 
     [Export(PropertyHint.Range, "0,5,0.1")]
     public float DifficultyScaling { get; set; } = 1.0f;
+
+    // Fixed map seed for reproducible layouts (debugging/testing). -1 = random each generation.
+    [Export]
+    public int MapSeed { get; set; } = -1;
 }

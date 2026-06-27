@@ -22,8 +22,7 @@ namespace RogueLike.Code.View;
 /// </summary>
 public partial class Main : Node2D
 {
-    [Export]
-    public LevelSettings LevelSettings { get; set; }
+    [Export] public LevelSettings LevelSettings { get; set; }
 
     private const int GridWidth = 50;
     private const int GridHeight = 50;
@@ -70,8 +69,11 @@ public partial class Main : Node2D
 
     private void SetupLevel()
     {
-        // 1. Generate map layout
-        _rooms = BspDungeonGenerator.Generate(_gridMap);
+        // 1. Generate map layout (fixed seed if LevelSettings supplies one, else random)
+        int? seed = LevelSettings?.MapSeed >= 0
+            ? LevelSettings.MapSeed
+            : null;
+        _rooms = BspDungeonGenerator.Generate(_gridMap, seed);
         SetupTileMap();
 
         // 2. Place player
@@ -84,7 +86,8 @@ public partial class Main : Node2D
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");
         var stairsScene = GD.Load<PackedScene>("res://Scenes/StairsDown.tscn");
 
-        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _actorRegistry, _dungeonLevel, LevelSettings);
+        Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _actorRegistry, _dungeonLevel,
+            LevelSettings);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _floorItems);
         Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _nodeRegistry, _gridMap);
 
