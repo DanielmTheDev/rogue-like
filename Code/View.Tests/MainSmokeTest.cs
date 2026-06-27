@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GdUnit4;
 using RogueLike.Code.View.Enemies;
+using RogueLike.Code.View.Items;
 using RogueLike.Code.View.Player;
 using RogueLike.Code.View.World;
 using RogueLike.Domain.Common;
@@ -51,6 +52,18 @@ public class MainSmokeTest
 
         var hasStairs = main.GetChildren().Any(c => c is StairsController);
         AssertBool(hasStairs).OverrideFailureMessage("no stairs spawned into the level").IsTrue();
+    }
+
+    [TestCase]
+    public async Task Boots_SpawnsTwoFloorWeapons()
+    {
+        using var runner = ISceneRunner.Load(MainScene, true);
+        await runner.AwaitIdleFrame();
+
+        var weaponCount = runner.Scene().GetChildren().Count(c => c is WeaponItem);
+        AssertInt(weaponCount)
+            .OverrideFailureMessage("expected a Sword +1 and a Sword +2 to spawn")
+            .IsEqual(2);
     }
 
     [TestCase]
