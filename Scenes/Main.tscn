@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bgacm0vsedlkr"]
+[gd_scene load_steps=6 format=3 uid="uid://bgacm0vsedlkr"]
 
 [ext_resource type="Script" uid="uid://bhemhhtah4hs3" path="res://Code/View/Main.cs" id="1_main_script"]
 [ext_resource type="Script" uid="uid://bv50eriaqtt0k" path="res://Code/View/Grid/DungeonTileMap.cs" id="2_tilemap_script"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://b1v2h3i4j5k6l" path="res://Scenes/UI/ExperienceUI.tscn" id="7_exp_ui_scene"]
 [ext_resource type="Resource" uid="uid://ck30u1q20435m" path="res://Resources/DefaultLevelSettings.tres" id="8_level_settings"]
 [ext_resource type="PackedScene" uid="uid://d1y3r25jmk0l4" path="res://Scenes/MinimapUI.tscn" id="9_minimap_scene"]
+[ext_resource type="PackedScene" uid="uid://c7w3e5bap0n2u" path="res://Scenes/UI/WeaponUI.tscn" id="10_weapon_ui_scene"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main_script")
@@ -27,3 +28,5 @@ script = ExtResource("2_tilemap_script")
 [node name="ExperienceUI" parent="." instance=ExtResource("7_exp_ui_scene")]
 
 [node name="MinimapUI" parent="." instance=ExtResource("9_minimap_scene")]
+
+[node name="WeaponUI" parent="." instance=ExtResource("10_weapon_ui_scene")]

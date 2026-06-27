@@ -64,6 +64,8 @@ public partial class Main : Node2D
         inventoryUI.Initialize(player.Inventory);
         var expUI = GetNode<UI.ExperienceUI>("ExperienceUI/ExperienceControl");
         expUI.Initialize(player.Experience);
+        var weaponUI = GetNode<UI.WeaponUI>("WeaponUI/WeaponControl");
+        weaponUI.Initialize(player.Loadout);
         _minimap = GetNode<UI.MinimapController>("MinimapUI/MinimapController");
         _minimap.Initialize(_gridMap, _fovMap, player);
     }
