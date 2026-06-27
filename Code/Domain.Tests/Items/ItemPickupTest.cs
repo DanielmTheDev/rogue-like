@@ -5,82 +5,52 @@ using RogueLike.Domain.Actors;
 
 namespace RogueLike.Domain.Tests.Items;
 
+/// <summary>
+/// FloorItems registry behaviour: it locates the item under the actor, delegates the
+/// pickup decision to that item, and unregisters it only when the item reports it was
+/// taken. The pickup orchestration itself lives on the item (ItemController) and is
+/// covered by the view tests.
+/// </summary>
 public class ItemPickupTest
 {
     [Fact]
-    public void TryPickup_EmptyInventory_AddsItem_AndReturnsTrue()
-    {
-        var item = new MockItem();
-        var inventory = new Inventory(maxSlots: 5);
-
-        var picked = ((IItem)item).TryPickup(new MockActor(), inventory);
-
-        Assert.True(picked);
-        Assert.Equal(1, inventory.Count);
-        Assert.True(item.OnPickupCalled);
-    }
-
-    [Fact]
-    public void TryPickup_FullInventory_ReturnsFalse_AndDoesNotPickup()
-    {
-        var inventory = new Inventory(maxSlots: 1);
-        inventory.AddItem(new MockItem());
-        var item = new MockItem();
-
-        var picked = ((IItem)item).TryPickup(new MockActor(), inventory);
-
-        Assert.False(picked);
-        Assert.Equal(1, inventory.Count);
-        Assert.False(item.OnPickupCalled);
-    }
-
-    [Fact]
-    public void TryPickup_CannotPickup_ReturnsFalse()
-    {
-        var item = new MockItem { Pickable = false };
-        var inventory = new Inventory(maxSlots: 5);
-
-        var picked = ((IItem)item).TryPickup(new MockActor(), inventory);
-
-        Assert.False(picked);
-        Assert.Equal(0, inventory.Count);
-    }
-
-    [Fact]
-    public void TryPickup_NullInventory_ReturnsFalse()
-    {
-        var item = new MockItem();
-
-        Assert.False(((IItem)item).TryPickup(new MockActor(), null));
-    }
-
-    [Fact]
-    public void CheckForPickup_ItemAtPosition_PicksUpAndUnregisters()
+    public void CheckForPickup_ItemTaken_DelegatesAndUnregisters()
     {
         var manager = new FloorItems();
         var pos = new GridPos(3, 4);
-        var item = new MockItem { GridPosition = pos };
+        var item = new MockItem { GridPosition = pos, TryPickupResult = true };
         manager.RegisterItem(item);
-        var inventory = new Inventory(maxSlots: 5);
 
-        manager.CheckForPickup(pos, new MockActor(), inventory);
+        manager.CheckForPickup(pos, new MockActor(), new Inventory(maxSlots: 5));
 
-        Assert.Equal(1, inventory.Count);
-        Assert.True(item.OnPickupCalled);
+        Assert.True(item.TryPickupCalled);
         Assert.Empty(manager.AllItems);
     }
 
     [Fact]
-    public void CheckForPickup_NoItemAtPosition_LeavesItemOnFloor()
+    public void CheckForPickup_ItemNotTaken_LeavesItOnFloor()
+    {
+        var manager = new FloorItems();
+        var pos = new GridPos(3, 4);
+        var item = new MockItem { GridPosition = pos, TryPickupResult = false };
+        manager.RegisterItem(item);
+
+        manager.CheckForPickup(pos, new MockActor(), new Inventory(maxSlots: 5));
+
+        Assert.True(item.TryPickupCalled);
+        Assert.Single(manager.AllItems);
+    }
+
+    [Fact]
+    public void CheckForPickup_NoItemAtPosition_DoesNothing()
     {
         var manager = new FloorItems();
         var item = new MockItem { GridPosition = new GridPos(3, 4) };
         manager.RegisterItem(item);
-        var inventory = new Inventory(maxSlots: 5);
 
-        manager.CheckForPickup(new GridPos(0, 0), new MockActor(), inventory);
+        manager.CheckForPickup(new GridPos(0, 0), new MockActor(), new Inventory(maxSlots: 5));
 
-        Assert.Equal(0, inventory.Count);
+        Assert.False(item.TryPickupCalled);
         Assert.Single(manager.AllItems);
     }
 
@@ -89,12 +59,18 @@ public class ItemPickupTest
         public string DisplayName { get; set; } = "MockItem";
         public GridPos GridPosition { get; set; }
         public bool IsConsumable { get; set; } = true;
-        public bool Pickable { get; set; } = true;
-        public bool OnPickupCalled { get; private set; }
+        public bool TryPickupResult { get; set; } = true;
+        public bool TryPickupCalled { get; private set; }
 
-        public bool CanPickup(IActor actor) => Pickable;
-        public void OnPickup(IActor actor) => OnPickupCalled = true;
+        public bool CanPickup(IActor actor) => true;
+        public void OnPickup(IActor actor) { }
         public bool Use(IActor actor) => true;
+
+        public bool TryPickup(IActor actor, Inventory inventory)
+        {
+            TryPickupCalled = true;
+            return TryPickupResult;
+        }
     }
 
     private class MockActor : IActor

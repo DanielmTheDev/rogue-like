@@ -6,7 +6,9 @@ using RogueLike.Domain.Grid;
 using RogueLike.Domain.Grid.FOV;
 using RogueLike.Domain.Actors;
 using RogueLike.Code.View.Player;
+using RogueLike.Domain.Equipment;
 using RogueLike.Domain.Items;
+using RogueLike.Code.View.Items;
 using RogueLike.Code.View.Resources;
 using RogueLike.Code.View.World;
 
@@ -122,6 +124,16 @@ public static class Spawner
             var spawnPos = RandomFloorTile(room);
             SpawnHealingPotion(parentNode, potionScene, grid, floorItems, spawnPos);
         }
+    }
+
+    public static void SpawnWeapon(
+        Node parent, PackedScene weaponScene, FloorItems floorItems,
+        GridPos pos, Weapon weapon)
+    {
+        var item = weaponScene.Instantiate<WeaponItem>();
+        item.Configure(weapon);
+        parent.AddChild(item);
+        item.Initialize(floorItems, pos);
     }
 
     public static GridPos RandomFloorTile(GridRect room)

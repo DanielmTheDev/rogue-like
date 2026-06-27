@@ -10,6 +10,7 @@ using RogueLike.Code.View.Entities;
 using RogueLike.Domain.Grid.FOV;
 using RogueLike.Domain.Actors;
 using RogueLike.Code.View.Grid.FOV;
+using RogueLike.Domain.Equipment;
 using RogueLike.Domain.Items;
 using RogueLike.Code.View.Resources;
 using System.Linq;
@@ -85,14 +86,28 @@ public partial class Main : Node2D
         var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");
         var stairsScene = GD.Load<PackedScene>("res://Scenes/StairsDown.tscn");
+        var swordScene = GD.Load<PackedScene>("res://Scenes/Sword.tscn");
 
         Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _actorRegistry, _dungeonLevel,
             LevelSettings);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _floorItems);
+        // TEMP (loot system bring-up): drop a Sword +1 right next to the player so it's
+        // trivially testable. Will be replaced by proper loot placement later.
+        Spawner.SpawnWeapon(this, swordScene, _floorItems, WalkableNeighbour(_rooms[0].Center), new Weapon("Sword +1", 1));
         Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _nodeRegistry, _gridMap);
 
         // 4. Initial FOV Compute
         UpdateFov();
+    }
+
+    private GridPos WalkableNeighbour(GridPos origin)
+    {
+        GridPos[] neighbours =
+        [
+            new(origin.X + 1, origin.Y), new(origin.X - 1, origin.Y),
+            new(origin.X, origin.Y + 1), new(origin.X, origin.Y - 1)
+        ];
+        return neighbours.FirstOrDefault(_gridMap.IsWalkable, origin);
     }
 
     private void SetupFovTileMap()
