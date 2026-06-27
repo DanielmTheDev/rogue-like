@@ -81,35 +81,4 @@ public class TurnCycleTest
         DungeonGrid Grid,
         PlayerDouble Player,
         EnemyDouble Enemy);
-
-    // --- Domain doubles: real ICombatants, Godot-free, test-project only ---
-
-    private sealed class PlayerDouble(GridPos pos) : ICombatant
-    {
-        public GridPos GridPosition { get; } = pos;
-        public bool IsPlayer => true;
-        public string DisplayName => "Player";
-        public Health Health { get; private set; } = new(20, 20);
-        public int AttackDamage => 5;
-        public int XpReward => 0;
-        public void Die() { }
-        public void ReceiveDamage(Damage damage) => Health = Health.TakeDamage(damage.Amount);
-        public void Heal(int amount) => Health = Health.Heal(amount);
-    }
-
-    private sealed class EnemyDouble(GridPos start) : ICombatant
-    {
-        // The AI owns the GridMover that actually holds position, so position delegates to it
-        // (mirrors how EnemyController exposes GridPosition in the view).
-        public EnemyAI Ai { get; set; }
-        public GridPos GridPosition => Ai?.GridPosition ?? start;
-        public bool IsPlayer => false;
-        public string DisplayName => "Goblin";
-        public Health Health { get; private set; } = new(10, 10);
-        public int AttackDamage => 3;
-        public int XpReward => 5;
-        public void Die() { }
-        public void ReceiveDamage(Damage damage) => Health = Health.TakeDamage(damage.Amount);
-        public void Heal(int amount) => Health = Health.Heal(amount);
-    }
 }
