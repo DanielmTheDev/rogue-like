@@ -5,15 +5,23 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <IsPackable>false</IsPackable>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- View tests (gdUnit4) live IN this assembly. gdUnit4's Godot-runtime runner ([RequireGodotRuntime]
+         / ISceneRunner) only works when its generated runner scene compiles into the assembly Godot
+         loads — i.e. THIS one. A separate test project can't host runtime tests (gdUnit4 GD-298,
+         unimplemented). Domain tests stay separate + Godot-free (Code/Domain.Tests, xUnit). -->
+    <IsTestProject>true</IsTestProject>
+    <!-- Auto-apply the gdUnit4 headless settings so plain `dotnet test` works without an explicit settings flag. -->
+    <RunSettingsFilePath>$(MSBuildThisFileDirectory)test.runsettings</RunSettingsFilePath>
   </PropertyGroup>
-  <!-- Pure Godot game/View project. Tests live in their OWN projects: Code/Domain.Tests (xUnit,
-       Godot-free) and Code/View.Tests (gdUnit4, Godot.NET.Sdk, references this project). So this
-       project carries no test packages and is not IsTestProject — it just renders + delegates. -->
   <ItemGroup>
     <Compile Remove="Code/Domain/**/*.cs" />
     <Compile Remove="Code/Domain.Tests/**/*.cs" />
-    <Compile Remove="Code/View.Tests/**/*.cs" />
     <ProjectReference Include="Code/Domain/RogueLike.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="gdUnit4.api" Version="5.0.*" />
+    <PackageReference Include="gdUnit4.test.adapter" Version="3.0.*" />
   </ItemGroup>
   <!-- The old grep-based GuardDomainGodotFree target is gone: RogueLike.Domain.csproj has no Godot
        reference, so a `using Godot;` in the domain is now a compile-time error (a real wall). -->

@@ -6,3 +6,6 @@
 # .NET build output (e.g. the RogueLike.Domain library project)
 **/bin/
 **/obj/
+
+# gdUnit4 test adapter: auto-generated runtime-runner scene (regenerated on each test run)
+gdunit4_testadapter_v5/

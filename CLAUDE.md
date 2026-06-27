@@ -8,18 +8,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 dotnet build                                              # MUST be 0 errors before finishing any change
-dotnet test                                               # run ALL tests: xUnit domain (Godot-free) + gdUnit4 view (headless Godot)
-dotnet test Code/Domain.Tests/RogueLike.Domain.Tests.csproj # domain tests only — fast, NO Godot/GODOT_BIN
+dotnet test                                               # run ALL: xUnit domain + integration (Godot-free) + gdUnit4 view incl. ISceneRunner scene tests (needs GODOT_BIN, runs headless)
+dotnet test Code/Domain.Tests/RogueLike.Domain.Tests.csproj # domain + integration tests only — fast, NO Godot/GODOT_BIN
+dotnet test RogueLike.csproj                              # view + scene tests only (gdUnit4, headless Godot via test.runsettings — auto-applied)
 dotnet test --filter "FullyQualifiedName~TurnManagerTest" # run one suite
 dotnet test --filter "FullyQualifiedName~TurnManagerTest.MethodName" # run one test
 ```
 
-- **Three projects per layer, each with its own test project:**
-  - **Domain** — `Code/Domain/RogueLike.Domain.csproj` (lib) + `Code/Domain.Tests/RogueLike.Domain.Tests.csproj` (**xUnit**, plain `Microsoft.NET.Sdk`, **no Godot ref** — the test-side of the Godot-free wall; runs via plain `dotnet test`).
-  - **View** — `RogueLike.csproj` (the Godot game, at repo root) + `Code/View.Tests/RogueLike.View.Tests.csproj` (**gdUnit4**, `Godot.NET.Sdk`, references the game project, runs **headless Godot** via `test.runsettings`).
-  - The game project (`RogueLike.csproj`) is NOT a test project — it carries no test packages.
-- **A standalone gdUnit4 test project IS supported** (gdUnit4Net v5 / adapter v3): a `Godot.NET.Sdk` test project that references the game and sets `<GodotProjectDir>` to the repo root (where `project.godot` lives) — gdUnit4 boots Godot against that project and loads the test assembly. (Earlier belief that view tests had to live inside the game project was wrong.)
-- **Solution folders** group each layer with its tests: `Domain/` { RogueLike.Domain, RogueLike.Domain.Tests }, `View/` { RogueLike, RogueLike.View.Tests }.
+- **Two test projects, split by the Godot-free wall:**
+  - **Domain** — `Code/Domain/RogueLike.Domain.csproj` (lib) + `Code/Domain.Tests/RogueLike.Domain.Tests.csproj` (**xUnit**, plain `Microsoft.NET.Sdk`, **no Godot ref** — the test-side of the Godot-free wall; runs via plain `dotnet test`, no `GODOT_BIN`). Includes the Godot-free **integration** layer under `Code/Domain.Tests/Integration/`.
+  - **View** — view tests live **inside the game project** `RogueLike.csproj` (which is `IsTestProject` and carries the gdUnit4 packages); the `.cs` sit under `Code/View.Tests/`. They run under gdUnit4 headless. Scene tests use `[RequireGodotRuntime]` + `ISceneRunner` (e.g. `MainSmokeTest` boots `Scenes/Main.tscn`); pure-C# ones (e.g. `GridConversionsTest`) run in gdUnit4's engine-less Default runner.
+  - **Why view tests are NOT a separate project:** gdUnit4's Godot-runtime runner (`[RequireGodotRuntime]`/`ISceneRunner`) only works when its generated runner scene compiles into the assembly Godot loads — the game assembly. A standalone view-test project can't host runtime tests (gdUnit4 **GD-298**, unimplemented) — it dead-ends at `Failed to connect: Connection timeout`. So view tests live in the game assembly; Domain stays separate + Godot-free. See `docs/SYSTEM_DESIGN.md`.
+  - **`GODOT_BIN`** must point to a Godot 4.x **mono** binary (`/opt/Godot/Godot_v4.6.2-stable_mono_linux.x86_64`). On first use after a clean checkout, run `"$GODOT_BIN" --headless --import` once.
+- **Solution folders:** `Domain/` { RogueLike.Domain, RogueLike.Domain.Tests }, `View/` { RogueLike (game + view/scene tests) }.
 - Run the game from the Godot editor; main scene is `Scenes/Main.tscn`.
 
 ## Big-picture architecture
@@ -35,7 +36,7 @@ The core design split: **pure C# logic classes** hold all game rules and are uni
 **Namespaces mirror each project's folder, relative to its `.csproj` (not the repo root) — the segment above a project's csproj never appears in the namespace:**
 - **Domain** (`Code/Domain/RogueLike.Domain.csproj`) → `RogueLike.Domain.<Folder>` (the `Code/` container sits above the csproj, so it drops out).
 - **View** (the Godot game `RogueLike.csproj`, pinned at the repo root by `project.godot`) → `RogueLike.Code.View.<Folder>` (its source is `Code/View/**` *relative to the root csproj*, so `Code.View` stays — and that's correct, not a bug).
-- **Domain tests** (`Code/Domain.Tests/RogueLike.Domain.Tests.csproj`) → `RogueLike.Domain.Tests.<Folder>`; **view tests** (`Code/View.Tests/RogueLike.View.Tests.csproj`, its own project rooted at that folder) → `RogueLike.View.Tests.<Folder>`. Both test projects drop `Code` for the same reason Domain does — their csproj sits inside `Code/`. (A view test referencing the game's `GridConversions` needs an explicit `using RogueLike.Code.View;` now that it's no longer a child namespace of it.)
+- **Domain tests** (`Code/Domain.Tests/RogueLike.Domain.Tests.csproj`) → `RogueLike.Domain.Tests.<Folder>` (drops `Code` — its csproj sits inside `Code/`). **View tests** compile into the game project (`RogueLike.csproj`, pinned at repo root), so their files under `Code/View.Tests/` follow the View convention → `RogueLike.Code.View.Tests` (the `Code` segment stays, like all `RogueLike.Code.View.*`). `RogueLike.Code.View.Tests` is a child of `RogueLike.Code.View`, so `GridConversions` is in scope without an extra `using`.
 
 Domain test classes/methods use xUnit `[Fact]`/`[Theory]` (Rider recognizes these as used). gdUnit4 `[TestSuite]`/`[TestCase]` are reflection-invoked, so Rider false-flags them "never used"; suppressed via a scoped `[Code/View.Tests/**.cs]` section in `.editorconfig` (`resharper_*_global_highlighting = none`) — scoped to the gdUnit4 folder only, not global. (Rider 2026.1 removed the External-Annotations folder UI, so editorconfig is the version-controlled, no-UI route.)
 

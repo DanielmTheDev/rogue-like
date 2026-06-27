@@ -4,7 +4,7 @@ using RogueLike.Domain.Common;
 using RogueLike.Code.View;
 using static GdUnit4.Assertions;
 
-namespace RogueLike.View.Tests;
+namespace RogueLike.Code.View.Tests;
 
 [TestSuite]
 public class GridConversionsTest
