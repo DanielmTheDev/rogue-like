@@ -53,6 +53,13 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
           restore-keys: nuget-${{ runner.os }}-
 
+      # Godot's --import (editor mode) and gdUnit4's [RequireGodotRuntime]/ISceneRunner
+      # runtime instance both init UI and need a display, even with --headless — without
+      # one Godot segfaults on import and tests fail "Connection timeout". xvfb gives a
+      # virtual display; every godot invocation below is wrapped in xvfb-run.
+      - name: Install xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
       # gdUnit4 test adapter reads GODOT_BIN; setup-godot exports GODOT/GODOT4, not GODOT_BIN.
       - name: Export GODOT_BIN
         run: echo "GODOT_BIN=$(which godot)" >> "$GITHUB_ENV"
@@ -61,15 +68,9 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release -warnaserror
 
-      # One-time asset import after a clean checkout (required before headless tests run).
+      # One-time asset import after a clean checkout (required before tests run).
       - name: Godot import
-        run: '"$GODOT_BIN" --headless --import'
-
-      # gdUnit4's [RequireGodotRuntime]/ISceneRunner tests spawn a Godot runtime
-      # instance that needs a display; xvfb gives it a virtual one (else: "Failed
-      # to connect: Connection timeout"). Godot itself still runs headless.
-      - name: Install xvfb
-        run: sudo apt-get update && sudo apt-get install -y xvfb
+        run: xvfb-run -a "$GODOT_BIN" --headless --import
 
       - name: Test (view + scene)
         run: xvfb-run -a dotnet test RogueLike.csproj --configuration Release
