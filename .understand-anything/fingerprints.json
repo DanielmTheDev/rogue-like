@@ -1,0 +1,5739 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "c40a94a6ce2d0123ef011b2e180971501c2f29de",
+  "generatedAt": "2026-06-24T03:51:28.672Z",
+  "files": {
+    ".gitattributes": {
+      "filePath": ".gitattributes",
+      "contentHash": "21b01a606c9f85f18bb9230245f00ab104df7409cbb2fe9423f6751ca72ba754",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3,
+      "hasStructuralAnalysis": false
+    },
+    "Assets/Tiles/dungeon_tileset.tres": {
+      "filePath": "Assets/Tiles/dungeon_tileset.tres",
+      "contentHash": "b5f840787c2295c9ce378d8209c3deeea5eddab814e429a79466d3a7c5947663",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 15,
+      "hasStructuralAnalysis": false
+    },
+    "CLAUDE.md": {
+      "filePath": "CLAUDE.md",
+      "contentHash": "75bb7130b939425fa58e4ee899f5c1d90d9416322afbba0344dc7b4547622a83",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 87,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Actors/ArcherAITest.cs": {
+      "filePath": "Code/Domain.Tests/Actors/ArcherAITest.cs",
+      "contentHash": "0fefd829bc5a0f8a1abb2d4bd148d41f3fa059ef4d4d49e05fd57c8bd4e646fb",
+      "functions": [
+        {
+          "name": "ArcherAITest",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "TakeTurn_DoesNotShootThroughWalls",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 32
+        },
+        {
+          "name": "TakeTurn_InRangeWithClearLos_Shoots",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        }
+      ],
+      "classes": [
+        {
+          "name": "ArcherAITest",
+          "methods": [
+            "ArcherAITest",
+            "TakeTurn_DoesNotShootThroughWalls",
+            "TakeTurn_InRangeWithClearLos_Shoots"
+          ],
+          "properties": [
+            "_grid",
+            "_actorRegistry",
+            "_fovMap"
+          ],
+          "exported": true,
+          "lineCount": 102
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "ArcherAITest",
+        "TakeTurn_DoesNotShootThroughWalls",
+        "TakeTurn_InRangeWithClearLos_Shoots",
+        "ArcherAITest"
+      ],
+      "totalLines": 112,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Actors/EnemyAITest.cs": {
+      "filePath": "Code/Domain.Tests/Actors/EnemyAITest.cs",
+      "contentHash": "179d1e0443d3614329d623b7ee2d711b10a5a7917f3b23300584562f59da07ed",
+      "functions": [
+        {
+          "name": "TakeTurn_MovesTowardsPlayer",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 27
+        },
+        {
+          "name": "TakeTurn_AdjacentToPlayer_Attacks",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 27
+        }
+      ],
+      "classes": [
+        {
+          "name": "EnemyAITest",
+          "methods": [
+            "TakeTurn_MovesTowardsPlayer",
+            "TakeTurn_AdjacentToPlayer_Attacks"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 96
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        }
+      ],
+      "exports": [
+        "TakeTurn_MovesTowardsPlayer",
+        "TakeTurn_AdjacentToPlayer_Attacks",
+        "EnemyAITest"
+      ],
+      "totalLines": 106,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Actors/PlayerMovementTest.cs": {
+      "filePath": "Code/Domain.Tests/Actors/PlayerMovementTest.cs",
+      "contentHash": "768e9ae9af21897004b425c2006f08417c26b129e85ceb2d40c1ec8b70f53e03",
+      "functions": [
+        {
+          "name": "CreateTestGrid",
+          "params": [],
+          "returnType": "DungeonGrid",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "CreateMover",
+          "params": [
+            "grid",
+            "startPos",
+            "actorRegistry"
+          ],
+          "returnType": "GridMover",
+          "exported": false,
+          "lineCount": 8
+        },
+        {
+          "name": "TryMove_ValidDirection_ReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "TryMove_ValidDirection_UpdatesPosition",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "TryMove_IntoWall_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "TryMove_IntoWall_PositionUnchanged",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "TryMove_OutOfBounds_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "TryMove_OutOfBounds_PositionUnchanged",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "TryMove_MultipleSteps_TracksCorrectly",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "TryMove_DiagonalIntoOpenSpace_ReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "TryMove_DiagonalCornerCut_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "Initialize_SetsCorrectPosition",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [
+        {
+          "name": "PlayerMovementTest",
+          "methods": [
+            "CreateTestGrid",
+            "CreateMover",
+            "TryMove_ValidDirection_ReturnsTrue",
+            "TryMove_ValidDirection_UpdatesPosition",
+            "TryMove_IntoWall_ReturnsFalse",
+            "TryMove_IntoWall_PositionUnchanged",
+            "TryMove_OutOfBounds_ReturnsFalse",
+            "TryMove_OutOfBounds_PositionUnchanged",
+            "TryMove_MultipleSteps_TracksCorrectly",
+            "TryMove_DiagonalIntoOpenSpace_ReturnsTrue",
+            "TryMove_DiagonalCornerCut_ReturnsFalse",
+            "Initialize_SetsCorrectPosition"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 140
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        }
+      ],
+      "exports": [
+        "TryMove_ValidDirection_ReturnsTrue",
+        "TryMove_ValidDirection_UpdatesPosition",
+        "TryMove_IntoWall_ReturnsFalse",
+        "TryMove_IntoWall_PositionUnchanged",
+        "TryMove_OutOfBounds_ReturnsFalse",
+        "TryMove_OutOfBounds_PositionUnchanged",
+        "TryMove_MultipleSteps_TracksCorrectly",
+        "TryMove_DiagonalIntoOpenSpace_ReturnsTrue",
+        "TryMove_DiagonalCornerCut_ReturnsFalse",
+        "Initialize_SetsCorrectPosition",
+        "PlayerMovementTest"
+      ],
+      "totalLines": 152,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Combat/CombatantTest.cs": {
+      "filePath": "Code/Domain.Tests/Combat/CombatantTest.cs",
+      "contentHash": "53e787073dd063539ae4d84b9092b4cd886f49d4f0bf60eceff7dfc704ef9773",
+      "functions": [
+        {
+          "name": "TryAttack_DealsDamage_AndReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "TryAttack_NullDefender_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "TryAttack_KillsDefender_TriggersDie",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "TryAttack_OnKill_InvokesKillerOnKilledHook",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "TryAttack_NonLethal_DoesNotInvokeOnKilled",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "CombatantTest",
+          "methods": [
+            "TryAttack_DealsDamage_AndReturnsTrue",
+            "TryAttack_NullDefender_ReturnsFalse",
+            "TryAttack_KillsDefender_TriggersDie",
+            "TryAttack_OnKill_InvokesKillerOnKilledHook",
+            "TryAttack_NonLethal_DoesNotInvokeOnKilled"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 96
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        }
+      ],
+      "exports": [
+        "TryAttack_DealsDamage_AndReturnsTrue",
+        "TryAttack_NullDefender_ReturnsFalse",
+        "TryAttack_KillsDefender_TriggersDie",
+        "TryAttack_OnKill_InvokesKillerOnKilledHook",
+        "TryAttack_NonLethal_DoesNotInvokeOnKilled",
+        "CombatantTest"
+      ],
+      "totalLines": 103,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Combat/DamageTest.cs": {
+      "filePath": "Code/Domain.Tests/Combat/DamageTest.cs",
+      "contentHash": "d815d7bf4285ed1b0bbb1f2a96114cee777dd33d33497967bd607029821cead8",
+      "functions": [
+        {
+          "name": "Constructor_StoresAmount",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Constructor_NegativeAmount_Throws",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "None_IsZero",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "Equality_IsByValue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [
+        {
+          "name": "DamageTest",
+          "methods": [
+            "Constructor_StoresAmount",
+            "Constructor_NegativeAmount_Throws",
+            "None_IsZero",
+            "Equality_IsByValue"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 29
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        }
+      ],
+      "exports": [
+        "Constructor_StoresAmount",
+        "Constructor_NegativeAmount_Throws",
+        "None_IsZero",
+        "Equality_IsByValue",
+        "DamageTest"
+      ],
+      "totalLines": 36,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Combat/HealthTest.cs": {
+      "filePath": "Code/Domain.Tests/Combat/HealthTest.cs",
+      "contentHash": "96bdd8dbdec9e7958325c55fefd83531edf507c69d0c52e57087cb8c56e6a1c4",
+      "functions": [
+        {
+          "name": "NewHealth_IsFull_AndAlive",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "TakeDamage_ReducesCurrent",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "TakeDamage_ClampsAtZero_AndIsDead",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "TakeDamage_NonPositive_IsNoOp",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Heal_ClampsAtMax",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Heal_OnDead_IsNoOp",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "WithIncreasedMax_RaisesMax_AndHealsToFull",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "Ctor_CurrentAboveMax_Throws",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "Ctor_NonPositiveMax_Throws",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "EqualityByValue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [
+        {
+          "name": "HealthTest",
+          "methods": [
+            "NewHealth_IsFull_AndAlive",
+            "TakeDamage_ReducesCurrent",
+            "TakeDamage_ClampsAtZero_AndIsDead",
+            "TakeDamage_NonPositive_IsNoOp",
+            "Heal_ClampsAtMax",
+            "Heal_OnDead_IsNoOp",
+            "WithIncreasedMax_RaisesMax_AndHealsToFull",
+            "Ctor_CurrentAboveMax_Throws",
+            "Ctor_NonPositiveMax_Throws",
+            "EqualityByValue"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 83
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        }
+      ],
+      "exports": [
+        "NewHealth_IsFull_AndAlive",
+        "TakeDamage_ReducesCurrent",
+        "TakeDamage_ClampsAtZero_AndIsDead",
+        "TakeDamage_NonPositive_IsNoOp",
+        "Heal_ClampsAtMax",
+        "Heal_OnDead_IsNoOp",
+        "WithIncreasedMax_RaisesMax_AndHealsToFull",
+        "Ctor_CurrentAboveMax_Throws",
+        "Ctor_NonPositiveMax_Throws",
+        "EqualityByValue",
+        "HealthTest"
+      ],
+      "totalLines": 90,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Common/DirectionTest.cs": {
+      "filePath": "Code/Domain.Tests/Common/DirectionTest.cs",
+      "contentHash": "5a11aa4be2ca388c654c96502ddb96e75746e85f78a5d20d71bc2d3fe5bacc44",
+      "functions": [
+        {
+          "name": "FromDelta_StoresComponents",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "FromDelta_OutOfRange_Throws",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "NamedStatics_HaveExpectedDeltas",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Default_IsNone",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "None_IsZero",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "IsDiagonal_OnlyWhenBothAxesNonZero",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "AllEight_HasEightDistinctNonZeroDirections",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Equality_IsByValue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [
+        {
+          "name": "DirectionTest",
+          "methods": [
+            "FromDelta_StoresComponents",
+            "FromDelta_OutOfRange_Throws",
+            "NamedStatics_HaveExpectedDeltas",
+            "Default_IsNone",
+            "None_IsZero",
+            "IsDiagonal_OnlyWhenBothAxesNonZero",
+            "AllEight_HasEightDistinctNonZeroDirections",
+            "Equality_IsByValue"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 61
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "System.Linq",
+          "specifiers": [
+            "Linq"
+          ]
+        },
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "FromDelta_StoresComponents",
+        "FromDelta_OutOfRange_Throws",
+        "NamedStatics_HaveExpectedDeltas",
+        "Default_IsNone",
+        "None_IsZero",
+        "IsDiagonal_OnlyWhenBothAxesNonZero",
+        "AllEight_HasEightDistinctNonZeroDirections",
+        "Equality_IsByValue",
+        "DirectionTest"
+      ],
+      "totalLines": 69,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Common/GridPosTest.cs": {
+      "filePath": "Code/Domain.Tests/Common/GridPosTest.cs",
+      "contentHash": "0267e5226ab3c939e71917755ed57054134a3e89e3c56383b2ae95d65d8fd247",
+      "functions": [
+        {
+          "name": "Constructor_StoresCoordinates",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "Step_AppliesDirection",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "ManhattanTo_SumsAxisDistances",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ChebyshevTo_TakesMaxAxisDistance",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "DirectionTo_IsUnitStepTowardsTarget",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Equality_AndHashing_WorkAsDictionaryKey",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [
+        {
+          "name": "GridPosTest",
+          "methods": [
+            "Constructor_StoresCoordinates",
+            "Step_AppliesDirection",
+            "ManhattanTo_SumsAxisDistances",
+            "ChebyshevTo_TakesMaxAxisDistance",
+            "DirectionTo_IsUnitStepTowardsTarget",
+            "Equality_AndHashing_WorkAsDictionaryKey"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 49
+        }
+      ],
+      "imports": [
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "Constructor_StoresCoordinates",
+        "Step_AppliesDirection",
+        "ManhattanTo_SumsAxisDistances",
+        "ChebyshevTo_TakesMaxAxisDistance",
+        "DirectionTo_IsUnitStepTowardsTarget",
+        "Equality_AndHashing_WorkAsDictionaryKey",
+        "GridPosTest"
+      ],
+      "totalLines": 56,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Common/GridRectTest.cs": {
+      "filePath": "Code/Domain.Tests/Common/GridRectTest.cs",
+      "contentHash": "057c89b363edd5fea4ece254e7d6f1a9d4f6b1ffc4fc9401b179fceef1548d80",
+      "functions": [
+        {
+          "name": "Construct_FromInts_SetsOriginAndSize",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "End_IsExclusiveBottomRight",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Center_IsIntegerMidpoint",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Ctor_NonPositiveSize_Throws",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "EqualityByValue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [
+        {
+          "name": "GridRectTest",
+          "methods": [
+            "Construct_FromInts_SetsOriginAndSize",
+            "End_IsExclusiveBottomRight",
+            "Center_IsIntegerMidpoint",
+            "Ctor_NonPositiveSize_Throws",
+            "EqualityByValue"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 44
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "Construct_FromInts_SetsOriginAndSize",
+        "End_IsExclusiveBottomRight",
+        "Center_IsIntegerMidpoint",
+        "Ctor_NonPositiveSize_Throws",
+        "EqualityByValue",
+        "GridRectTest"
+      ],
+      "totalLines": 51,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Flow/ExperienceSystemTest.cs": {
+      "filePath": "Code/Domain.Tests/Flow/ExperienceSystemTest.cs",
+      "contentHash": "57c6fae8c3732f2bbcf5109392b611332709fe969daf04d276ddb076b9895805",
+      "functions": [
+        {
+          "name": "ExperienceSystemTest",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "InitialState_IsCorrect",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "AddXP_NoLevelUp",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "AddXP_ExactLevelUp",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "AddXP_LevelUpWithCarryOver",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "AddXP_MultiLevelUp",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "Events_OnXPChanged_FiresCorrectly",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "Events_OnLevelUp_FiresCorrectly",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        }
+      ],
+      "classes": [
+        {
+          "name": "ExperienceSystemTest",
+          "methods": [
+            "ExperienceSystemTest",
+            "InitialState_IsCorrect",
+            "AddXP_NoLevelUp",
+            "AddXP_ExactLevelUp",
+            "AddXP_LevelUpWithCarryOver",
+            "AddXP_MultiLevelUp",
+            "Events_OnXPChanged_FiresCorrectly",
+            "Events_OnLevelUp_FiresCorrectly"
+          ],
+          "properties": [
+            "_exp"
+          ],
+          "exported": true,
+          "lineCount": 86
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        }
+      ],
+      "exports": [
+        "ExperienceSystemTest",
+        "InitialState_IsCorrect",
+        "AddXP_NoLevelUp",
+        "AddXP_ExactLevelUp",
+        "AddXP_LevelUpWithCarryOver",
+        "AddXP_MultiLevelUp",
+        "Events_OnXPChanged_FiresCorrectly",
+        "Events_OnLevelUp_FiresCorrectly",
+        "ExperienceSystemTest"
+      ],
+      "totalLines": 92,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Flow/TurnManagerTest.cs": {
+      "filePath": "Code/Domain.Tests/Flow/TurnManagerTest.cs",
+      "contentHash": "c1d9442313e6ff890715fb684de5526b792df2ac33dd16c499cbd791eca8a630",
+      "functions": [
+        {
+          "name": "InitialState_IsPlayerTurn",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "EndPlayerTurn_ShiftsToEnemyTurn",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "EndPlayerTurn_FiresTurnChangedEvents",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 20
+        }
+      ],
+      "classes": [
+        {
+          "name": "TurnManagerTest",
+          "methods": [
+            "InitialState_IsPlayerTurn",
+            "EndPlayerTurn_ShiftsToEnemyTurn",
+            "EndPlayerTurn_FiresTurnChangedEvents"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 44
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        }
+      ],
+      "exports": [
+        "InitialState_IsPlayerTurn",
+        "EndPlayerTurn_ShiftsToEnemyTurn",
+        "EndPlayerTurn_FiresTurnChangedEvents",
+        "TurnManagerTest"
+      ],
+      "totalLines": 53,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Grid/DungeonGridPathfindingTest.cs": {
+      "filePath": "Code/Domain.Tests/Grid/DungeonGridPathfindingTest.cs",
+      "contentHash": "611cd3beccd9fe598d0b63f14e7b732715941ea37d274a9b0f9d92ed4a1c6603",
+      "functions": [
+        {
+          "name": "OpenGrid",
+          "params": [
+            "w",
+            "h"
+          ],
+          "returnType": "DungeonGrid",
+          "exported": false,
+          "lineCount": 1
+        },
+        {
+          "name": "CanStep_IntoOpenFloor_ReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "CanStep_IntoWall_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "CanStep_DiagonalThatCutsWallCorner_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "CanStep_OutOfBounds_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "FindPath_SimpleStraightLine",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "FindPath_AroundWall",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "FindPath_OpenDiagonal_TakesDiagonalShortcut",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "FindPath_DiagonalCornerCut_RoutesAround",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "FindPath_NoPathExists",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "FindPath_StartAndEndAreSame",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "DungeonGridPathfindingTest",
+          "methods": [
+            "OpenGrid",
+            "CanStep_IntoOpenFloor_ReturnsTrue",
+            "CanStep_IntoWall_ReturnsFalse",
+            "CanStep_DiagonalThatCutsWallCorner_ReturnsFalse",
+            "CanStep_OutOfBounds_ReturnsFalse",
+            "FindPath_SimpleStraightLine",
+            "FindPath_AroundWall",
+            "FindPath_OpenDiagonal_TakesDiagonalShortcut",
+            "FindPath_DiagonalCornerCut_RoutesAround",
+            "FindPath_NoPathExists",
+            "FindPath_StartAndEndAreSame"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 126
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        }
+      ],
+      "exports": [
+        "CanStep_IntoOpenFloor_ReturnsTrue",
+        "CanStep_IntoWall_ReturnsFalse",
+        "CanStep_DiagonalThatCutsWallCorner_ReturnsFalse",
+        "CanStep_OutOfBounds_ReturnsFalse",
+        "FindPath_SimpleStraightLine",
+        "FindPath_AroundWall",
+        "FindPath_OpenDiagonal_TakesDiagonalShortcut",
+        "FindPath_DiagonalCornerCut_RoutesAround",
+        "FindPath_NoPathExists",
+        "FindPath_StartAndEndAreSame",
+        "DungeonGridPathfindingTest"
+      ],
+      "totalLines": 139,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Grid/FOV/RaycasterTest.cs": {
+      "filePath": "Code/Domain.Tests/Grid/FOV/RaycasterTest.cs",
+      "contentHash": "13c98bced2a91e77a1f0ddd5706ae355410fbf207c8d1fb0bd2e1ebf1cc338b9",
+      "functions": [
+        {
+          "name": "ComputeFov_ClearsPreviousVisibleTiles",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "ComputeFov_BlockedByWall",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        }
+      ],
+      "classes": [
+        {
+          "name": "RaycasterTest",
+          "methods": [
+            "ComputeFov_ClearsPreviousVisibleTiles",
+            "ComputeFov_BlockedByWall"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 38
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        }
+      ],
+      "exports": [
+        "ComputeFov_ClearsPreviousVisibleTiles",
+        "ComputeFov_BlockedByWall",
+        "RaycasterTest"
+      ],
+      "totalLines": 46,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Grid/Generators/BspDungeonGeneratorTest.cs": {
+      "filePath": "Code/Domain.Tests/Grid/Generators/BspDungeonGeneratorTest.cs",
+      "contentHash": "6cf39a1be25b116bf0863c3c0f6c1a7f327b25160683459465681562026598b7",
+      "functions": [
+        {
+          "name": "Generate_FillsGridAndReturnsRooms",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 18
+        }
+      ],
+      "classes": [
+        {
+          "name": "BspDungeonGeneratorTest",
+          "methods": [
+            "Generate_FillsGridAndReturnsRooms"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 21
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.Generators",
+          "specifiers": [
+            "Generators"
+          ]
+        }
+      ],
+      "exports": [
+        "Generate_FillsGridAndReturnsRooms",
+        "BspDungeonGeneratorTest"
+      ],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Grid/GridMapTest.cs": {
+      "filePath": "Code/Domain.Tests/Grid/GridMapTest.cs",
+      "contentHash": "7697ba0e55a75d36e08edb28ef2d5cfafb3be409921954b644f30c2e213f2e90",
+      "functions": [
+        {
+          "name": "IsInBounds_InsideGrid_ReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "IsInBounds_OutsideGrid_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "IsWalkable_FloorCell_ReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "IsWalkable_WallCell_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "IsWalkable_OutOfBounds_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "GetCell_OutOfBounds_ReturnsWall",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "SetCell_ThenGetCell_ReturnsCorrectType",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "classes": [
+        {
+          "name": "DungeonGridTest",
+          "methods": [
+            "IsInBounds_InsideGrid_ReturnsTrue",
+            "IsInBounds_OutsideGrid_ReturnsFalse",
+            "IsWalkable_FloorCell_ReturnsTrue",
+            "IsWalkable_WallCell_ReturnsFalse",
+            "IsWalkable_OutOfBounds_ReturnsFalse",
+            "GetCell_OutOfBounds_ReturnsWall",
+            "SetCell_ThenGetCell_ReturnsCorrectType"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 67
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        }
+      ],
+      "exports": [
+        "IsInBounds_InsideGrid_ReturnsTrue",
+        "IsInBounds_OutsideGrid_ReturnsFalse",
+        "IsWalkable_FloorCell_ReturnsTrue",
+        "IsWalkable_WallCell_ReturnsFalse",
+        "IsWalkable_OutOfBounds_ReturnsFalse",
+        "GetCell_OutOfBounds_ReturnsWall",
+        "SetCell_ThenGetCell_ReturnsCorrectType",
+        "DungeonGridTest"
+      ],
+      "totalLines": 74,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Grid/LineOfSightTest.cs": {
+      "filePath": "Code/Domain.Tests/Grid/LineOfSightTest.cs",
+      "contentHash": "55e35df4e63459197ca2a19e5cceb4ab4e89932149b21ec16ee38efa8193539e",
+      "functions": [
+        {
+          "name": "OpenGrid",
+          "params": [
+            "w",
+            "h"
+          ],
+          "returnType": "DungeonGrid",
+          "exported": false,
+          "lineCount": 1
+        },
+        {
+          "name": "HasClearLine_OnOpenHorizontalRow_ReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "HasClearLine_WhenWallBlocksRow_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "HasClearLine_AdjacentTiles_ReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "HasClearLine_OriginEqualsTarget_ReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "HasClearLine_WallOnTargetTile_StillReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "HasClearLine_ClearDiagonal_ReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "HasClearLine_WallOnDiagonalPath_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "classes": [
+        {
+          "name": "LineOfSightTest",
+          "methods": [
+            "OpenGrid",
+            "HasClearLine_OnOpenHorizontalRow_ReturnsTrue",
+            "HasClearLine_WhenWallBlocksRow_ReturnsFalse",
+            "HasClearLine_AdjacentTiles_ReturnsTrue",
+            "HasClearLine_OriginEqualsTarget_ReturnsTrue",
+            "HasClearLine_WallOnTargetTile_StillReturnsTrue",
+            "HasClearLine_ClearDiagonal_ReturnsTrue",
+            "HasClearLine_WallOnDiagonalPath_ReturnsFalse"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 64
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        }
+      ],
+      "exports": [
+        "HasClearLine_OnOpenHorizontalRow_ReturnsTrue",
+        "HasClearLine_WhenWallBlocksRow_ReturnsFalse",
+        "HasClearLine_AdjacentTiles_ReturnsTrue",
+        "HasClearLine_OriginEqualsTarget_ReturnsTrue",
+        "HasClearLine_WallOnTargetTile_StillReturnsTrue",
+        "HasClearLine_ClearDiagonal_ReturnsTrue",
+        "HasClearLine_WallOnDiagonalPath_ReturnsFalse",
+        "LineOfSightTest"
+      ],
+      "totalLines": 75,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Items/InventoryTest.cs": {
+      "filePath": "Code/Domain.Tests/Items/InventoryTest.cs",
+      "contentHash": "56a2532f7f4d3dce08a973f5585a720b4e0c8e095726c2d55b27f459aae48637",
+      "functions": [
+        {
+          "name": "NewInventory_IsEmpty",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "AddItem_IncreasesCount",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "AddItem_WhenFull_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "UseItem_CallsItemUse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "UseItem_ConsumableItem_RemovedFromInventory",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "UseItem_NonConsumableItem_RemainsInInventory",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "UseItem_InvalidIndex_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "GetItem_ReturnsCorrectItem",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "OnInventoryChanged_FiresWhenItemAdded",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        }
+      ],
+      "classes": [
+        {
+          "name": "InventoryTest",
+          "methods": [
+            "NewInventory_IsEmpty",
+            "AddItem_IncreasesCount",
+            "AddItem_WhenFull_ReturnsFalse",
+            "UseItem_CallsItemUse",
+            "UseItem_ConsumableItem_RemovedFromInventory",
+            "UseItem_NonConsumableItem_RemainsInInventory",
+            "UseItem_InvalidIndex_ReturnsFalse",
+            "GetItem_ReturnsCorrectItem",
+            "OnInventoryChanged_FiresWhenItemAdded"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 137
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Items",
+          "specifiers": [
+            "Items"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        }
+      ],
+      "exports": [
+        "NewInventory_IsEmpty",
+        "AddItem_IncreasesCount",
+        "AddItem_WhenFull_ReturnsFalse",
+        "UseItem_CallsItemUse",
+        "UseItem_ConsumableItem_RemovedFromInventory",
+        "UseItem_NonConsumableItem_RemainsInInventory",
+        "UseItem_InvalidIndex_ReturnsFalse",
+        "GetItem_ReturnsCorrectItem",
+        "OnInventoryChanged_FiresWhenItemAdded",
+        "InventoryTest"
+      ],
+      "totalLines": 145,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/Items/ItemPickupTest.cs": {
+      "filePath": "Code/Domain.Tests/Items/ItemPickupTest.cs",
+      "contentHash": "85070c57c59a302803fdc63ac5328b611e1caa03785e43b40753852aa2a42b9b",
+      "functions": [
+        {
+          "name": "TryPickup_EmptyInventory_AddsItem_AndReturnsTrue",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "TryPickup_FullInventory_ReturnsFalse_AndDoesNotPickup",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "TryPickup_CannotPickup_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "TryPickup_NullInventory_ReturnsFalse",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "CheckForPickup_ItemAtPosition_PicksUpAndUnregisters",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "CheckForPickup_NoItemAtPosition_LeavesItemOnFloor",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        }
+      ],
+      "classes": [
+        {
+          "name": "ItemPickupTest",
+          "methods": [
+            "TryPickup_EmptyInventory_AddsItem_AndReturnsTrue",
+            "TryPickup_FullInventory_ReturnsFalse_AndDoesNotPickup",
+            "TryPickup_CannotPickup_ReturnsFalse",
+            "TryPickup_NullInventory_ReturnsFalse",
+            "CheckForPickup_ItemAtPosition_PicksUpAndUnregisters",
+            "CheckForPickup_NoItemAtPosition_LeavesItemOnFloor"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 98
+        }
+      ],
+      "imports": [
+        {
+          "source": "Xunit",
+          "specifiers": [
+            "Xunit"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Items",
+          "specifiers": [
+            "Items"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        }
+      ],
+      "exports": [
+        "TryPickup_EmptyInventory_AddsItem_AndReturnsTrue",
+        "TryPickup_FullInventory_ReturnsFalse_AndDoesNotPickup",
+        "TryPickup_CannotPickup_ReturnsFalse",
+        "TryPickup_NullInventory_ReturnsFalse",
+        "CheckForPickup_ItemAtPosition_PicksUpAndUnregisters",
+        "CheckForPickup_NoItemAtPosition_LeavesItemOnFloor",
+        "ItemPickupTest"
+      ],
+      "totalLines": 106,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain.Tests/RogueLike.Domain.Tests.csproj": {
+      "filePath": "Code/Domain.Tests/RogueLike.Domain.Tests.csproj",
+      "contentHash": "624d119be0223e376dc45d846423156fa473519592c24364f0deb0c959cdd708",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": false
+    },
+    "Code/Domain/Actors/ActorRegistry.cs": {
+      "filePath": "Code/Domain/Actors/ActorRegistry.cs",
+      "contentHash": "8db242bb13dd7d5a593b306378fb3e3e1b15a55f1092bc901df974e5364c917a",
+      "functions": [
+        {
+          "name": "RegisterActor",
+          "params": [
+            "actor"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "UnregisterActor",
+          "params": [
+            "actor"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "UpdateActorPosition",
+          "params": [
+            "actor",
+            "oldPosition",
+            "newPosition"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "IsOccupied",
+          "params": [
+            "position"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "GetActorAt",
+          "params": [
+            "position"
+          ],
+          "returnType": "IActor",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "ClearAll",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [
+        {
+          "name": "ActorRegistry",
+          "methods": [
+            "RegisterActor",
+            "UnregisterActor",
+            "UpdateActorPosition",
+            "IsOccupied",
+            "GetActorAt",
+            "ClearAll"
+          ],
+          "properties": [
+            "_actorsByPosition",
+            "_allActors",
+            "AllActors"
+          ],
+          "exported": true,
+          "lineCount": 53
+        }
+      ],
+      "imports": [
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "AllActors",
+        "RegisterActor",
+        "UnregisterActor",
+        "UpdateActorPosition",
+        "IsOccupied",
+        "GetActorAt",
+        "ClearAll",
+        "ActorRegistry"
+      ],
+      "totalLines": 65,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Actors/ArcherAI.cs": {
+      "filePath": "Code/Domain/Actors/ArcherAI.cs",
+      "contentHash": "56dc7a2265914ec2d6d83d89c27e1e85a63a3e94b6e8815b40901227f346e9c3",
+      "functions": [
+        {
+          "name": "ArcherAI",
+          "params": [
+            "owner",
+            "grid",
+            "actorRegistry",
+            "startPos",
+            "range"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "TakeTurn",
+          "params": [
+            "fovMap"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "IsVisible",
+          "params": [
+            "player",
+            "fovMap"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 2
+        },
+        {
+          "name": "CanShoot",
+          "params": [
+            "player"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "Shoot",
+          "params": [
+            "player"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "ChasePlayer",
+          "params": [
+            "player"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 9
+        }
+      ],
+      "classes": [
+        {
+          "name": "ArcherAI",
+          "methods": [
+            "ArcherAI",
+            "TakeTurn",
+            "IsVisible",
+            "CanShoot",
+            "Shoot",
+            "ChasePlayer"
+          ],
+          "properties": [
+            "_owner",
+            "_grid",
+            "_actorRegistry",
+            "_mover",
+            "_range",
+            "GridPosition"
+          ],
+          "exported": true,
+          "lineCount": 58
+        }
+      ],
+      "imports": [
+        {
+          "source": "System.Linq",
+          "specifiers": [
+            "Linq"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        }
+      ],
+      "exports": [
+        "GridPosition",
+        "ArcherAI",
+        "TakeTurn",
+        "ArcherAI"
+      ],
+      "totalLines": 77,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Actors/EnemyAI.cs": {
+      "filePath": "Code/Domain/Actors/EnemyAI.cs",
+      "contentHash": "aafaaf9f258d2573067ecfedba2bca35a65c2148a89eb90a568af2f7e5dff7ee",
+      "functions": [
+        {
+          "name": "EnemyAI",
+          "params": [
+            "owner",
+            "grid",
+            "actorRegistry",
+            "startPos"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "TakeTurn",
+          "params": [
+            "fovMap"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 35
+        }
+      ],
+      "classes": [
+        {
+          "name": "EnemyAI",
+          "methods": [
+            "EnemyAI",
+            "TakeTurn"
+          ],
+          "properties": [
+            "_owner",
+            "_grid",
+            "_actorRegistry",
+            "_mover",
+            "GridPosition"
+          ],
+          "exported": true,
+          "lineCount": 59
+        }
+      ],
+      "imports": [
+        {
+          "source": "System.Linq",
+          "specifiers": [
+            "Linq"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        }
+      ],
+      "exports": [
+        "GridPosition",
+        "EnemyAI",
+        "TakeTurn",
+        "EnemyAI"
+      ],
+      "totalLines": 74,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Actors/GridMover.cs": {
+      "filePath": "Code/Domain/Actors/GridMover.cs",
+      "contentHash": "c71391e2e8c748684f2f8e9234c385a715d45ee73e3b58ee13c515e71240189f",
+      "functions": [
+        {
+          "name": "GridMover",
+          "params": [
+            "owner",
+            "grid",
+            "actorRegistry",
+            "startPos"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "TryMove",
+          "params": [
+            "direction"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 17
+        }
+      ],
+      "classes": [
+        {
+          "name": "GridMover",
+          "methods": [
+            "GridMover",
+            "TryMove"
+          ],
+          "properties": [
+            "_grid",
+            "_actorRegistry",
+            "_owner",
+            "_gridPosition",
+            "GridPosition",
+            "Grid"
+          ],
+          "exported": true,
+          "lineCount": 47
+        }
+      ],
+      "imports": [
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        }
+      ],
+      "exports": [
+        "GridPosition",
+        "Grid",
+        "GridMover",
+        "TryMove",
+        "GridMover"
+      ],
+      "totalLines": 59,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Actors/IActor.cs": {
+      "filePath": "Code/Domain/Actors/IActor.cs",
+      "contentHash": "7f058a2491d247e4c22d3478ceb376c16b70733ac402f082160f51098d3760a9",
+      "functions": [],
+      "classes": [
+        {
+          "name": "IActor",
+          "methods": [],
+          "properties": [
+            "GridPosition",
+            "IsPlayer"
+          ],
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "imports": [
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "IActor"
+      ],
+      "totalLines": 17,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Combat/Damage.cs": {
+      "filePath": "Code/Domain/Combat/Damage.cs",
+      "contentHash": "dcdbae782fd2c51c4e76120e1d65af335f7bb50d4bbd0790ceef9317e59cb9a6",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Combat/Health.cs": {
+      "filePath": "Code/Domain/Combat/Health.cs",
+      "contentHash": "fc7f472ad0f63ba7a16340b0ee6bcfbb7b9b27d746fb137c95857d5522130acf",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 44,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Combat/ICombatant.cs": {
+      "filePath": "Code/Domain/Combat/ICombatant.cs",
+      "contentHash": "ae4c8c295d2948c7d099098657a68443a10473e5644e570ac667919cde319c1a",
+      "functions": [],
+      "classes": [
+        {
+          "name": "ICombatant",
+          "methods": [
+            "Die",
+            "ReceiveDamage",
+            "Heal",
+            "TryAttack",
+            "OnKilled"
+          ],
+          "properties": [
+            "DisplayName",
+            "Health",
+            "AttackDamage",
+            "XpReward"
+          ],
+          "exported": true,
+          "lineCount": 43
+        }
+      ],
+      "imports": [
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        }
+      ],
+      "exports": [
+        "ICombatant"
+      ],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Common/Direction.cs": {
+      "filePath": "Code/Domain/Common/Direction.cs",
+      "contentHash": "e62de12ab7b078d6a15c8773ceb95c8ffe4de7297b621fc52a198501d047e618",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 57,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Common/GridPos.cs": {
+      "filePath": "Code/Domain/Common/GridPos.cs",
+      "contentHash": "ec1ed0d7a78e940714a9bf7bbf7eee0dc8185ce68448883c212e1675bc98edd3",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Common/GridRect.cs": {
+      "filePath": "Code/Domain/Common/GridRect.cs",
+      "contentHash": "011c582bc26f630a7a1ec56f4d017f45c3e79bb9e50110b8bc28d93194b4bff6",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 39,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Flow/ExperienceSystem.cs": {
+      "filePath": "Code/Domain/Flow/ExperienceSystem.cs",
+      "contentHash": "c52776f9e4a82a0e4079e95a1ff7305d722073bcb48346d6c49ec62d67328a8e",
+      "functions": [
+        {
+          "name": "ExperienceSystem",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "AddXP",
+          "params": [
+            "amount"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "LevelUp",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 9
+        },
+        {
+          "name": "CalculateXPForLevel",
+          "params": [
+            "level"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 5
+        }
+      ],
+      "classes": [
+        {
+          "name": "ExperienceSystem",
+          "methods": [
+            "ExperienceSystem",
+            "AddXP",
+            "LevelUp",
+            "CalculateXPForLevel"
+          ],
+          "properties": [
+            "CurrentLevel",
+            "CurrentXP",
+            "XPForNextLevel",
+            "BaseXP"
+          ],
+          "exported": true,
+          "lineCount": 54
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        }
+      ],
+      "exports": [
+        "CurrentLevel",
+        "CurrentXP",
+        "XPForNextLevel",
+        "ExperienceSystem",
+        "AddXP",
+        "ExperienceSystem"
+      ],
+      "totalLines": 63,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Flow/GameLog.cs": {
+      "filePath": "Code/Domain/Flow/GameLog.cs",
+      "contentHash": "21ce0b7e701191b4fe02d60c356f8177752a9df0b84127f9b064958a81ea4f95",
+      "functions": [
+        {
+          "name": "Clear",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "Log",
+          "params": [
+            "message"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "LogCombat",
+          "params": [
+            "attacker",
+            "target",
+            "damage"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "LogDeath",
+          "params": [
+            "name"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [
+        {
+          "name": "GameLog",
+          "methods": [
+            "Clear",
+            "Log",
+            "LogCombat",
+            "LogDeath"
+          ],
+          "properties": [
+            "_instance",
+            "Instance",
+            "_history",
+            "History"
+          ],
+          "exported": true,
+          "lineCount": 34
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        }
+      ],
+      "exports": [
+        "Instance",
+        "History",
+        "Clear",
+        "Log",
+        "LogCombat",
+        "LogDeath",
+        "GameLog"
+      ],
+      "totalLines": 45,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Flow/TurnManager.cs": {
+      "filePath": "Code/Domain/Flow/TurnManager.cs",
+      "contentHash": "c96705dd65dc6ee384d70623abe61ce262a0f4edd9b42778bd0cd212ed4ac111",
+      "functions": [
+        {
+          "name": "EndPlayerTurn",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "EndEnemyTurn",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "SetState",
+          "params": [
+            "newState"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        }
+      ],
+      "classes": [
+        {
+          "name": "TurnManager",
+          "methods": [
+            "EndPlayerTurn",
+            "EndEnemyTurn",
+            "SetState"
+          ],
+          "properties": [
+            "CurrentState"
+          ],
+          "exported": true,
+          "lineCount": 38
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        }
+      ],
+      "exports": [
+        "CurrentState",
+        "EndPlayerTurn",
+        "EndEnemyTurn",
+        "TurnManager"
+      ],
+      "totalLines": 47,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Flow/TurnState.cs": {
+      "filePath": "Code/Domain/Flow/TurnState.cs",
+      "contentHash": "79c78ba3fbc5437e0663e8fb0c4c6ea7c9b42ddba45650fc9316074200d3c200",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Grid/CellType.cs": {
+      "filePath": "Code/Domain/Grid/CellType.cs",
+      "contentHash": "e387e969c1c5d11788ba910776e9105cda12625c6954a28fda947ab8daa58e89",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Grid/DungeonGrid.cs": {
+      "filePath": "Code/Domain/Grid/DungeonGrid.cs",
+      "contentHash": "2c93832fae2c028b7fc2ec13edee1629596dc980760dddaa1de4d217156e92ad",
+      "functions": [
+        {
+          "name": "DungeonGrid",
+          "params": [
+            "width",
+            "height",
+            "tileSize"
+          ],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "IsInBounds",
+          "params": [
+            "coord"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "IsWalkable",
+          "params": [
+            "coord"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "HasClearLine",
+          "params": [
+            "from",
+            "to"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "CanStep",
+          "params": [
+            "from",
+            "d"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "SetCell",
+          "params": [
+            "coord",
+            "type"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "GetCell",
+          "params": [
+            "coord"
+          ],
+          "returnType": "CellType",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "IsDiagonalCornerCut",
+          "params": [
+            "from",
+            "d"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 8
+        },
+        {
+          "name": "IntermediateCells",
+          "params": [
+            "from",
+            "to"
+          ],
+          "returnType": "IEnumerable<GridPos>",
+          "exported": false,
+          "lineCount": 23
+        },
+        {
+          "name": "FillWith",
+          "params": [
+            "type"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "DungeonGrid",
+          "methods": [
+            "DungeonGrid",
+            "IsInBounds",
+            "IsWalkable",
+            "HasClearLine",
+            "CanStep",
+            "SetCell",
+            "GetCell",
+            "IsDiagonalCornerCut",
+            "IntermediateCells",
+            "FillWith"
+          ],
+          "properties": [
+            "Width",
+            "Height",
+            "TileSize",
+            "_cells"
+          ],
+          "exported": true,
+          "lineCount": 141
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "Width",
+        "Height",
+        "TileSize",
+        "DungeonGrid",
+        "IsInBounds",
+        "IsWalkable",
+        "HasClearLine",
+        "CanStep",
+        "SetCell",
+        "GetCell",
+        "DungeonGrid"
+      ],
+      "totalLines": 160,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Grid/DungeonGrid.Pathfinding.cs": {
+      "filePath": "Code/Domain/Grid/DungeonGrid.Pathfinding.cs",
+      "contentHash": "b57f8e4d61bb5ba051d449fc3e72a7bb132b17423e6637b61269ff1c8bee71ed",
+      "functions": [
+        {
+          "name": "FindPath",
+          "params": [
+            "from",
+            "to"
+          ],
+          "returnType": "List<GridPos>",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "WalkableNeighbors",
+          "params": [
+            "p"
+          ],
+          "returnType": "IEnumerable<GridPos>",
+          "exported": false,
+          "lineCount": 2
+        }
+      ],
+      "classes": [
+        {
+          "name": "DungeonGrid",
+          "methods": [
+            "FindPath",
+            "WalkableNeighbors"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 93
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "System.Linq",
+          "specifiers": [
+            "Linq"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "FindPath",
+        "DungeonGrid"
+      ],
+      "totalLines": 106,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Grid/FOV/FovMap.cs": {
+      "filePath": "Code/Domain/Grid/FOV/FovMap.cs",
+      "contentHash": "0ea7d30a088831aa5196b098b0a447f09887b3ffe3f3093a3ada3baef91e6679",
+      "functions": [
+        {
+          "name": "FovMap",
+          "params": [
+            "width",
+            "height"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "GetVisibility",
+          "params": [
+            "pos"
+          ],
+          "returnType": "VisibilityState",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "SetVisibility",
+          "params": [
+            "pos",
+            "state"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "ResetVisible",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        }
+      ],
+      "classes": [
+        {
+          "name": "FovMap",
+          "methods": [
+            "FovMap",
+            "GetVisibility",
+            "SetVisibility",
+            "ResetVisible"
+          ],
+          "properties": [
+            "_states",
+            "Width",
+            "Height"
+          ],
+          "exported": true,
+          "lineCount": 48
+        }
+      ],
+      "imports": [
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "Width",
+        "Height",
+        "FovMap",
+        "GetVisibility",
+        "SetVisibility",
+        "ResetVisible",
+        "FovMap"
+      ],
+      "totalLines": 57,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Grid/FOV/IFovAlgorithm.cs": {
+      "filePath": "Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+      "contentHash": "1fc69fa2463833098e7b5bf8cbed4b1fdc9f4a0614b84e5b587f40495624817e",
+      "functions": [],
+      "classes": [
+        {
+          "name": "IFovAlgorithm",
+          "methods": [
+            "ComputeFov"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "imports": [
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "IFovAlgorithm"
+      ],
+      "totalLines": 17,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Grid/FOV/Raycaster.cs": {
+      "filePath": "Code/Domain/Grid/FOV/Raycaster.cs",
+      "contentHash": "595d51a5d68596f91cc9ac1cfcbfbee57f116ac11a74d6b1508d36945de9132d",
+      "functions": [
+        {
+          "name": "ComputeFov",
+          "params": [
+            "fovMap",
+            "grid",
+            "origin",
+            "radius"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "CastRay",
+          "params": [
+            "fovMap",
+            "grid",
+            "origin",
+            "target",
+            "radiusRadius"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 45
+        }
+      ],
+      "classes": [
+        {
+          "name": "Raycaster",
+          "methods": [
+            "ComputeFov",
+            "CastRay"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 66
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "ComputeFov",
+        "Raycaster"
+      ],
+      "totalLines": 75,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Grid/FOV/VisibilityState.cs": {
+      "filePath": "Code/Domain/Grid/FOV/VisibilityState.cs",
+      "contentHash": "7a9d09320f7367c422aa5246a3bff928ad142ce7c4ef2977cda8064e7742edcb",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 12,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Grid/Generators/BspDungeonGenerator.cs": {
+      "filePath": "Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "contentHash": "f434b5aa9f72b064119d7b81270d7e847be3a0ca46ae1d83ece4ca8e29e1de54",
+      "functions": [
+        {
+          "name": "Generate",
+          "params": [
+            "grid",
+            "minSplitSize"
+          ],
+          "returnType": "List<GridRect>",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "Partition",
+          "params": [
+            "node",
+            "minSplitSize"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 34
+        },
+        {
+          "name": "CarveRooms",
+          "params": [
+            "node",
+            "roomsList",
+            "grid"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 38
+        },
+        {
+          "name": "ConnectRooms",
+          "params": [
+            "grid",
+            "room1",
+            "room2"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 17
+        },
+        {
+          "name": "CarveHorizontalTunn",
+          "params": [
+            "grid",
+            "x1",
+            "x2",
+            "y"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "CarveVerticalTunn",
+          "params": [
+            "grid",
+            "y1",
+            "y2",
+            "x"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 7
+        }
+      ],
+      "classes": [
+        {
+          "name": "BspDungeonGenerator",
+          "methods": [
+            "Generate",
+            "Partition",
+            "CarveRooms",
+            "ConnectRooms",
+            "CarveHorizontalTunn",
+            "CarveVerticalTunn"
+          ],
+          "properties": [
+            "_rng"
+          ],
+          "exported": true,
+          "lineCount": 139
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "Generate",
+        "BspDungeonGenerator"
+      ],
+      "totalLines": 149,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Grid/Generators/BspNode.cs": {
+      "filePath": "Code/Domain/Grid/Generators/BspNode.cs",
+      "contentHash": "049545978f53da88f9d79664147fe7a99c724417cd56f24b040327d68f5226aa",
+      "functions": [
+        {
+          "name": "BspNode",
+          "params": [
+            "bounds"
+          ],
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [
+        {
+          "name": "BspNode",
+          "methods": [
+            "BspNode"
+          ],
+          "properties": [
+            "Bounds",
+            "LeftChild",
+            "RightChild",
+            "Room",
+            "IsLeaf"
+          ],
+          "exported": true,
+          "lineCount": 16
+        }
+      ],
+      "imports": [
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "Bounds",
+        "LeftChild",
+        "RightChild",
+        "Room",
+        "BspNode",
+        "IsLeaf",
+        "BspNode"
+      ],
+      "totalLines": 24,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Items/FloorItems.cs": {
+      "filePath": "Code/Domain/Items/FloorItems.cs",
+      "contentHash": "00338c4da0de63d4c11598ddbe55ddf153b18f4f606b154ed58cbecadff19807",
+      "functions": [
+        {
+          "name": "RegisterItem",
+          "params": [
+            "item"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "UnregisterItem",
+          "params": [
+            "item"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "Clear",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "CheckForPickup",
+          "params": [
+            "position",
+            "actor",
+            "inventory"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [
+        {
+          "name": "FloorItems",
+          "methods": [
+            "RegisterItem",
+            "UnregisterItem",
+            "Clear",
+            "CheckForPickup"
+          ],
+          "properties": [
+            "_items",
+            "AllItems"
+          ],
+          "exported": true,
+          "lineCount": 37
+        }
+      ],
+      "imports": [
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "System.Linq",
+          "specifiers": [
+            "Linq"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "AllItems",
+        "RegisterItem",
+        "UnregisterItem",
+        "Clear",
+        "CheckForPickup",
+        "FloorItems"
+      ],
+      "totalLines": 47,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Items/IItem.cs": {
+      "filePath": "Code/Domain/Items/IItem.cs",
+      "contentHash": "4d39480695a998df872cd67762c843c792403f583f780a5ffad2bbf7730ea7ff",
+      "functions": [],
+      "classes": [
+        {
+          "name": "IItem",
+          "methods": [
+            "CanPickup",
+            "OnPickup",
+            "Use",
+            "TryPickup"
+          ],
+          "properties": [
+            "DisplayName",
+            "GridPosition",
+            "IsConsumable"
+          ],
+          "exported": true,
+          "lineCount": 43
+        }
+      ],
+      "imports": [
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "IItem"
+      ],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/Items/Inventory.cs": {
+      "filePath": "Code/Domain/Items/Inventory.cs",
+      "contentHash": "90e0141e121b7a0acc738697c004c20c8cb797324ab177103342ae73d45e8ec4",
+      "functions": [
+        {
+          "name": "Inventory",
+          "params": [
+            "maxSlots"
+          ],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "AddItem",
+          "params": [
+            "item"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "UseItem",
+          "params": [
+            "index",
+            "user"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "GetItem",
+          "params": [
+            "index"
+          ],
+          "returnType": "IItem",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "Clear",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "GetGroupedItems",
+          "params": [],
+          "returnType": "List<(string ItemName, int Count, int FirstIndex)>",
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "UseItemByGroup",
+          "params": [
+            "groupIndex",
+            "user"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [
+        {
+          "name": "Inventory",
+          "methods": [
+            "Inventory",
+            "AddItem",
+            "UseItem",
+            "GetItem",
+            "Clear",
+            "GetGroupedItems",
+            "UseItemByGroup"
+          ],
+          "properties": [
+            "_items",
+            "Items",
+            "MaxSlots",
+            "Count",
+            "IsFull"
+          ],
+          "exported": true,
+          "lineCount": 106
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "System.Linq",
+          "specifiers": [
+            "Linq"
+          ]
+        }
+      ],
+      "exports": [
+        "Items",
+        "MaxSlots",
+        "Count",
+        "IsFull",
+        "Inventory",
+        "AddItem",
+        "UseItem",
+        "GetItem",
+        "Clear",
+        "GetGroupedItems",
+        "UseItemByGroup",
+        "Inventory"
+      ],
+      "totalLines": 117,
+      "hasStructuralAnalysis": true
+    },
+    "Code/Domain/RogueLike.Domain.csproj": {
+      "filePath": "Code/Domain/RogueLike.Domain.csproj",
+      "contentHash": "947882112307af1d0e01219b57a57d74cb54b20755b1c69d11545021915a583d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 15,
+      "hasStructuralAnalysis": false
+    },
+    "Code/View.Tests/GridConversionsTest.cs": {
+      "filePath": "Code/View.Tests/GridConversionsTest.cs",
+      "contentHash": "9712e4e5b4644f99c542495ca59c935a2b19ba917fce62accaceb1e63d08e97c",
+      "functions": [
+        {
+          "name": "ToGridPos_FromVector2I_CopiesComponents",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "ToVector2I_FromGridPos_CopiesComponents",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "TypeRoundTrip_IsIdentity",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "ToWorldCenter_ReturnsTileCenter",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "ToGridPos_FromWorld_FloorsToTile",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        }
+      ],
+      "classes": [
+        {
+          "name": "GridConversionsTest",
+          "methods": [
+            "ToGridPos_FromVector2I_CopiesComponents",
+            "ToVector2I_FromGridPos_CopiesComponents",
+            "TypeRoundTrip_IsIdentity",
+            "ToWorldCenter_ReturnsTileCenter",
+            "ToGridPos_FromWorld_FloorsToTile"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 57
+        }
+      ],
+      "imports": [
+        {
+          "source": "GdUnit4",
+          "specifiers": [
+            "GdUnit4"
+          ]
+        },
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View",
+          "specifiers": [
+            "View"
+          ]
+        },
+        {
+          "source": "GdUnit4.Assertions",
+          "specifiers": [
+            "Assertions"
+          ]
+        }
+      ],
+      "exports": [
+        "ToGridPos_FromVector2I_CopiesComponents",
+        "ToVector2I_FromGridPos_CopiesComponents",
+        "TypeRoundTrip_IsIdentity",
+        "ToWorldCenter_ReturnsTileCenter",
+        "ToGridPos_FromWorld_FloorsToTile",
+        "GridConversionsTest"
+      ],
+      "totalLines": 66,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View.Tests/RogueLike.View.Tests.csproj": {
+      "filePath": "Code/View.Tests/RogueLike.View.Tests.csproj",
+      "contentHash": "c8906bc10eecf5bace9019e47f2190e272fac1bd21f77a69dc3f9f2cbf94d6dd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 24,
+      "hasStructuralAnalysis": false
+    },
+    "Code/View/Enemies/ArcherController.cs": {
+      "filePath": "Code/View/Enemies/ArcherController.cs",
+      "contentHash": "30d5d3676157bc7664e29bc4d61ffd1ea468952d8ae2b75de32b4957abf70de0",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [
+            "grid",
+            "actorRegistry",
+            "startPos"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "TakeTurn",
+          "params": [
+            "grid",
+            "fovMap"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "SyncPosition",
+          "params": [
+            "grid",
+            "fovMap"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "ArcherController",
+          "methods": [
+            "Initialize",
+            "TakeTurn",
+            "SyncPosition"
+          ],
+          "properties": [
+            "_ai",
+            "Range",
+            "GridPosition",
+            "IsPlayer",
+            "AttackDamage"
+          ],
+          "exported": true,
+          "lineCount": 38
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Entities",
+          "specifiers": [
+            "Entities"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        }
+      ],
+      "exports": [
+        "Range",
+        "GridPosition",
+        "IsPlayer",
+        "AttackDamage",
+        "Initialize",
+        "TakeTurn",
+        "ArcherController"
+      ],
+      "totalLines": 51,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Enemies/EnemyController.cs": {
+      "filePath": "Code/View/Enemies/EnemyController.cs",
+      "contentHash": "62d4efde4b42c7225b5a71d94578b2fa098e5417e12f4b11be8e95d9e91595c6",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [
+            "grid",
+            "actorRegistry",
+            "startPos"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "TakeTurn",
+          "params": [
+            "grid",
+            "fovMap"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "SyncPosition",
+          "params": [
+            "grid",
+            "fovMap"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "EnemyController",
+          "methods": [
+            "Initialize",
+            "TakeTurn",
+            "SyncPosition"
+          ],
+          "properties": [
+            "_ai",
+            "GridPosition",
+            "IsPlayer",
+            "AttackDamage"
+          ],
+          "exported": true,
+          "lineCount": 36
+        }
+      ],
+      "imports": [
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Entities",
+          "specifiers": [
+            "Entities"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        }
+      ],
+      "exports": [
+        "GridPosition",
+        "IsPlayer",
+        "AttackDamage",
+        "Initialize",
+        "TakeTurn",
+        "EnemyController"
+      ],
+      "totalLines": 46,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Entities/ActorController.cs": {
+      "filePath": "Code/View/Entities/ActorController.cs",
+      "contentHash": "1720a0d6b5ce80ebfce729fe12e7f634b0dfb2a2f27dc097b3be920281b63157",
+      "functions": [
+        {
+          "name": "InitializeBase",
+          "params": [
+            "actorRegistry"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ReceiveDamage",
+          "params": [
+            "damage"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "Heal",
+          "params": [
+            "amount"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "IncreaseMaxHp",
+          "params": [
+            "amount"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "Die",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "InitializeHealth",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "SyncHealthBar",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 6
+        }
+      ],
+      "classes": [
+        {
+          "name": "ActorController",
+          "methods": [
+            "InitializeBase",
+            "ReceiveDamage",
+            "Heal",
+            "IncreaseMaxHp",
+            "Die",
+            "InitializeHealth",
+            "SyncHealthBar"
+          ],
+          "properties": [
+            "_actorRegistry",
+            "DisplayName",
+            "Health",
+            "GridPosition",
+            "IsPlayer",
+            "AttackDamage",
+            "HealthBar",
+            "BaseHealth",
+            "BaseAttackDamage",
+            "XpReward"
+          ],
+          "exported": true,
+          "lineCount": 75
+        }
+      ],
+      "imports": [
+        {
+          "source": "System",
+          "specifiers": [
+            "System"
+          ]
+        },
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        }
+      ],
+      "exports": [
+        "DisplayName",
+        "Health",
+        "GridPosition",
+        "IsPlayer",
+        "AttackDamage",
+        "HealthBar",
+        "BaseHealth",
+        "BaseAttackDamage",
+        "XpReward",
+        "InitializeBase",
+        "ReceiveDamage",
+        "Heal",
+        "IncreaseMaxHp",
+        "Die",
+        "ActorController"
+      ],
+      "totalLines": 91,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Entities/NodeRegistry.cs": {
+      "filePath": "Code/View/Entities/NodeRegistry.cs",
+      "contentHash": "d4c1e8163f802616ee1320534da1813b47f6e4455e9449dbffe426952c1e1268",
+      "functions": [
+        {
+          "name": "RegisterNode",
+          "params": [
+            "node",
+            "position"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "GetNodeAt",
+          "params": [
+            "position"
+          ],
+          "returnType": "Node2D",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "Clear",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 1
+        }
+      ],
+      "classes": [
+        {
+          "name": "NodeRegistry",
+          "methods": [
+            "RegisterNode",
+            "GetNodeAt",
+            "Clear"
+          ],
+          "properties": [
+            "_nodesByPosition"
+          ],
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "imports": [
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "RegisterNode",
+        "GetNodeAt",
+        "Clear",
+        "NodeRegistry"
+      ],
+      "totalLines": 22,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Entities/Spawner.cs": {
+      "filePath": "Code/View/Entities/Spawner.cs",
+      "contentHash": "59739204fd52ed6559ea9c0525763f626be99fc5793e706c011abe8ba7d6f0e2",
+      "functions": [
+        {
+          "name": "PlacePlayerOnLevel",
+          "params": [
+            "player",
+            "startRoom",
+            "grid",
+            "actorRegistry",
+            "fovMap",
+            "nodeRegistry"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "SpawnEnemies",
+          "params": [
+            "parentNode",
+            "goblinScene",
+            "archerScene",
+            "rooms",
+            "grid",
+            "actorRegistry",
+            "dungeonLevel",
+            "levelSettings"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 47
+        },
+        {
+          "name": "SpawnGoblin",
+          "params": [
+            "parent",
+            "scene",
+            "grid",
+            "actorRegistry",
+            "pos",
+            "index"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "SpawnArcher",
+          "params": [
+            "parent",
+            "scene",
+            "grid",
+            "actorRegistry",
+            "pos",
+            "index"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "SpawnHealingPotion",
+          "params": [
+            "parent",
+            "potionScene",
+            "grid",
+            "floorItems",
+            "pos"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "SpawnPotions",
+          "params": [
+            "parentNode",
+            "potionScene",
+            "rooms",
+            "grid",
+            "floorItems"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "RandomFloorTile",
+          "params": [
+            "room"
+          ],
+          "returnType": "GridPos",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "SpawnStairs",
+          "params": [
+            "parent",
+            "scene",
+            "room",
+            "nodeRegistry",
+            "grid"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        }
+      ],
+      "classes": [
+        {
+          "name": "Spawner",
+          "methods": [
+            "PlacePlayerOnLevel",
+            "SpawnEnemies",
+            "SpawnGoblin",
+            "SpawnArcher",
+            "SpawnHealingPotion",
+            "SpawnPotions",
+            "RandomFloorTile",
+            "SpawnStairs"
+          ],
+          "properties": [
+            "_rng"
+          ],
+          "exported": true,
+          "lineCount": 128
+        }
+      ],
+      "imports": [
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Enemies",
+          "specifiers": [
+            "Enemies"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Player",
+          "specifiers": [
+            "Player"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Items",
+          "specifiers": [
+            "Items"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Resources",
+          "specifiers": [
+            "Resources"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.World",
+          "specifiers": [
+            "World"
+          ]
+        }
+      ],
+      "exports": [
+        "PlacePlayerOnLevel",
+        "SpawnEnemies",
+        "SpawnGoblin",
+        "SpawnArcher",
+        "SpawnHealingPotion",
+        "SpawnPotions",
+        "RandomFloorTile",
+        "SpawnStairs",
+        "Spawner"
+      ],
+      "totalLines": 146,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Grid/DungeonTileMap.cs": {
+      "filePath": "Code/View/Grid/DungeonTileMap.cs",
+      "contentHash": "abe447d376d69c53f09e6ccc9e7b599e707986906fd3eacb7f7542fbbb5dff78",
+      "functions": [
+        {
+          "name": "Render",
+          "params": [
+            "gridMap"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 24
+        }
+      ],
+      "classes": [
+        {
+          "name": "DungeonTileMap",
+          "methods": [
+            "Render"
+          ],
+          "properties": [
+            "LightTile",
+            "DarkTile",
+            "WallTile",
+            "SourceId"
+          ],
+          "exported": true,
+          "lineCount": 38
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        }
+      ],
+      "exports": [
+        "Render",
+        "DungeonTileMap"
+      ],
+      "totalLines": 48,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Grid/FOV/FovTileMap.cs": {
+      "filePath": "Code/View/Grid/FOV/FovTileMap.cs",
+      "contentHash": "b4060484ef16901424d07cb27d24efbc94b095554d6e2d9dd80b34dd403ba0a4",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 20
+        },
+        {
+          "name": "Render",
+          "params": [
+            "map"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 20
+        }
+      ],
+      "classes": [
+        {
+          "name": "FovTileMap",
+          "methods": [
+            "Initialize",
+            "Render"
+          ],
+          "properties": [
+            "SourceUnexplored",
+            "SourceExplored"
+          ],
+          "exported": true,
+          "lineCount": 47
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        }
+      ],
+      "exports": [
+        "Initialize",
+        "Render",
+        "FovTileMap"
+      ],
+      "totalLines": 57,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/GridConversions.cs": {
+      "filePath": "Code/View/GridConversions.cs",
+      "contentHash": "aa1fba7123ef4ef3ea8f3736ab2bfd48e3299ee305aabc617492438d56da06c1",
+      "functions": [
+        {
+          "name": "ToGridPos",
+          "params": [
+            "coord"
+          ],
+          "returnType": "GridPos",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "ToVector2I",
+          "params": [
+            "pos"
+          ],
+          "returnType": "Vector2I",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "ToWorldCenter",
+          "params": [
+            "pos",
+            "tileSize"
+          ],
+          "returnType": "Vector2",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ToGridPos",
+          "params": [
+            "world",
+            "tileSize"
+          ],
+          "returnType": "GridPos",
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [
+        {
+          "name": "GridConversions",
+          "methods": [
+            "ToGridPos",
+            "ToVector2I",
+            "ToWorldCenter",
+            "ToGridPos"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 19
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        }
+      ],
+      "exports": [
+        "ToGridPos",
+        "ToVector2I",
+        "ToWorldCenter",
+        "ToGridPos",
+        "GridConversions"
+      ],
+      "totalLines": 32,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Items/Consumables/HealingPotion.cs": {
+      "filePath": "Code/View/Items/Consumables/HealingPotion.cs",
+      "contentHash": "b64d773ccbe0a652a4bf80c5e385268be0eec03bb2ee46f30e1f4246400407c4",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [
+            "floorItems",
+            "position"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "Use",
+          "params": [
+            "actor"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "HealingPotion",
+          "methods": [
+            "Initialize",
+            "Use"
+          ],
+          "properties": [
+            "HealAmount"
+          ],
+          "exported": true,
+          "lineCount": 21
+        }
+      ],
+      "imports": [
+        {
+          "source": "RogueLike.Domain.Items",
+          "specifiers": [
+            "Items"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        }
+      ],
+      "exports": [
+        "HealAmount",
+        "Initialize",
+        "Use",
+        "HealingPotion"
+      ],
+      "totalLines": 33,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Items/ItemController.cs": {
+      "filePath": "Code/View/Items/ItemController.cs",
+      "contentHash": "7362456d201cba073d2d1d8bfba94d22cd8ff97e847a9b8d810a32fe3d5f623b",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [
+            "floorItems",
+            "position"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "CanPickup",
+          "params": [
+            "actor"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "OnPickup",
+          "params": [
+            "actor"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "Use",
+          "params": [
+            "actor"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [
+        {
+          "name": "ItemController",
+          "methods": [
+            "Initialize",
+            "CanPickup",
+            "OnPickup",
+            "Use"
+          ],
+          "properties": [
+            "ItemName",
+            "DisplayName",
+            "GridPosition",
+            "IsConsumable",
+            "_floorItems"
+          ],
+          "exported": true,
+          "lineCount": 36
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Items",
+          "specifiers": [
+            "Items"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        }
+      ],
+      "exports": [
+        "ItemName",
+        "DisplayName",
+        "GridPosition",
+        "IsConsumable",
+        "Initialize",
+        "CanPickup",
+        "OnPickup",
+        "Use",
+        "ItemController"
+      ],
+      "totalLines": 48,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Main.cs": {
+      "filePath": "Code/View/Main.cs",
+      "contentHash": "8cf5c1f28790444b0b9776126e56d8fe35c01e58ccf1dc09b490eb94f9b47cdf",
+      "functions": [
+        {
+          "name": "_Ready",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "SetupLevel",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 23
+        },
+        {
+          "name": "SetupFovTileMap",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "UpdateFov",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 18
+        },
+        {
+          "name": "OnTurnChanged",
+          "params": [
+            "newState"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 8
+        },
+        {
+          "name": "ProcessEnemyTurns",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 14
+        },
+        {
+          "name": "SetupTileMap",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "DescendLevel",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 26
+        },
+        {
+          "name": "RestartGame",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        }
+      ],
+      "classes": [
+        {
+          "name": "Main",
+          "methods": [
+            "_Ready",
+            "SetupLevel",
+            "SetupFovTileMap",
+            "UpdateFov",
+            "OnTurnChanged",
+            "ProcessEnemyTurns",
+            "SetupTileMap",
+            "DescendLevel",
+            "RestartGame"
+          ],
+          "properties": [
+            "LevelSettings",
+            "GridWidth",
+            "GridHeight",
+            "_gridMap",
+            "_actorRegistry",
+            "_nodeRegistry",
+            "_turnManager",
+            "_floorItems",
+            "_fovMap",
+            "_fovAlgorithm",
+            "_fovTileMap",
+            "_minimap",
+            "_rooms",
+            "_dungeonLevel"
+          ],
+          "exported": true,
+          "lineCount": 173
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.Generators",
+          "specifiers": [
+            "Generators"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Items",
+          "specifiers": [
+            "Items"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Player",
+          "specifiers": [
+            "Player"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Entities",
+          "specifiers": [
+            "Entities"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Items",
+          "specifiers": [
+            "Items"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Resources",
+          "specifiers": [
+            "Resources"
+          ]
+        },
+        {
+          "source": "System.Linq",
+          "specifiers": [
+            "Linq"
+          ]
+        }
+      ],
+      "exports": [
+        "LevelSettings",
+        "_Ready",
+        "DescendLevel",
+        "RestartGame",
+        "Main"
+      ],
+      "totalLines": 196,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Player/InputMapper.cs": {
+      "filePath": "Code/View/Player/InputMapper.cs",
+      "contentHash": "feb99e68cb867c46ca7e04c09a5b8fd78a20082dd1ffcb5719a3cf45d840b304",
+      "functions": [
+        {
+          "name": "GetDirection",
+          "params": [
+            "@event"
+          ],
+          "returnType": "Vector2I",
+          "exported": true,
+          "lineCount": 12
+        }
+      ],
+      "classes": [
+        {
+          "name": "InputMapper",
+          "methods": [
+            "GetDirection"
+          ],
+          "properties": [
+            "DirectionMap"
+          ],
+          "exported": true,
+          "lineCount": 35
+        }
+      ],
+      "imports": [
+        {
+          "source": "System.Collections.Generic",
+          "specifiers": [
+            "Generic"
+          ]
+        },
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        }
+      ],
+      "exports": [
+        "GetDirection",
+        "InputMapper"
+      ],
+      "totalLines": 44,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Player/PlayerController.cs": {
+      "filePath": "Code/View/Player/PlayerController.cs",
+      "contentHash": "d9804a0dea098cf78e2b5791b589cd4c3ec423949a6e90bfaa34de23f1f2f573",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [
+            "main",
+            "turnManager",
+            "floorItems"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "PlaceOnLevel",
+          "params": [
+            "gridMap",
+            "actorRegistry",
+            "fovMap",
+            "nodeRegistry",
+            "startPos"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "TryMove",
+          "params": [
+            "direction"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 39
+        },
+        {
+          "name": "Die",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "OnKilled",
+          "params": [
+            "victim"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "_UnhandledInput",
+          "params": [
+            "@event"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 21
+        },
+        {
+          "name": "HandleWaitActions",
+          "params": [
+            "@event"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 14
+        },
+        {
+          "name": "HandleItemActions",
+          "params": [
+            "@event"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 12
+        },
+        {
+          "name": "HandleMovementActions",
+          "params": [
+            "@event"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 17
+        },
+        {
+          "name": "SyncPosition",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "WaitUntilFullHealth",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 35
+        },
+        {
+          "name": "ShiftMove",
+          "params": [
+            "direction"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 18
+        },
+        {
+          "name": "ShouldShiftMoveStop",
+          "params": [
+            "direction",
+            "ortho1",
+            "ortho2",
+            "side1WasWalkable",
+            "side2WasWalkable"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 25
+        },
+        {
+          "name": "IsBlocked",
+          "params": [
+            "position"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "HasPathChanged",
+          "params": [
+            "ortho1",
+            "ortho2",
+            "side1WasWalkable",
+            "side2WasWalkable"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "IsEnemyVisible",
+          "params": [],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "HandleLevelUp",
+          "params": [
+            "newLevel"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 9
+        },
+        {
+          "name": "ProcessTurnAction",
+          "params": [
+            "logHeal"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 14
+        },
+        {
+          "name": "Reset",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        }
+      ],
+      "classes": [
+        {
+          "name": "PlayerController",
+          "methods": [
+            "Initialize",
+            "PlaceOnLevel",
+            "TryMove",
+            "Die",
+            "OnKilled",
+            "_UnhandledInput",
+            "HandleWaitActions",
+            "HandleItemActions",
+            "HandleMovementActions",
+            "SyncPosition",
+            "WaitUntilFullHealth",
+            "ShiftMove",
+            "ShouldShiftMoveStop",
+            "IsBlocked",
+            "HasPathChanged",
+            "IsEnemyVisible",
+            "HandleLevelUp",
+            "ProcessTurnAction",
+            "Reset"
+          ],
+          "properties": [
+            "_mover",
+            "_turnManager",
+            "_floorItems",
+            "_inventory",
+            "_fovMap",
+            "_nodeRegistry",
+            "_main",
+            "IsDead",
+            "_turnsSinceLastHeal",
+            "TurnsPerHeal",
+            "GridPosition",
+            "IsPlayer",
+            "AttackDamage",
+            "Inventory",
+            "Experience"
+          ],
+          "exported": true,
+          "lineCount": 354
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Common",
+          "specifiers": [
+            "Common"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Entities",
+          "specifiers": [
+            "Entities"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Actors",
+          "specifiers": [
+            "Actors"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Combat",
+          "specifiers": [
+            "Combat"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Items",
+          "specifiers": [
+            "Items"
+          ]
+        },
+        {
+          "source": "System.Linq",
+          "specifiers": [
+            "Linq"
+          ]
+        }
+      ],
+      "exports": [
+        "IsDead",
+        "GridPosition",
+        "IsPlayer",
+        "AttackDamage",
+        "Inventory",
+        "Experience",
+        "Initialize",
+        "PlaceOnLevel",
+        "TryMove",
+        "Die",
+        "OnKilled",
+        "_UnhandledInput",
+        "Reset",
+        "PlayerController"
+      ],
+      "totalLines": 372,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/Resources/LevelSettings.cs": {
+      "filePath": "Code/View/Resources/LevelSettings.cs",
+      "contentHash": "6851e69c85d3438d6f596a46848928123a8d384b0382c3ccd405330dfe8c8ecb",
+      "functions": [],
+      "classes": [
+        {
+          "name": "LevelSettings",
+          "methods": [],
+          "properties": [
+            "MinEnemiesPerRoom",
+            "MaxEnemiesPerRoom",
+            "BaseEnemyCountModifier",
+            "DifficultyScaling"
+          ],
+          "exported": true,
+          "lineCount": 17
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        }
+      ],
+      "exports": [
+        "MinEnemiesPerRoom",
+        "MaxEnemiesPerRoom",
+        "BaseEnemyCountModifier",
+        "DifficultyScaling",
+        "LevelSettings"
+      ],
+      "totalLines": 26,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/UI/ExperienceUI.cs": {
+      "filePath": "Code/View/UI/ExperienceUI.cs",
+      "contentHash": "46bc0f566e9675923528af7c668e8870a367a724717de2bc4aec41cdecde59d5",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [
+            "expSystem"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "UpdateDisplay",
+          "params": [
+            "newLevel"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "UpdateDisplay",
+          "params": [
+            "currentXP",
+            "xpForNextLevel"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "UpdateDisplay",
+          "params": [
+            "level",
+            "currentXP",
+            "xpForNextLevel"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 8
+        },
+        {
+          "name": "_ExitTree",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "classes": [
+        {
+          "name": "ExperienceUI",
+          "methods": [
+            "Initialize",
+            "UpdateDisplay",
+            "UpdateDisplay",
+            "UpdateDisplay",
+            "_ExitTree"
+          ],
+          "properties": [
+            "LevelLabel",
+            "XpBar",
+            "_expSystem"
+          ],
+          "exported": true,
+          "lineCount": 43
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        }
+      ],
+      "exports": [
+        "LevelLabel",
+        "XpBar",
+        "Initialize",
+        "_ExitTree",
+        "ExperienceUI"
+      ],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/UI/GameLogController.cs": {
+      "filePath": "Code/View/UI/GameLogController.cs",
+      "contentHash": "4b81efa67e8a30b342261d0f642a6a7a2eac2f653a028ea62df0675f5481863e",
+      "functions": [
+        {
+          "name": "_Ready",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "ClearLog",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "AppendMessage",
+          "params": [
+            "message"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "_ExitTree",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [
+        {
+          "name": "GameLogController",
+          "methods": [
+            "_Ready",
+            "ClearLog",
+            "AppendMessage",
+            "_ExitTree"
+          ],
+          "properties": [
+            "LogLabel"
+          ],
+          "exported": true,
+          "lineCount": 37
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Flow",
+          "specifiers": [
+            "Flow"
+          ]
+        }
+      ],
+      "exports": [
+        "LogLabel",
+        "_Ready",
+        "_ExitTree",
+        "GameLogController"
+      ],
+      "totalLines": 47,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/UI/InventoryUI.cs": {
+      "filePath": "Code/View/UI/InventoryUI.cs",
+      "contentHash": "ea91ec7ce4c42e9a20b2d5aec677b731f30dd8ab764ac1bcf1de04d000a15076",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [
+            "inventory"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "UpdateDisplay",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 31
+        },
+        {
+          "name": "_ExitTree",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        }
+      ],
+      "classes": [
+        {
+          "name": "InventoryUI",
+          "methods": [
+            "Initialize",
+            "UpdateDisplay",
+            "_ExitTree"
+          ],
+          "properties": [
+            "InventoryLabel",
+            "_inventory"
+          ],
+          "exported": true,
+          "lineCount": 53
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Items",
+          "specifiers": [
+            "Items"
+          ]
+        }
+      ],
+      "exports": [
+        "InventoryLabel",
+        "Initialize",
+        "_ExitTree",
+        "InventoryUI"
+      ],
+      "totalLines": 62,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/UI/MinimapController.cs": {
+      "filePath": "Code/View/UI/MinimapController.cs",
+      "contentHash": "598cf8b744c4a0e16ed146920989014775dce6e27e7c4b8f2acc457d4e6674c9",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [
+            "grid",
+            "fov",
+            "player"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "Refresh",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "_Draw",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 23
+        }
+      ],
+      "classes": [
+        {
+          "name": "MinimapController",
+          "methods": [
+            "Initialize",
+            "Refresh",
+            "_Draw"
+          ],
+          "properties": [
+            "CellPx",
+            "_grid",
+            "_fov",
+            "_player"
+          ],
+          "exported": true,
+          "lineCount": 41
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid",
+          "specifiers": [
+            "Grid"
+          ]
+        },
+        {
+          "source": "RogueLike.Domain.Grid.FOV",
+          "specifiers": [
+            "FOV"
+          ]
+        },
+        {
+          "source": "RogueLike.Code.View.Player",
+          "specifiers": [
+            "Player"
+          ]
+        }
+      ],
+      "exports": [
+        "Initialize",
+        "Refresh",
+        "_Draw",
+        "MinimapController"
+      ],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    "Code/View/World/StairsController.cs": {
+      "filePath": "Code/View/World/StairsController.cs",
+      "contentHash": "47ea56ada96d94d2e121998f28c19bb99faec570955641cdc0b724a043215b4a",
+      "functions": [
+        {
+          "name": "Initialize",
+          "params": [
+            "gridPosition"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [
+        {
+          "name": "StairsController",
+          "methods": [
+            "Initialize"
+          ],
+          "properties": [
+            "GridPosition"
+          ],
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "imports": [
+        {
+          "source": "Godot",
+          "specifiers": [
+            "Godot"
+          ]
+        }
+      ],
+      "exports": [
+        "GridPosition",
+        "Initialize",
+        "StairsController"
+      ],
+      "totalLines": 18,
+      "hasStructuralAnalysis": true
+    },
+    "docs/ASSET_PIPELINE.md": {
+      "filePath": "docs/ASSET_PIPELINE.md",
+      "contentHash": "d000e40889afee4188310692452823fd4a342b89959ff2cbff62c5c5a7e2b58f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 32,
+      "hasStructuralAnalysis": true
+    },
+    "docs/DDD_REVIEW_CHECKLIST.md": {
+      "filePath": "docs/DDD_REVIEW_CHECKLIST.md",
+      "contentHash": "cd6b6bbed0f3b3a4f685a9e2d4b5227cada43e6c7ba5f2256c3aee4097e39ef8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 51,
+      "hasStructuralAnalysis": true
+    },
+    "docs/SYSTEM_DESIGN.md": {
+      "filePath": "docs/SYSTEM_DESIGN.md",
+      "contentHash": "4bb014794943048afe8c7cbb43e4ca9e72c798e9e7c810bf28e6b9ea7ec25939",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 84,
+      "hasStructuralAnalysis": true
+    },
+    "features.md": {
+      "filePath": "features.md",
+      "contentHash": "5c87f9791056a2c5bc12b0c883c56866b8989ef1a159ffb0d37db7f3825009cf",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": true
+    },
+    "project.godot": {
+      "filePath": "project.godot",
+      "contentHash": "d28a4f9186f9341af60202ef99b10b6238de2337ab88243fd9a359af4489c8b7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 117,
+      "hasStructuralAnalysis": false
+    },
+    "REFACTORING_OPPORTUNITIES.md": {
+      "filePath": "REFACTORING_OPPORTUNITIES.md",
+      "contentHash": "025d7bb89723ff79bbed96e0247adb250bf71f24c6fa62e10950d50c1f6bdbf2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": true
+    },
+    "Resources/DefaultLevelSettings.tres": {
+      "filePath": "Resources/DefaultLevelSettings.tres",
+      "contentHash": "00f7e1ee68267b46039ae3da5798480f0999c0db95ac16d03f32110f68b2e0d7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": false
+    },
+    "RogueLike.csproj": {
+      "filePath": "RogueLike.csproj",
+      "contentHash": "6cc9c413a266a479ab309d0b8d97e91f9ebb4be5bcd1533ed894347b5874562d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": false
+    },
+    "RogueLike.sln": {
+      "filePath": "RogueLike.sln",
+      "contentHash": "bad7037f577b159d5d35baa714fc10f4dabf6809b01936861520814002dd1ce0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 139,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/Archer.tscn": {
+      "filePath": "Scenes/Archer.tscn",
+      "contentHash": "ac2c82d6a667d212debd010258ef57671e08f7d001545c298ba9e01cd58ab2e9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 30,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/Enemy.tscn": {
+      "filePath": "Scenes/Enemy.tscn",
+      "contentHash": "dc5dbbb04b61f0b8d390edcad97c0a7dc01cd5e3afb7fdb548a212b2bd77b4d5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/GameLogUI.tscn": {
+      "filePath": "Scenes/GameLogUI.tscn",
+      "contentHash": "07703d06f29e5a438adfd5c8b684e8c3b6ec12be443db4a9abc8e4617c054f03",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 56,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/HealingPotion.tscn": {
+      "filePath": "Scenes/HealingPotion.tscn",
+      "contentHash": "b1d2e73aff054c93413075c3947de025b0c60dd2056a4bd7f4892988fc9cf21c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/InventoryUI.tscn": {
+      "filePath": "Scenes/InventoryUI.tscn",
+      "contentHash": "2b76115f9e4dceca212b1d7864e211ed3fb0765dea852c499b1e8827eecc61a3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 52,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/Main.tscn": {
+      "filePath": "Scenes/Main.tscn",
+      "contentHash": "c2ceafa8bab4cfe78d61322e9f58a1be2d7ac258818524b276030a647c18beac",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 30,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/MinimapUI.tscn": {
+      "filePath": "Scenes/MinimapUI.tscn",
+      "contentHash": "7768b01c3cd8e691bb772a803a87a661d776199709b304647417e35c60099e3a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 37,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/Player.tscn": {
+      "filePath": "Scenes/Player.tscn",
+      "contentHash": "0d4674646643bd0821b3e8953e72580ecd0be4bc494d01e33d52f4165bb4b51e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/StairsDown.tscn": {
+      "filePath": "Scenes/StairsDown.tscn",
+      "contentHash": "62f911bf1840262b8f7827eba58b8c41559a60603ba77811eb991e771f735172",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": false
+    },
+    "Scenes/UI/ExperienceUI.tscn": {
+      "filePath": "Scenes/UI/ExperienceUI.tscn",
+      "contentHash": "f26d609f50b34e722b7beac41b1cc906e4553f566f4357a4f6e97ff86fcb75f4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 60,
+      "hasStructuralAnalysis": false
+    },
+    "test.runsettings": {
+      "filePath": "test.runsettings",
+      "contentHash": "d9e7cb786efbb94cff3abcd618aadd3cb63b7b537b03a1f3d6a3abe47b363bb1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": false
+    }
+  }
+}

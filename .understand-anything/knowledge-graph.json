@@ -1,0 +1,3505 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "RogueLike",
+    "languages": [
+      "csharp",
+      "markdown",
+      "godot-scene",
+      "godot-resource",
+      "xml"
+    ],
+    "frameworks": [
+      "Godot",
+      ".NET 8",
+      "xUnit",
+      "gdUnit4"
+    ],
+    "description": "Turn-based roguelike dungeon crawler built on Godot 4.6 / C# (.NET 8). Layered DDD architecture: pure C# Godot-free Domain holds all game rules (grid, BSP generation, FOV, turn loop, actors/AI, combat, items, progression) and is unit-tested in isolation; thin Godot Node2D View controllers render and delegate downward.",
+    "analyzedAt": "2026-06-24T04:17:56Z",
+    "gitCommitHash": "c40a94a6ce2d0123ef011b2e180971501c2f29de"
+  },
+  "nodes": [
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "Authoritative architecture and workflow ledger for the project, documenting the three-project layered DDD layout (Godot-free Domain + thin Godot View controllers), build/test commands, rich-domain modelling rules, and C#/Godot coding standards.",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "architecture",
+        "conventions",
+        "ddd"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Serves as the canonical Claude Code instruction file; encodes the Godot-free Domain wall, TDD/small-batch workflow, and member-ordering/var/collection-expression style gates."
+    },
+    {
+      "id": "document:REFACTORING_OPPORTUNITIES.md",
+      "type": "document",
+      "name": "REFACTORING_OPPORTUNITIES.md",
+      "filePath": "REFACTORING_OPPORTUNITIES.md",
+      "summary": "Running log of identified refactoring opportunities (issue/solution/priority), scanned after each feature for code smells like long methods, DRY violations, and god classes.",
+      "tags": [
+        "documentation",
+        "refactoring",
+        "technical-debt",
+        "log"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:RogueLike.csproj",
+      "type": "config",
+      "name": "RogueLike.csproj",
+      "filePath": "RogueLike.csproj",
+      "summary": "Godot View game project (Godot.NET.Sdk 4.6.2, net8.0) that references the Godot-free Domain library and excludes Domain/test sources from compilation; enforces code-style-in-build for the View layer.",
+      "tags": [
+        "configuration",
+        "build-system",
+        "godot",
+        "csproj",
+        "view-layer"
+      ],
+      "complexity": "simple",
+      "languageNotes": "EnforceCodeStyleInBuild makes collection-expression/var style violations fail the build; Compile Remove globs carve out Domain and both test projects so the game project carries no test packages."
+    },
+    {
+      "id": "config:RogueLike.sln",
+      "type": "config",
+      "name": "RogueLike.sln",
+      "filePath": "RogueLike.sln",
+      "summary": "Visual Studio solution tying together the four projects across two solution folders: Domain { RogueLike.Domain, RogueLike.Domain.Tests } and View { RogueLike, RogueLike.View.Tests }.",
+      "tags": [
+        "configuration",
+        "build-system",
+        "solution",
+        "project-layout"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "NestedProjects section groups each layer with its test project; the View game project carries ExportDebug/ExportRelease configs for Godot export, which the Domain/test projects do not."
+    },
+    {
+      "id": "document:features.md",
+      "type": "document",
+      "name": "features.md",
+      "filePath": "features.md",
+      "summary": "Lightweight feature tracker splitting completed work (Done) from planned work (Backlog) for the roguelike.",
+      "tags": [
+        "documentation",
+        "roadmap",
+        "feature-tracking",
+        "backlog"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/ASSET_PIPELINE.md",
+      "type": "document",
+      "name": "ASSET_PIPELINE.md",
+      "filePath": "docs/ASSET_PIPELINE.md",
+      "summary": "Asset creation workflow for the roguelike: AI sprite generation prompt conventions, ImageMagick chromakey scaling/transparency conversion, and Godot scene integration steps.",
+      "tags": [
+        "documentation",
+        "asset-pipeline",
+        "workflow",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/DDD_REVIEW_CHECKLIST.md",
+      "type": "document",
+      "name": "DDD_REVIEW_CHECKLIST.md",
+      "filePath": "docs/DDD_REVIEW_CHECKLIST.md",
+      "summary": "Rich-domain review rubric applied by the self-review gate before presenting changes, covering behavior-with-data rules, Godot-free domain enforcement, transitional-code markers, phase awareness, and the formatting gate.",
+      "tags": [
+        "documentation",
+        "ddd",
+        "review-checklist",
+        "code-quality"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/SYSTEM_DESIGN.md",
+      "type": "document",
+      "name": "SYSTEM_DESIGN.md",
+      "filePath": "docs/SYSTEM_DESIGN.md",
+      "summary": "Authoritative architecture ledger documenting core systems (DungeonGrid, GridMover, Combat/Health, AI, FOV, TurnManager, map generation, spawning) and the anemic-to-rich DDD migration status with the value-object catalogue and aggregate-root targets.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "ddd",
+        "design-ledger",
+        "entry-point"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Living architecture document with a migration status table (red/yellow/green) that must be updated synchronously with changes to Health, Movement, AI, or Map Generation."
+    },
+    {
+      "id": "file:.gitattributes",
+      "type": "file",
+      "name": ".gitattributes",
+      "filePath": ".gitattributes",
+      "summary": "Git attributes file controlling line-ending normalization and diff/merge handling for repository files.",
+      "tags": [
+        "configuration",
+        "git",
+        "vcs"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:Assets/Tiles/dungeon_tileset.tres",
+      "type": "config",
+      "name": "dungeon_tileset.tres",
+      "filePath": "Assets/Tiles/dungeon_tileset.tres",
+      "summary": "Godot TileSet resource defining the dungeon tile atlas used by the rendering TileMapLayers.",
+      "tags": [
+        "godot-resource",
+        "tileset",
+        "asset",
+        "rendering"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Godot .tres text resource serializing a TileSet definition."
+    },
+    {
+      "id": "file:Code/Domain.Tests/Actors/ArcherAITest.cs",
+      "type": "file",
+      "name": "ArcherAITest.cs",
+      "filePath": "Code/Domain.Tests/Actors/ArcherAITest.cs",
+      "summary": "xUnit tests verifying ArcherAI shoots only with a clear line of sight and within range, using mock actors on a DungeonGrid.",
+      "tags": [
+        "test",
+        "xunit",
+        "ai",
+        "actor"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Actors/EnemyAITest.cs",
+      "type": "file",
+      "name": "EnemyAITest.cs",
+      "filePath": "Code/Domain.Tests/Actors/EnemyAITest.cs",
+      "summary": "xUnit tests verifying EnemyAI moves toward the player when visible and attacks when adjacent.",
+      "tags": [
+        "test",
+        "xunit",
+        "ai",
+        "actor"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Actors/PlayerMovementTest.cs",
+      "type": "file",
+      "name": "PlayerMovementTest.cs",
+      "filePath": "Code/Domain.Tests/Actors/PlayerMovementTest.cs",
+      "summary": "xUnit tests for GridMover movement validation covering walls, bounds, diagonal corner-cutting, and position tracking.",
+      "tags": [
+        "test",
+        "xunit",
+        "movement",
+        "grid"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Combat/CombatantTest.cs",
+      "type": "file",
+      "name": "CombatantTest.cs",
+      "filePath": "Code/Domain.Tests/Combat/CombatantTest.cs",
+      "summary": "xUnit tests for the ICombatant.TryAttack flow, asserting damage application, death triggering, and on-killed hooks via mock combatants.",
+      "tags": [
+        "test",
+        "xunit",
+        "combat"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Combat/DamageTest.cs",
+      "type": "file",
+      "name": "DamageTest.cs",
+      "filePath": "Code/Domain.Tests/Combat/DamageTest.cs",
+      "summary": "xUnit tests for the Damage value object validating amount storage, negative-amount rejection, the None constant, and value equality.",
+      "tags": [
+        "test",
+        "xunit",
+        "combat",
+        "value-object"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Combat/HealthTest.cs",
+      "type": "file",
+      "name": "HealthTest.cs",
+      "filePath": "Code/Domain.Tests/Combat/HealthTest.cs",
+      "summary": "xUnit tests for the Health value object covering damage clamping, healing limits, max-HP increases, constructor validation, and value equality.",
+      "tags": [
+        "test",
+        "xunit",
+        "combat",
+        "value-object"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Common/DirectionTest.cs",
+      "type": "file",
+      "name": "DirectionTest.cs",
+      "filePath": "Code/Domain.Tests/Common/DirectionTest.cs",
+      "summary": "xUnit tests for the Direction value object verifying delta factory, range validation, named statics, diagonal detection, and the eight-direction set.",
+      "tags": [
+        "test",
+        "xunit",
+        "value-object",
+        "geometry"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Common/GridPosTest.cs",
+      "type": "file",
+      "name": "GridPosTest.cs",
+      "filePath": "Code/Domain.Tests/Common/GridPosTest.cs",
+      "summary": "xUnit tests for the GridPos value object covering construction, arithmetic, distance helpers, and value equality.",
+      "tags": [
+        "test",
+        "xunit",
+        "value-object",
+        "geometry"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Common/GridRectTest.cs",
+      "type": "file",
+      "name": "GridRectTest.cs",
+      "filePath": "Code/Domain.Tests/Common/GridRectTest.cs",
+      "summary": "xUnit tests for the GridRect value object validating bounds, containment, and center calculation.",
+      "tags": [
+        "test",
+        "xunit",
+        "value-object",
+        "geometry"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Flow/ExperienceSystemTest.cs",
+      "type": "file",
+      "name": "ExperienceSystemTest.cs",
+      "filePath": "Code/Domain.Tests/Flow/ExperienceSystemTest.cs",
+      "summary": "xUnit tests for the ExperienceSystem covering XP accumulation, level-up thresholds, and progression events.",
+      "tags": [
+        "test",
+        "xunit",
+        "progression",
+        "flow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Flow/TurnManagerTest.cs",
+      "type": "file",
+      "name": "TurnManagerTest.cs",
+      "filePath": "Code/Domain.Tests/Flow/TurnManagerTest.cs",
+      "summary": "xUnit tests for the TurnManager player/enemy turn state machine transitions.",
+      "tags": [
+        "test",
+        "xunit",
+        "turn-management",
+        "flow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Grid/DungeonGridPathfindingTest.cs",
+      "type": "file",
+      "name": "DungeonGridPathfindingTest.cs",
+      "filePath": "Code/Domain.Tests/Grid/DungeonGridPathfindingTest.cs",
+      "summary": "xUnit tests for DungeonGrid A* pathfinding covering reachable paths, blocked routes, and edge cases.",
+      "tags": [
+        "test",
+        "xunit",
+        "pathfinding",
+        "grid"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Grid/FOV/RaycasterTest.cs",
+      "type": "file",
+      "name": "RaycasterTest.cs",
+      "filePath": "Code/Domain.Tests/Grid/FOV/RaycasterTest.cs",
+      "summary": "xUnit tests for the Raycaster field-of-view algorithm verifying visibility computation along rays.",
+      "tags": [
+        "test",
+        "xunit",
+        "fov",
+        "grid"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Grid/Generators/BspDungeonGeneratorTest.cs",
+      "type": "file",
+      "name": "BspDungeonGeneratorTest.cs",
+      "filePath": "Code/Domain.Tests/Grid/Generators/BspDungeonGeneratorTest.cs",
+      "summary": "xUnit test for the BSP dungeon generator confirming it produces a connected, walkable grid layout.",
+      "tags": [
+        "test",
+        "xunit",
+        "map-generation",
+        "grid"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Grid/GridMapTest.cs",
+      "type": "file",
+      "name": "GridMapTest.cs",
+      "filePath": "Code/Domain.Tests/Grid/GridMapTest.cs",
+      "summary": "xUnit tests (class DungeonGridTest) for DungeonGrid cell get/set, bounds checking, and walkability queries.",
+      "tags": [
+        "test",
+        "xunit",
+        "grid",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Grid/LineOfSightTest.cs",
+      "type": "file",
+      "name": "LineOfSightTest.cs",
+      "filePath": "Code/Domain.Tests/Grid/LineOfSightTest.cs",
+      "summary": "xUnit tests for the LineOfSight Bresenham algorithm verifying clear-line detection across walls.",
+      "tags": [
+        "test",
+        "xunit",
+        "line-of-sight",
+        "grid"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Items/InventoryTest.cs",
+      "type": "file",
+      "name": "InventoryTest.cs",
+      "filePath": "Code/Domain.Tests/Items/InventoryTest.cs",
+      "summary": "xUnit tests for the Inventory aggregate covering add/remove, capacity limits, and item queries.",
+      "tags": [
+        "test",
+        "xunit",
+        "inventory",
+        "items"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain.Tests/Items/ItemPickupTest.cs",
+      "type": "file",
+      "name": "ItemPickupTest.cs",
+      "filePath": "Code/Domain.Tests/Items/ItemPickupTest.cs",
+      "summary": "xUnit tests for item pickup behavior verifying actors collect items and inventory updates accordingly.",
+      "tags": [
+        "test",
+        "xunit",
+        "items",
+        "inventory"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:Code/Domain.Tests/RogueLike.Domain.Tests.csproj",
+      "type": "config",
+      "name": "RogueLike.Domain.Tests.csproj",
+      "filePath": "Code/Domain.Tests/RogueLike.Domain.Tests.csproj",
+      "summary": "MSBuild project file for the Godot-free xUnit domain test suite, referencing the RogueLike.Domain library.",
+      "tags": [
+        "configuration",
+        "build-system",
+        "test",
+        "msbuild"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Plain Microsoft.NET.Sdk project with no Godot reference — the test-side of the Godot-free wall."
+    },
+    {
+      "id": "file:Code/Domain/Actors/ActorRegistry.cs",
+      "type": "file",
+      "name": "ActorRegistry.cs",
+      "filePath": "Code/Domain/Actors/ActorRegistry.cs",
+      "summary": "Godot-free registry of all actors keyed by GridPos, guarding single-tile occupancy and exposing a flat list for turn iteration.",
+      "tags": [
+        "data-model",
+        "actor",
+        "domain",
+        "registry"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Actors/ArcherAI.cs",
+      "type": "file",
+      "name": "ArcherAI.cs",
+      "filePath": "Code/Domain/Actors/ArcherAI.cs",
+      "summary": "Pure C# AI decision tree for the skeleton archer: shoots when the player is in clear line of sight and range, otherwise chases.",
+      "tags": [
+        "ai",
+        "actor",
+        "domain",
+        "decision-tree",
+        "tested"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Actors/EnemyAI.cs",
+      "type": "file",
+      "name": "EnemyAI.cs",
+      "filePath": "Code/Domain/Actors/EnemyAI.cs",
+      "summary": "Pure C# AI decision logic for melee enemies: moves toward a visible player and attacks when adjacent.",
+      "tags": [
+        "ai",
+        "actor",
+        "domain",
+        "decision-tree",
+        "tested"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Actors/GridMover.cs",
+      "type": "file",
+      "name": "GridMover.cs",
+      "filePath": "Code/Domain/Actors/GridMover.cs",
+      "summary": "Godot-free movement logic holding an actor's grid position and validating each step against terrain and occupancy.",
+      "tags": [
+        "movement",
+        "actor",
+        "domain",
+        "validation",
+        "tested"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:Code/Domain/Actors/ActorRegistry.cs:ActorRegistry",
+      "type": "class",
+      "name": "ActorRegistry",
+      "filePath": "Code/Domain/Actors/ActorRegistry.cs",
+      "lineRange": [
+        12,
+        64
+      ],
+      "summary": "Registry mapping GridPos to IActor; provides register/unregister, position updates, occupancy checks, and actor lookup while enforcing single occupancy.",
+      "tags": [
+        "registry",
+        "actor",
+        "domain",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:Code/Domain/Actors/ArcherAI.cs:ArcherAI",
+      "type": "class",
+      "name": "ArcherAI",
+      "filePath": "Code/Domain/Actors/ArcherAI.cs",
+      "lineRange": [
+        19,
+        76
+      ],
+      "summary": "Ranged-enemy AI that evaluates visibility and range each turn to decide between shooting via ICombatant.TryAttack and pathfinding closer to the player.",
+      "tags": [
+        "ai",
+        "actor",
+        "decision-tree",
+        "combat"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:Code/Domain/Actors/EnemyAI.cs:EnemyAI",
+      "type": "class",
+      "name": "EnemyAI",
+      "filePath": "Code/Domain/Actors/EnemyAI.cs",
+      "lineRange": [
+        15,
+        73
+      ],
+      "summary": "Melee-enemy AI that, on each turn, moves toward a visible player via GridMover and attacks when adjacent.",
+      "tags": [
+        "ai",
+        "actor",
+        "decision-tree",
+        "combat"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:Code/Domain/Actors/GridMover.cs:GridMover",
+      "type": "class",
+      "name": "GridMover",
+      "filePath": "Code/Domain/Actors/GridMover.cs",
+      "lineRange": [
+        12,
+        58
+      ],
+      "summary": "Holds an actor's grid position and validates moves against DungeonGrid terrain and ActorRegistry occupancy, returning success and updating position.",
+      "tags": [
+        "movement",
+        "actor",
+        "validation",
+        "domain"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Actors/IActor.cs",
+      "type": "file",
+      "name": "IActor.cs",
+      "filePath": "Code/Domain/Actors/IActor.cs",
+      "summary": "Domain interface for any positioned actor on the grid, exposing its GridPosition and whether it is the player.",
+      "tags": [
+        "type-definition",
+        "domain",
+        "actor",
+        "interface"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Godot-free domain abstraction; positions modeled via the GridPos value object rather than Vector2I."
+    },
+    {
+      "id": "class:Code/Domain/Actors/IActor.cs:IActor",
+      "type": "class",
+      "name": "IActor",
+      "filePath": "Code/Domain/Actors/IActor.cs",
+      "lineRange": [
+        8,
+        16
+      ],
+      "summary": "Contract for grid-positioned actors (player or enemy) exposing GridPosition and IsPlayer.",
+      "tags": [
+        "interface",
+        "actor",
+        "domain",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain/Combat/Damage.cs",
+      "type": "file",
+      "name": "Damage.cs",
+      "filePath": "Code/Domain/Combat/Damage.cs",
+      "summary": "Immutable value object representing a combat damage amount, self-validating against negative values in its constructor.",
+      "tags": [
+        "value-object",
+        "combat",
+        "domain",
+        "validation"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Rich-domain value object: equality-by-value, no setters, illegal (negative) state is unconstructable."
+    },
+    {
+      "id": "file:Code/Domain/Combat/Health.cs",
+      "type": "file",
+      "name": "Health.cs",
+      "filePath": "Code/Domain/Combat/Health.cs",
+      "summary": "Immutable Health value object; TakeDamage/Heal/WithIncreasedMax return new clamped instances rather than mutating state.",
+      "tags": [
+        "value-object",
+        "combat",
+        "domain",
+        "validation"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Operations return new instances (Math.Max/Math.Min clamping) honoring the immutable VO rule."
+    },
+    {
+      "id": "file:Code/Domain/Combat/ICombatant.cs",
+      "type": "file",
+      "name": "ICombatant.cs",
+      "filePath": "Code/Domain/Combat/ICombatant.cs",
+      "summary": "Rich combat interface defining DisplayName, Health and attack stats plus default-implemented TryAttack that produces Damage, applies it, logs combat, and triggers OnKilled.",
+      "tags": [
+        "interface",
+        "combat",
+        "domain",
+        "api-handler"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses C# default interface methods to host the attack rule on the contract, keeping behavior with the data."
+    },
+    {
+      "id": "class:Code/Domain/Combat/ICombatant.cs:ICombatant",
+      "type": "class",
+      "name": "ICombatant",
+      "filePath": "Code/Domain/Combat/ICombatant.cs",
+      "lineRange": [
+        9,
+        51
+      ],
+      "summary": "Combatant contract with Health/attack stats and a default TryAttack flow (compute Damage, ReceiveDamage, log, OnKilled).",
+      "tags": [
+        "interface",
+        "combat",
+        "domain",
+        "factory"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Common/Direction.cs",
+      "type": "file",
+      "name": "Direction.cs",
+      "filePath": "Code/Domain/Common/Direction.cs",
+      "summary": "Eight-way direction value type with delta vectors, an AllEight set, and FromDelta factory mapping signed deltas to directions.",
+      "tags": [
+        "value-object",
+        "domain",
+        "grid",
+        "utility"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Godot-free directional primitive used across grid, movement and pathfinding logic."
+    },
+    {
+      "id": "file:Code/Domain/Common/GridPos.cs",
+      "type": "file",
+      "name": "GridPos.cs",
+      "filePath": "Code/Domain/Common/GridPos.cs",
+      "summary": "Immutable grid coordinate value object with Manhattan/Chebyshev distance, Step, and DirectionTo helpers used throughout the domain.",
+      "tags": [
+        "value-object",
+        "domain",
+        "grid",
+        "utility"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Core domain coordinate replacing Godot's Vector2I inside the Godot-free layer."
+    },
+    {
+      "id": "file:Code/Domain/Common/GridRect.cs",
+      "type": "file",
+      "name": "GridRect.cs",
+      "filePath": "Code/Domain/Common/GridRect.cs",
+      "summary": "Immutable rectangle value object over grid coordinates with a self-validating constructor and a Center accessor returning a GridPos.",
+      "tags": [
+        "value-object",
+        "domain",
+        "grid",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain/Flow/ExperienceSystem.cs",
+      "type": "file",
+      "name": "ExperienceSystem.cs",
+      "filePath": "Code/Domain/Flow/ExperienceSystem.cs",
+      "summary": "Tracks player level and XP, awarding experience and leveling up via AddXP/LevelUp and raising OnXPChanged/OnLevelUp events.",
+      "tags": [
+        "domain",
+        "progression",
+        "event-handler",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:Code/Domain/Flow/ExperienceSystem.cs:ExperienceSystem",
+      "type": "class",
+      "name": "ExperienceSystem",
+      "filePath": "Code/Domain/Flow/ExperienceSystem.cs",
+      "lineRange": [
+        9,
+        62
+      ],
+      "summary": "Owns level/XP state and the leveling curve; AddXP accumulates and cascades to LevelUp, emitting progression events.",
+      "tags": [
+        "domain",
+        "progression",
+        "event-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Flow/GameLog.cs",
+      "type": "file",
+      "name": "GameLog.cs",
+      "filePath": "Code/Domain/Flow/GameLog.cs",
+      "summary": "Singleton message log collecting combat/death/general messages and broadcasting them via OnMessageLogged/OnLogCleared events.",
+      "tags": [
+        "singleton",
+        "domain",
+        "logging",
+        "event-handler"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Static Instance singleton; decouples domain logic from the UI log view through events."
+    },
+    {
+      "id": "class:Code/Domain/Flow/GameLog.cs:GameLog",
+      "type": "class",
+      "name": "GameLog",
+      "filePath": "Code/Domain/Flow/GameLog.cs",
+      "lineRange": [
+        11,
+        44
+      ],
+      "summary": "Singleton log with Log/LogCombat/LogDeath/Clear that append to history and notify listeners.",
+      "tags": [
+        "singleton",
+        "logging",
+        "event-handler",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain/Flow/TurnManager.cs",
+      "type": "file",
+      "name": "TurnManager.cs",
+      "filePath": "Code/Domain/Flow/TurnManager.cs",
+      "summary": "Player-to-enemy turn state machine; EndPlayerTurn/EndEnemyTurn advance CurrentState via SetState and raise OnTurnChanged.",
+      "tags": [
+        "domain",
+        "state-machine",
+        "event-handler",
+        "flow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/Domain/Flow/TurnManager.cs:TurnManager",
+      "type": "class",
+      "name": "TurnManager",
+      "filePath": "Code/Domain/Flow/TurnManager.cs",
+      "lineRange": [
+        9,
+        46
+      ],
+      "summary": "Drives the Player→Enemy turn cycle, transitioning CurrentState and firing OnTurnChanged on each switch.",
+      "tags": [
+        "state-machine",
+        "flow",
+        "event-handler",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain/Flow/TurnState.cs",
+      "type": "file",
+      "name": "TurnState.cs",
+      "filePath": "Code/Domain/Flow/TurnState.cs",
+      "summary": "Enum of turn phases (player vs enemy) consumed by the TurnManager state machine.",
+      "tags": [
+        "type-definition",
+        "enum",
+        "flow",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain/Grid/CellType.cs",
+      "type": "file",
+      "name": "CellType.cs",
+      "filePath": "Code/Domain/Grid/CellType.cs",
+      "summary": "Enum of dungeon cell kinds (e.g. wall/floor/stairs) used by DungeonGrid for walkability and rendering.",
+      "tags": [
+        "type-definition",
+        "enum",
+        "grid",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "type": "file",
+      "name": "DungeonGrid.cs",
+      "filePath": "Code/Domain/Grid/DungeonGrid.cs",
+      "summary": "Core walkability data structure storing cell types and answering bounds/walkability/line-of-sight/step queries; holds no map-generation logic.",
+      "tags": [
+        "data-model",
+        "grid",
+        "domain",
+        "core"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Map generation deliberately lives elsewhere (BspDungeonGenerator); the grid only holds and queries cell data."
+    },
+    {
+      "id": "class:Code/Domain/Grid/DungeonGrid.cs:DungeonGrid",
+      "type": "class",
+      "name": "DungeonGrid",
+      "filePath": "Code/Domain/Grid/DungeonGrid.cs",
+      "lineRange": [
+        19,
+        159
+      ],
+      "summary": "Holds the cell grid and exposes IsInBounds/IsWalkable/CanStep/HasClearLine/SetCell/GetCell plus corner-cut and intermediate-cell helpers.",
+      "tags": [
+        "data-model",
+        "grid",
+        "core",
+        "domain"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:Code/Domain/Grid/DungeonGrid.Pathfinding.cs",
+      "type": "file",
+      "name": "DungeonGrid.Pathfinding.cs",
+      "filePath": "Code/Domain/Grid/DungeonGrid.Pathfinding.cs",
+      "summary": "Partial of DungeonGrid adding A* FindPath via an internal PathSearch helper over walkable eight-way neighbors.",
+      "tags": [
+        "algorithm",
+        "pathfinding",
+        "grid",
+        "domain"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Partial class split keeps the A* search out of the core grid file; PathSearch is a private cost-driven open/closed-set solver."
+    },
+    {
+      "id": "file:Code/Domain/Grid/FOV/FovMap.cs",
+      "type": "file",
+      "name": "FovMap.cs",
+      "filePath": "Code/Domain/Grid/FOV/FovMap.cs",
+      "summary": "Per-cell visibility map storing VisibilityState, with Get/SetVisibility and ResetVisible to clear the visible layer each FOV pass.",
+      "tags": [
+        "data-model",
+        "fov",
+        "grid",
+        "domain"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:Code/Domain/Grid/FOV/FovMap.cs:FovMap",
+      "type": "class",
+      "name": "FovMap",
+      "filePath": "Code/Domain/Grid/FOV/FovMap.cs",
+      "lineRange": [
+        9,
+        56
+      ],
+      "summary": "Stores VisibilityState per grid cell and supports lookups, updates, and resetting the currently-visible set.",
+      "tags": [
+        "data-model",
+        "fov",
+        "grid",
+        "domain"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+      "type": "file",
+      "name": "IFovAlgorithm.cs",
+      "filePath": "Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+      "summary": "Strategy interface for field-of-view computation, declaring ComputeFov over a FovMap, DungeonGrid, origin and radius.",
+      "tags": [
+        "interface",
+        "fov",
+        "domain",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/Domain/Grid/FOV/IFovAlgorithm.cs:IFovAlgorithm",
+      "type": "class",
+      "name": "IFovAlgorithm",
+      "filePath": "Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+      "lineRange": [
+        9,
+        16
+      ],
+      "summary": "Defines the ComputeFov strategy contract implemented by concrete FOV algorithms such as Raycaster.",
+      "tags": [
+        "interface",
+        "fov",
+        "strategy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain/Grid/FOV/Raycaster.cs",
+      "type": "file",
+      "name": "Raycaster.cs",
+      "filePath": "Code/Domain/Grid/FOV/Raycaster.cs",
+      "summary": "IFovAlgorithm implementation casting Bresenham rays in a 360-degree circle to mark visible cells on a FovMap, stopping at walls.",
+      "tags": [
+        "algorithm",
+        "fov",
+        "grid",
+        "domain"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Stateless pure algorithm (Bresenham line) — computes visibility without mutating domain entities."
+    },
+    {
+      "id": "class:Code/Domain/Grid/FOV/Raycaster.cs:Raycaster",
+      "type": "class",
+      "name": "Raycaster",
+      "filePath": "Code/Domain/Grid/FOV/Raycaster.cs",
+      "lineRange": [
+        9,
+        74
+      ],
+      "summary": "Computes FOV by casting rays from an origin and setting visibility along each ray until a wall blocks it.",
+      "tags": [
+        "algorithm",
+        "fov",
+        "raycasting",
+        "domain"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Grid/FOV/VisibilityState.cs",
+      "type": "file",
+      "name": "VisibilityState.cs",
+      "filePath": "Code/Domain/Grid/FOV/VisibilityState.cs",
+      "summary": "Enum of cell visibility states (e.g. unseen/explored/visible) stored by FovMap.",
+      "tags": [
+        "type-definition",
+        "enum",
+        "fov",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "type": "file",
+      "name": "BspDungeonGenerator.cs",
+      "filePath": "Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "summary": "Standalone BSP map generator that partitions space into a BspNode tree, carves rooms into a DungeonGrid, and connects them with tunnels.",
+      "tags": [
+        "algorithm",
+        "generator",
+        "grid",
+        "domain"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Operates on a pure DungeonGrid per the rule that map generation must never live in DungeonGrid itself."
+    },
+    {
+      "id": "class:Code/Domain/Grid/Generators/BspDungeonGenerator.cs:BspDungeonGenerator",
+      "type": "class",
+      "name": "BspDungeonGenerator",
+      "filePath": "Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "lineRange": [
+        10,
+        148
+      ],
+      "summary": "Generates a dungeon via recursive Partition, CarveRooms, and ConnectRooms with horizontal/vertical tunnel carving.",
+      "tags": [
+        "algorithm",
+        "generator",
+        "bsp",
+        "domain"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:Code/Domain/Grid/Generators/BspNode.cs",
+      "type": "file",
+      "name": "BspNode.cs",
+      "filePath": "Code/Domain/Grid/Generators/BspNode.cs",
+      "summary": "Binary space partition tree node holding bounds, child nodes, an optional room rect, and an IsLeaf accessor.",
+      "tags": [
+        "data-model",
+        "generator",
+        "tree",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/Domain/Grid/Generators/BspNode.cs:BspNode",
+      "type": "class",
+      "name": "BspNode",
+      "filePath": "Code/Domain/Grid/Generators/BspNode.cs",
+      "lineRange": [
+        8,
+        23
+      ],
+      "summary": "Node of the BSP partition tree carrying bounds (GridRect), left/right children, and the carved room.",
+      "tags": [
+        "data-model",
+        "tree",
+        "bsp",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/Domain/Items/FloorItems.cs",
+      "type": "file",
+      "name": "FloorItems.cs",
+      "filePath": "Code/Domain/Items/FloorItems.cs",
+      "summary": "Registry of items lying on the dungeon floor; on actor arrival CheckForPickup delegates to the item's TryPickup and unregisters it.",
+      "tags": [
+        "domain",
+        "items",
+        "registry",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:Code/Domain/Items/FloorItems.cs:FloorItems",
+      "type": "class",
+      "name": "FloorItems",
+      "filePath": "Code/Domain/Items/FloorItems.cs",
+      "lineRange": [
+        10,
+        46
+      ],
+      "summary": "Tracks floor items and resolves pickups at a position by invoking IItem.TryPickup against an actor and inventory.",
+      "tags": [
+        "registry",
+        "items",
+        "domain",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Items/IItem.cs",
+      "type": "file",
+      "name": "IItem.cs",
+      "filePath": "Code/Domain/Items/IItem.cs",
+      "summary": "Item contract with DisplayName/GridPosition/IsConsumable and a default TryPickup that checks CanPickup, adds to inventory, logs, and runs OnPickup.",
+      "tags": [
+        "interface",
+        "items",
+        "domain",
+        "api-handler"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Default interface method TryPickup puts the pickup rule on the item type itself (rich-domain behavior-with-data)."
+    },
+    {
+      "id": "class:Code/Domain/Items/IItem.cs:IItem",
+      "type": "class",
+      "name": "IItem",
+      "filePath": "Code/Domain/Items/IItem.cs",
+      "lineRange": [
+        9,
+        51
+      ],
+      "summary": "Item contract exposing CanPickup/OnPickup/Use and a default TryPickup orchestration over an inventory.",
+      "tags": [
+        "interface",
+        "items",
+        "domain",
+        "factory"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/Domain/Items/Inventory.cs",
+      "type": "file",
+      "name": "Inventory.cs",
+      "filePath": "Code/Domain/Items/Inventory.cs",
+      "summary": "Slot-limited inventory of IItems supporting add/use/grouping; UseItem invokes the item and removes consumables, raising OnInventoryChanged.",
+      "tags": [
+        "domain",
+        "items",
+        "data-model",
+        "event-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:Code/Domain/Items/Inventory.cs:Inventory",
+      "type": "class",
+      "name": "Inventory",
+      "filePath": "Code/Domain/Items/Inventory.cs",
+      "lineRange": [
+        11,
+        116
+      ],
+      "summary": "Bounded item collection with AddItem/UseItem/GetGroupedItems/UseItemByGroup that consumes items and notifies listeners.",
+      "tags": [
+        "data-model",
+        "items",
+        "domain",
+        "event-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:Code/Domain/RogueLike.Domain.csproj",
+      "type": "config",
+      "name": "RogueLike.Domain.csproj",
+      "filePath": "Code/Domain/RogueLike.Domain.csproj",
+      "summary": "Project file for the Godot-free Domain library (plain Microsoft.NET.Sdk, net8.0) holding all pure-C# game rules with no Godot reference.",
+      "tags": [
+        "configuration",
+        "build-system",
+        "dotnet",
+        "domain"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Plain SDK (not Godot.NET.Sdk) enforces the compile-time Godot-free wall around the domain layer."
+    },
+    {
+      "id": "file:Code/View.Tests/GridConversionsTest.cs",
+      "type": "file",
+      "name": "GridConversionsTest.cs",
+      "filePath": "Code/View.Tests/GridConversionsTest.cs",
+      "summary": "gdUnit4 view test verifying GridConversions bridges between Godot Vector2I/Vector2 and the domain GridPos, including round-trip identity and world-center math.",
+      "tags": [
+        "test",
+        "view",
+        "conversion",
+        "gdunit4"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "gdUnit4 [TestCase] methods run headless Godot; exercises the single Vector2I↔GridPos conversion bridge."
+    },
+    {
+      "id": "class:Code/View.Tests/GridConversionsTest.cs:GridConversionsTest",
+      "type": "class",
+      "name": "GridConversionsTest",
+      "filePath": "Code/View.Tests/GridConversionsTest.cs",
+      "lineRange": [
+        9,
+        65
+      ],
+      "summary": "Test suite asserting GridConversions extension methods correctly map between Godot vectors and GridPos.",
+      "tags": [
+        "test",
+        "view",
+        "conversion",
+        "gdunit4"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:Code/View.Tests/RogueLike.View.Tests.csproj",
+      "type": "config",
+      "name": "RogueLike.View.Tests.csproj",
+      "filePath": "Code/View.Tests/RogueLike.View.Tests.csproj",
+      "summary": "Standalone gdUnit4 view-test project (Godot.NET.Sdk) that references the game project and points GodotProjectDir at the repo root so Godot boots headless against project.godot to exercise view-layer types.",
+      "tags": [
+        "configuration",
+        "test",
+        "build-system",
+        "ci-cd",
+        "godot"
+      ],
+      "complexity": "simple",
+      "languageNotes": "gdUnit4Net v5 / adapter v3; sets GodotProjectDir to the repo root rather than the test folder so Godot finds project.godot."
+    },
+    {
+      "id": "file:Code/View/Enemies/ArcherController.cs",
+      "type": "file",
+      "name": "ArcherController.cs",
+      "filePath": "Code/View/Enemies/ArcherController.cs",
+      "summary": "Godot view controller for ranged archer enemies; wraps the domain ArcherAI, delegates turn decisions to it, and syncs sprite position and FOV-based visibility.",
+      "tags": [
+        "component",
+        "event-handler",
+        "enemy",
+        "godot",
+        "ai"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/Enemies/ArcherController.cs:ArcherController",
+      "type": "class",
+      "name": "ArcherController",
+      "filePath": "Code/View/Enemies/ArcherController.cs",
+      "lineRange": [
+        13,
+        50
+      ],
+      "summary": "ActorController subclass for archers; owns an ArcherAI, exposes Range/AttackDamage, and renders position/visibility from the logical grid.",
+      "tags": [
+        "component",
+        "enemy",
+        "ai",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/Enemies/EnemyController.cs",
+      "type": "file",
+      "name": "EnemyController.cs",
+      "filePath": "Code/View/Enemies/EnemyController.cs",
+      "summary": "Godot view controller for melee goblin enemies; wraps the domain EnemyAI and syncs sprite position and FOV visibility each turn.",
+      "tags": [
+        "component",
+        "event-handler",
+        "enemy",
+        "godot",
+        "ai"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/Enemies/EnemyController.cs:EnemyController",
+      "type": "class",
+      "name": "EnemyController",
+      "filePath": "Code/View/Enemies/EnemyController.cs",
+      "lineRange": [
+        10,
+        45
+      ],
+      "summary": "ActorController subclass for goblins; owns an EnemyAI, registers itself with the actor registry, and delegates turn-taking to the AI.",
+      "tags": [
+        "component",
+        "enemy",
+        "ai",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/Entities/ActorController.cs",
+      "type": "file",
+      "name": "ActorController.cs",
+      "filePath": "Code/View/Entities/ActorController.cs",
+      "summary": "Abstract base Node2D for all combat-capable grid actors; owns the domain Health value object, exposes damage/heal/die operations, and raises a health-changed event for decoupled UI.",
+      "tags": [
+        "data-model",
+        "component",
+        "godot",
+        "combat",
+        "base-class"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "abstract partial Node2D implementing the domain ICombatant interface; bridges Godot view to the Godot-free domain."
+    },
+    {
+      "id": "class:Code/View/Entities/ActorController.cs:ActorController",
+      "type": "class",
+      "name": "ActorController",
+      "filePath": "Code/View/Entities/ActorController.cs",
+      "lineRange": [
+        16,
+        90
+      ],
+      "summary": "Abstract combat actor base: holds Health, fires OnHealthChanged, and implements ReceiveDamage/Heal/IncreaseMaxHp/Die plus health-bar sync.",
+      "tags": [
+        "base-class",
+        "combat",
+        "data-model",
+        "godot"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/View/Entities/NodeRegistry.cs",
+      "type": "file",
+      "name": "NodeRegistry.cs",
+      "filePath": "Code/View/Entities/NodeRegistry.cs",
+      "summary": "View-side registry mapping grid positions to Godot nodes (e.g. stairs), enabling position-based lookups separate from the domain ActorRegistry.",
+      "tags": [
+        "registry",
+        "utility",
+        "godot",
+        "lookup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/Entities/NodeRegistry.cs:NodeRegistry",
+      "type": "class",
+      "name": "NodeRegistry",
+      "filePath": "Code/View/Entities/NodeRegistry.cs",
+      "lineRange": [
+        12,
+        21
+      ],
+      "summary": "Dictionary-backed registry of Godot nodes keyed by GridPos, with register, lookup, and clear operations.",
+      "tags": [
+        "registry",
+        "utility",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/Entities/Spawner.cs",
+      "type": "file",
+      "name": "Spawner.cs",
+      "filePath": "Code/View/Entities/Spawner.cs",
+      "summary": "Static factory that places the player, enemies, healing potions, and stairs across BSP rooms, instantiating packed scenes and registering actors/nodes; enemy counts are tuned via LevelSettings.",
+      "tags": [
+        "factory",
+        "spawner",
+        "godot",
+        "level-generation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:Code/View/Entities/Spawner.cs:Spawner",
+      "type": "class",
+      "name": "Spawner",
+      "filePath": "Code/View/Entities/Spawner.cs",
+      "lineRange": [
+        18,
+        145
+      ],
+      "summary": "Static entity placement helper: spawns goblins/archers/potions/stairs into rooms using a seeded RNG and the dungeon grid's walkable tiles.",
+      "tags": [
+        "factory",
+        "spawner",
+        "godot",
+        "level-generation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/View/Grid/DungeonTileMap.cs",
+      "type": "file",
+      "name": "DungeonTileMap.cs",
+      "filePath": "Code/View/Grid/DungeonTileMap.cs",
+      "summary": "TileMapLayer that renders the logical DungeonGrid into floor/wall tiles, reading cell types from the pure-C# grid.",
+      "tags": [
+        "component",
+        "rendering",
+        "godot",
+        "tilemap"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/Grid/DungeonTileMap.cs:DungeonTileMap",
+      "type": "class",
+      "name": "DungeonTileMap",
+      "filePath": "Code/View/Grid/DungeonTileMap.cs",
+      "lineRange": [
+        10,
+        47
+      ],
+      "summary": "Renders dungeon floor/wall tiles from a logical grid map via SetCell, exposing tile-source export vars.",
+      "tags": [
+        "rendering",
+        "godot",
+        "tilemap"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/Grid/FOV/FovTileMap.cs",
+      "type": "file",
+      "name": "FovTileMap.cs",
+      "filePath": "Code/View/Grid/FOV/FovTileMap.cs",
+      "summary": "TileMapLayer that builds an unexplored/explored fog-of-war tileset at runtime and renders the FovMap visibility state over the dungeon.",
+      "tags": [
+        "component",
+        "rendering",
+        "godot",
+        "fov",
+        "tilemap"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/Grid/FOV/FovTileMap.cs:FovTileMap",
+      "type": "class",
+      "name": "FovTileMap",
+      "filePath": "Code/View/Grid/FOV/FovTileMap.cs",
+      "lineRange": [
+        10,
+        56
+      ],
+      "summary": "Constructs a fog tileset programmatically and renders per-cell visibility from a FovMap.",
+      "tags": [
+        "rendering",
+        "godot",
+        "fov",
+        "tilemap"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/GridConversions.cs",
+      "type": "file",
+      "name": "GridConversions.cs",
+      "filePath": "Code/View/GridConversions.cs",
+      "summary": "Static bridge converting between the domain GridPos value object and Godot's Vector2I/Vector2 world coordinates, confining Vector2I usage to the view edge.",
+      "tags": [
+        "utility",
+        "serialization",
+        "godot",
+        "bridge",
+        "conversion"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Extension-method bridge that keeps Vector2I out of the Godot-free domain per the project's DDD rules."
+    },
+    {
+      "id": "class:Code/View/GridConversions.cs:GridConversions",
+      "type": "class",
+      "name": "GridConversions",
+      "filePath": "Code/View/GridConversions.cs",
+      "lineRange": [
+        13,
+        31
+      ],
+      "summary": "Static conversion helpers (ToGridPos/ToVector2I/ToWorldCenter) bridging GridPos and Godot coordinate types.",
+      "tags": [
+        "utility",
+        "conversion",
+        "godot",
+        "bridge"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/Items/Consumables/HealingPotion.cs",
+      "type": "file",
+      "name": "HealingPotion.cs",
+      "filePath": "Code/View/Items/Consumables/HealingPotion.cs",
+      "summary": "Consumable item controller that, when used, heals the consuming combatant by a configured amount and logs the action.",
+      "tags": [
+        "component",
+        "item",
+        "consumable",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/Items/Consumables/HealingPotion.cs:HealingPotion",
+      "type": "class",
+      "name": "HealingPotion",
+      "filePath": "Code/View/Items/Consumables/HealingPotion.cs",
+      "lineRange": [
+        12,
+        32
+      ],
+      "summary": "ItemController subclass; Use() heals the actor and writes to the game log.",
+      "tags": [
+        "item",
+        "consumable",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/Items/ItemController.cs",
+      "type": "file",
+      "name": "ItemController.cs",
+      "filePath": "Code/View/Items/ItemController.cs",
+      "summary": "Base Node2D item controller implementing the domain IItem interface; handles floor placement, pickup eligibility, and default use behavior.",
+      "tags": [
+        "component",
+        "item",
+        "base-class",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/Items/ItemController.cs:ItemController",
+      "type": "class",
+      "name": "ItemController",
+      "filePath": "Code/View/Items/ItemController.cs",
+      "lineRange": [
+        12,
+        47
+      ],
+      "summary": "IItem-implementing base controller: registers on the floor, exposes name/consumable flags, and defines CanPickup/OnPickup/Use hooks.",
+      "tags": [
+        "base-class",
+        "item",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/Main.cs",
+      "type": "file",
+      "name": "Main.cs",
+      "filePath": "Code/View/Main.cs",
+      "summary": "Top-level orchestrator Node that wires up the domain systems (grid, registries, turn manager, FOV), generates levels via BSP, spawns entities, drives FOV recompute and enemy turns, and handles level descent and restart-on-death.",
+      "tags": [
+        "entry-point",
+        "orchestration",
+        "godot",
+        "game-loop"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Constructs all domain systems in _Ready and coordinates view controllers with the Godot-free domain layer."
+    },
+    {
+      "id": "class:Code/View/Main.cs:Main",
+      "type": "class",
+      "name": "Main",
+      "filePath": "Code/View/Main.cs",
+      "lineRange": [
+        23,
+        195
+      ],
+      "summary": "Game orchestrator: level setup/teardown, FOV updates, enemy-turn processing, stairs descent, and restart.",
+      "tags": [
+        "orchestration",
+        "entry-point",
+        "godot",
+        "game-loop"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:Code/View/Player/InputMapper.cs",
+      "type": "file",
+      "name": "InputMapper.cs",
+      "filePath": "Code/View/Player/InputMapper.cs",
+      "summary": "Maps Godot input actions to domain Direction values for player movement, isolating input-binding concerns from the controller.",
+      "tags": [
+        "utility",
+        "input",
+        "godot",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/Player/InputMapper.cs:InputMapper",
+      "type": "class",
+      "name": "InputMapper",
+      "filePath": "Code/View/Player/InputMapper.cs",
+      "lineRange": [
+        9,
+        43
+      ],
+      "summary": "Translates pressed input actions into a Direction via a static action-to-direction map.",
+      "tags": [
+        "input",
+        "utility",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/Player/PlayerController.cs",
+      "type": "file",
+      "name": "PlayerController.cs",
+      "filePath": "Code/View/Player/PlayerController.cs",
+      "summary": "Player-actor view controller: handles input, movement (including shift auto-move), attacks, item use, inventory/experience, level-up, stairs descent, death, and restart-reset; delegates rules to domain types.",
+      "tags": [
+        "component",
+        "input",
+        "player",
+        "godot",
+        "controller"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Largest view controller; contains transitional DDD-Phase-3 rules (XP, shift-move) noted for migration onto domain types."
+    },
+    {
+      "id": "class:Code/View/Player/PlayerController.cs:PlayerController",
+      "type": "class",
+      "name": "PlayerController",
+      "filePath": "Code/View/Player/PlayerController.cs",
+      "lineRange": [
+        18,
+        371
+      ],
+      "summary": "ActorController subclass for the player; owns GridMover, Inventory, ExperienceSystem, and orchestrates movement, combat, item use, auto-move, and turn ending.",
+      "tags": [
+        "player",
+        "input",
+        "controller",
+        "godot"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:Code/View/Resources/LevelSettings.cs",
+      "type": "file",
+      "name": "LevelSettings.cs",
+      "filePath": "Code/View/Resources/LevelSettings.cs",
+      "summary": "Godot Resource exposing inspector-editable enemy-count and difficulty-scaling knobs that tune the Spawner per level.",
+      "tags": [
+        "config",
+        "data-model",
+        "godot",
+        "resource"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/Resources/LevelSettings.cs:LevelSettings",
+      "type": "class",
+      "name": "LevelSettings",
+      "filePath": "Code/View/Resources/LevelSettings.cs",
+      "lineRange": [
+        9,
+        25
+      ],
+      "summary": "Resource holding spawn-tuning properties (min/max enemies per room, base modifier, difficulty scaling) editable in the Godot Inspector.",
+      "tags": [
+        "config",
+        "data-model",
+        "godot",
+        "resource"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/UI/ExperienceUI.cs",
+      "type": "file",
+      "name": "ExperienceUI.cs",
+      "filePath": "Code/View/UI/ExperienceUI.cs",
+      "summary": "HUD controller that subscribes to the ExperienceSystem and updates the level label and XP progress bar on level-up and XP changes.",
+      "tags": [
+        "component",
+        "ui",
+        "godot",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/UI/ExperienceUI.cs:ExperienceUI",
+      "type": "class",
+      "name": "ExperienceUI",
+      "filePath": "Code/View/UI/ExperienceUI.cs",
+      "lineRange": [
+        6,
+        48
+      ],
+      "summary": "Binds to ExperienceSystem events and renders current level and XP-to-next-level in the HUD.",
+      "tags": [
+        "ui",
+        "godot",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/UI/GameLogController.cs",
+      "type": "file",
+      "name": "GameLogController.cs",
+      "filePath": "Code/View/UI/GameLogController.cs",
+      "summary": "HUD controller that mirrors the domain GameLog singleton into a RichTextLabel, appending messages and clearing on demand.",
+      "tags": [
+        "component",
+        "ui",
+        "godot",
+        "event-handler",
+        "logging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/UI/GameLogController.cs:GameLogController",
+      "type": "class",
+      "name": "GameLogController",
+      "filePath": "Code/View/UI/GameLogController.cs",
+      "lineRange": [
+        10,
+        46
+      ],
+      "summary": "Subscribes to GameLog and renders log messages into a RichTextLabel with clear/append handlers.",
+      "tags": [
+        "ui",
+        "logging",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/UI/InventoryUI.cs",
+      "type": "file",
+      "name": "InventoryUI.cs",
+      "filePath": "Code/View/UI/InventoryUI.cs",
+      "summary": "HUD controller that renders the player's grouped inventory items into a label, refreshing when the domain Inventory changes.",
+      "tags": [
+        "component",
+        "ui",
+        "godot",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/UI/InventoryUI.cs:InventoryUI",
+      "type": "class",
+      "name": "InventoryUI",
+      "filePath": "Code/View/UI/InventoryUI.cs",
+      "lineRange": [
+        9,
+        61
+      ],
+      "summary": "Binds to the domain Inventory and renders grouped item counts into a label.",
+      "tags": [
+        "ui",
+        "godot",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/UI/MinimapController.cs",
+      "type": "file",
+      "name": "MinimapController.cs",
+      "filePath": "Code/View/UI/MinimapController.cs",
+      "summary": "Custom-drawn minimap that renders explored/visible dungeon cells and the player marker from the DungeonGrid and FovMap.",
+      "tags": [
+        "component",
+        "ui",
+        "rendering",
+        "godot",
+        "minimap"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/UI/MinimapController.cs:MinimapController",
+      "type": "class",
+      "name": "MinimapController",
+      "filePath": "Code/View/UI/MinimapController.cs",
+      "lineRange": [
+        8,
+        48
+      ],
+      "summary": "Draws the minimap in _Draw from grid + FOV state, refreshing via QueueRedraw.",
+      "tags": [
+        "ui",
+        "minimap",
+        "rendering",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:Code/View/World/StairsController.cs",
+      "type": "file",
+      "name": "StairsController.cs",
+      "filePath": "Code/View/World/StairsController.cs",
+      "summary": "Minimal Node2D marking a stairs tile at a grid position, used to trigger level descent when the player steps on it.",
+      "tags": [
+        "component",
+        "world",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:Code/View/World/StairsController.cs:StairsController",
+      "type": "class",
+      "name": "StairsController",
+      "filePath": "Code/View/World/StairsController.cs",
+      "lineRange": [
+        9,
+        17
+      ],
+      "summary": "Holds a stairs grid position; initialized by the Spawner and looked up via NodeRegistry on player movement.",
+      "tags": [
+        "world",
+        "godot"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:project.godot",
+      "type": "config",
+      "name": "project.godot",
+      "filePath": "project.godot",
+      "summary": "Godot project manifest defining the application name, main scene, autoloads, input action map (movement/wait/item/restart), and rendering settings.",
+      "tags": [
+        "configuration",
+        "godot",
+        "entry-point",
+        "input"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:Resources/DefaultLevelSettings.tres",
+      "type": "config",
+      "name": "DefaultLevelSettings.tres",
+      "filePath": "Resources/DefaultLevelSettings.tres",
+      "summary": "Default LevelSettings resource instance bound to the LevelSettings script, providing spawn-tuning values consumed by Main/Spawner.",
+      "tags": [
+        "configuration",
+        "godot",
+        "resource",
+        "data"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:Scenes/Archer.tscn",
+      "type": "config",
+      "name": "Archer.tscn",
+      "filePath": "Scenes/Archer.tscn",
+      "summary": "Godot scene for the archer enemy, binding the ArcherController script and the archer sprite texture to a Node2D.",
+      "tags": [
+        "godot",
+        "scene",
+        "enemy",
+        "prefab"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:Scenes/Enemy.tscn",
+      "type": "config",
+      "name": "Enemy.tscn",
+      "filePath": "Scenes/Enemy.tscn",
+      "summary": "Godot scene for the goblin enemy, binding the EnemyController script and the enemy sprite texture to a Node2D.",
+      "tags": [
+        "godot",
+        "scene",
+        "enemy",
+        "prefab"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:Scenes/GameLogUI.tscn",
+      "type": "config",
+      "name": "GameLogUI.tscn",
+      "filePath": "Scenes/GameLogUI.tscn",
+      "summary": "Godot UI scene for the game-log panel, binding the GameLogController script to a RichTextLabel-based layout.",
+      "tags": [
+        "godot",
+        "scene",
+        "ui",
+        "prefab"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Scenes/HealingPotion.tscn",
+      "type": "service",
+      "name": "HealingPotion.tscn",
+      "filePath": "Scenes/HealingPotion.tscn",
+      "summary": "Godot scene for the healing potion pickup: a Node2D wired to the HealingPotion consumable script with a potion sprite.",
+      "tags": [
+        "godot-scene",
+        "item",
+        "consumable",
+        "view",
+        "deployment"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Godot .tscn scene; attaches Code/View/Items/Consumables/HealingPotion.cs via ext_resource Script and a Sprite2D texture."
+    },
+    {
+      "id": "service:Scenes/InventoryUI.tscn",
+      "type": "service",
+      "name": "InventoryUI.tscn",
+      "filePath": "Scenes/InventoryUI.tscn",
+      "summary": "Godot CanvasLayer scene rendering the player inventory panel, bound to the InventoryUI controller with an exported RichTextLabel node path.",
+      "tags": [
+        "godot-scene",
+        "ui",
+        "inventory",
+        "view",
+        "hud"
+      ],
+      "complexity": "simple",
+      "languageNotes": "node_paths=PackedStringArray binds the InventoryLabel [Export] to Panel/RichTextLabel at scene level."
+    },
+    {
+      "id": "service:Scenes/Main.tscn",
+      "type": "service",
+      "name": "Main.tscn",
+      "filePath": "Scenes/Main.tscn",
+      "summary": "Root game scene declared as the project's main scene; instances the Player, dungeon tilemap, and all HUD overlays under the Main orchestrator node.",
+      "tags": [
+        "godot-scene",
+        "entry-point",
+        "orchestration",
+        "view",
+        "composition-root"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Composition root: attaches Main.cs + DungeonTileMap.cs, instances Player/GameLogUI/InventoryUI/ExperienceUI/MinimapUI scenes, and assigns DefaultLevelSettings.tres."
+    },
+    {
+      "id": "service:Scenes/MinimapUI.tscn",
+      "type": "service",
+      "name": "MinimapUI.tscn",
+      "filePath": "Scenes/MinimapUI.tscn",
+      "summary": "Godot CanvasLayer scene for the corner minimap overlay, bound to the MinimapController which renders from the dungeon grid and FOV map.",
+      "tags": [
+        "godot-scene",
+        "ui",
+        "minimap",
+        "view",
+        "hud"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Scenes/Player.tscn",
+      "type": "service",
+      "name": "Player.tscn",
+      "filePath": "Scenes/Player.tscn",
+      "summary": "Godot scene for the player actor: Node2D with PlayerController script, sprite, smoothing Camera2D, and a health ProgressBar bound via exported node path.",
+      "tags": [
+        "godot-scene",
+        "player",
+        "actor",
+        "view",
+        "deployment"
+      ],
+      "complexity": "simple",
+      "languageNotes": "HealthBar [Export] bound to the ProgressBar child; Camera2D uses position smoothing to follow the player."
+    },
+    {
+      "id": "service:Scenes/StairsDown.tscn",
+      "type": "service",
+      "name": "StairsDown.tscn",
+      "filePath": "Scenes/StairsDown.tscn",
+      "summary": "Godot scene for the descend-stairs entity, attaching the StairsController script that triggers level transitions, with a stairs sprite.",
+      "tags": [
+        "godot-scene",
+        "world",
+        "level-transition",
+        "view",
+        "deployment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Scenes/UI/ExperienceUI.tscn",
+      "type": "service",
+      "name": "ExperienceUI.tscn",
+      "filePath": "Scenes/UI/ExperienceUI.tscn",
+      "summary": "Godot CanvasLayer scene for the XP/level HUD, bound to the ExperienceUI controller with exported level label and XP progress bar node paths.",
+      "tags": [
+        "godot-scene",
+        "ui",
+        "experience",
+        "view",
+        "hud"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "node_paths binds LevelLabel and XpBar [Export]s; styled with purple-fill StyleBoxFlat sub-resources."
+    },
+    {
+      "id": "config:test.runsettings",
+      "type": "config",
+      "name": "test.runsettings",
+      "filePath": "test.runsettings",
+      "summary": "VSTest run settings configuring the gdUnit4 view test suite to boot Godot headless and capture stdout.",
+      "tags": [
+        "configuration",
+        "testing",
+        "gdunit4",
+        "ci-cd",
+        "test-runner"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Passes --headless to GodotArguments so view tests run without a display; consumed by dotnet test for the View.Tests project."
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:RogueLike.csproj",
+      "target": "config:RogueLike.sln",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "config:RogueLike.sln",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "config:RogueLike.csproj",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/DDD_REVIEW_CHECKLIST.md",
+      "target": "document:docs/SYSTEM_DESIGN.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:Code/Domain/Actors/ActorRegistry.cs",
+      "target": "class:Code/Domain/Actors/ActorRegistry.cs:ActorRegistry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Actors/ActorRegistry.cs",
+      "target": "class:Code/Domain/Actors/ActorRegistry.cs:ActorRegistry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Actors/ArcherAI.cs",
+      "target": "class:Code/Domain/Actors/ArcherAI.cs:ArcherAI",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Actors/ArcherAI.cs",
+      "target": "class:Code/Domain/Actors/ArcherAI.cs:ArcherAI",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Actors/EnemyAI.cs",
+      "target": "class:Code/Domain/Actors/EnemyAI.cs:EnemyAI",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Actors/EnemyAI.cs",
+      "target": "class:Code/Domain/Actors/EnemyAI.cs:EnemyAI",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Actors/GridMover.cs",
+      "target": "class:Code/Domain/Actors/GridMover.cs:GridMover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Actors/GridMover.cs",
+      "target": "class:Code/Domain/Actors/GridMover.cs:GridMover",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/Domain/Actors/ArcherAI.cs:ArcherAI",
+      "target": "class:Code/Domain/Actors/GridMover.cs:GridMover",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:Code/Domain/Actors/ArcherAI.cs:ArcherAI",
+      "target": "class:Code/Domain/Actors/ActorRegistry.cs:ActorRegistry",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:Code/Domain/Actors/EnemyAI.cs:EnemyAI",
+      "target": "class:Code/Domain/Actors/GridMover.cs:GridMover",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:Code/Domain/Actors/EnemyAI.cs:EnemyAI",
+      "target": "class:Code/Domain/Actors/ActorRegistry.cs:ActorRegistry",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:Code/Domain/Actors/GridMover.cs:GridMover",
+      "target": "class:Code/Domain/Actors/ActorRegistry.cs:ActorRegistry",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Actors/ArcherAI.cs",
+      "target": "file:Code/Domain.Tests/Actors/ArcherAITest.cs",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:Code/Domain/Actors/EnemyAI.cs",
+      "target": "file:Code/Domain.Tests/Actors/EnemyAITest.cs",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:Code/Domain/Actors/GridMover.cs",
+      "target": "file:Code/Domain.Tests/Actors/PlayerMovementTest.cs",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:Code/Domain.Tests/RogueLike.Domain.Tests.csproj",
+      "target": "file:Code/Domain/Actors/ActorRegistry.cs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Actors/IActor.cs",
+      "target": "class:Code/Domain/Actors/IActor.cs:IActor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Actors/IActor.cs",
+      "target": "class:Code/Domain/Actors/IActor.cs:IActor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Actors/IActor.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Combat/ICombatant.cs",
+      "target": "class:Code/Domain/Combat/ICombatant.cs:ICombatant",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Combat/ICombatant.cs",
+      "target": "class:Code/Domain/Combat/ICombatant.cs:ICombatant",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Combat/ICombatant.cs",
+      "target": "file:Code/Domain/Combat/Damage.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Combat/ICombatant.cs",
+      "target": "file:Code/Domain/Combat/Health.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Combat/ICombatant.cs",
+      "target": "file:Code/Domain/Flow/GameLog.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Common/GridPos.cs",
+      "target": "file:Code/Domain/Common/Direction.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Common/GridRect.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Flow/ExperienceSystem.cs",
+      "target": "class:Code/Domain/Flow/ExperienceSystem.cs:ExperienceSystem",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Flow/ExperienceSystem.cs",
+      "target": "class:Code/Domain/Flow/ExperienceSystem.cs:ExperienceSystem",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Flow/GameLog.cs",
+      "target": "class:Code/Domain/Flow/GameLog.cs:GameLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Flow/GameLog.cs",
+      "target": "class:Code/Domain/Flow/GameLog.cs:GameLog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Flow/TurnManager.cs",
+      "target": "class:Code/Domain/Flow/TurnManager.cs:TurnManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Flow/TurnManager.cs",
+      "target": "class:Code/Domain/Flow/TurnManager.cs:TurnManager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Flow/TurnManager.cs",
+      "target": "file:Code/Domain/Flow/TurnState.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "target": "class:Code/Domain/Grid/DungeonGrid.cs:DungeonGrid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "target": "class:Code/Domain/Grid/DungeonGrid.cs:DungeonGrid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "target": "file:Code/Domain/Common/Direction.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "target": "file:Code/Domain/Grid/CellType.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/DungeonGrid.Pathfinding.cs",
+      "target": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/DungeonGrid.Pathfinding.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/DungeonGrid.Pathfinding.cs",
+      "target": "file:Code/Domain/Common/Direction.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/FovMap.cs",
+      "target": "class:Code/Domain/Grid/FOV/FovMap.cs:FovMap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/FovMap.cs",
+      "target": "class:Code/Domain/Grid/FOV/FovMap.cs:FovMap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/FovMap.cs",
+      "target": "file:Code/Domain/Grid/FOV/VisibilityState.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/FovMap.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+      "target": "class:Code/Domain/Grid/FOV/IFovAlgorithm.cs:IFovAlgorithm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+      "target": "class:Code/Domain/Grid/FOV/IFovAlgorithm.cs:IFovAlgorithm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+      "target": "file:Code/Domain/Grid/FOV/FovMap.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+      "target": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/Raycaster.cs",
+      "target": "class:Code/Domain/Grid/FOV/Raycaster.cs:Raycaster",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/Raycaster.cs",
+      "target": "class:Code/Domain/Grid/FOV/Raycaster.cs:Raycaster",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/Domain/Grid/FOV/Raycaster.cs:Raycaster",
+      "target": "class:Code/Domain/Grid/FOV/IFovAlgorithm.cs:IFovAlgorithm",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/Raycaster.cs",
+      "target": "file:Code/Domain/Grid/FOV/FovMap.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/Raycaster.cs",
+      "target": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/FOV/Raycaster.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "target": "class:Code/Domain/Grid/Generators/BspDungeonGenerator.cs:BspDungeonGenerator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "target": "class:Code/Domain/Grid/Generators/BspDungeonGenerator.cs:BspDungeonGenerator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "target": "file:Code/Domain/Grid/DungeonGrid.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "target": "file:Code/Domain/Grid/Generators/BspNode.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "target": "file:Code/Domain/Common/GridRect.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+      "target": "file:Code/Domain/Grid/CellType.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspNode.cs",
+      "target": "class:Code/Domain/Grid/Generators/BspNode.cs:BspNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspNode.cs",
+      "target": "class:Code/Domain/Grid/Generators/BspNode.cs:BspNode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Grid/Generators/BspNode.cs",
+      "target": "file:Code/Domain/Common/GridRect.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Items/FloorItems.cs",
+      "target": "class:Code/Domain/Items/FloorItems.cs:FloorItems",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Items/FloorItems.cs",
+      "target": "class:Code/Domain/Items/FloorItems.cs:FloorItems",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Items/FloorItems.cs",
+      "target": "file:Code/Domain/Items/IItem.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Items/FloorItems.cs",
+      "target": "file:Code/Domain/Items/Inventory.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Items/FloorItems.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Items/IItem.cs",
+      "target": "class:Code/Domain/Items/IItem.cs:IItem",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Items/IItem.cs",
+      "target": "class:Code/Domain/Items/IItem.cs:IItem",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Items/IItem.cs",
+      "target": "file:Code/Domain/Items/Inventory.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Items/IItem.cs",
+      "target": "file:Code/Domain/Flow/GameLog.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Items/IItem.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/Domain/Items/Inventory.cs",
+      "target": "class:Code/Domain/Items/Inventory.cs:Inventory",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/Domain/Items/Inventory.cs",
+      "target": "class:Code/Domain/Items/Inventory.cs:Inventory",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/Domain/Items/Inventory.cs",
+      "target": "file:Code/Domain/Items/IItem.cs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View.Tests/GridConversionsTest.cs",
+      "target": "class:Code/View.Tests/GridConversionsTest.cs:GridConversionsTest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View.Tests/GridConversionsTest.cs",
+      "target": "file:Code/Domain/Common/GridPos.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Enemies/ArcherController.cs",
+      "target": "class:Code/View/Enemies/ArcherController.cs:ArcherController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Enemies/ArcherController.cs",
+      "target": "class:Code/View/Enemies/ArcherController.cs:ArcherController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Enemies/ArcherController.cs:ArcherController",
+      "target": "class:Code/View/Entities/ActorController.cs:ActorController",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:Code/View/Enemies/EnemyController.cs",
+      "target": "class:Code/View/Enemies/EnemyController.cs:EnemyController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Enemies/EnemyController.cs",
+      "target": "class:Code/View/Enemies/EnemyController.cs:EnemyController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Enemies/EnemyController.cs:EnemyController",
+      "target": "class:Code/View/Entities/ActorController.cs:ActorController",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:Code/View/Entities/ActorController.cs",
+      "target": "class:Code/View/Entities/ActorController.cs:ActorController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Entities/ActorController.cs",
+      "target": "class:Code/View/Entities/ActorController.cs:ActorController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/Entities/NodeRegistry.cs",
+      "target": "class:Code/View/Entities/NodeRegistry.cs:NodeRegistry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Entities/NodeRegistry.cs",
+      "target": "class:Code/View/Entities/NodeRegistry.cs:NodeRegistry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/Entities/Spawner.cs",
+      "target": "class:Code/View/Entities/Spawner.cs:Spawner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Entities/Spawner.cs",
+      "target": "class:Code/View/Entities/Spawner.cs:Spawner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/Entities/Spawner.cs",
+      "target": "file:Code/View/Enemies/EnemyController.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Entities/Spawner.cs",
+      "target": "file:Code/View/Enemies/ArcherController.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Entities/Spawner.cs",
+      "target": "file:Code/View/Items/Consumables/HealingPotion.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Entities/Spawner.cs",
+      "target": "file:Code/View/World/StairsController.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Entities/Spawner.cs",
+      "target": "file:Code/View/Player/PlayerController.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Entities/Spawner.cs",
+      "target": "file:Code/View/Entities/NodeRegistry.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Grid/DungeonTileMap.cs",
+      "target": "class:Code/View/Grid/DungeonTileMap.cs:DungeonTileMap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Grid/DungeonTileMap.cs",
+      "target": "class:Code/View/Grid/DungeonTileMap.cs:DungeonTileMap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/Grid/DungeonTileMap.cs",
+      "target": "file:Code/View/GridConversions.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Grid/FOV/FovTileMap.cs",
+      "target": "class:Code/View/Grid/FOV/FovTileMap.cs:FovTileMap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Grid/FOV/FovTileMap.cs",
+      "target": "class:Code/View/Grid/FOV/FovTileMap.cs:FovTileMap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/GridConversions.cs",
+      "target": "class:Code/View/GridConversions.cs:GridConversions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/GridConversions.cs",
+      "target": "class:Code/View/GridConversions.cs:GridConversions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/Items/Consumables/HealingPotion.cs",
+      "target": "class:Code/View/Items/Consumables/HealingPotion.cs:HealingPotion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Items/Consumables/HealingPotion.cs",
+      "target": "class:Code/View/Items/Consumables/HealingPotion.cs:HealingPotion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Items/Consumables/HealingPotion.cs:HealingPotion",
+      "target": "class:Code/View/Items/ItemController.cs:ItemController",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:Code/View/Items/ItemController.cs",
+      "target": "class:Code/View/Items/ItemController.cs:ItemController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Items/ItemController.cs",
+      "target": "class:Code/View/Items/ItemController.cs:ItemController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/Items/ItemController.cs",
+      "target": "file:Code/View/GridConversions.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "class:Code/View/Main.cs:Main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "class:Code/View/Main.cs:Main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "file:Code/View/Entities/NodeRegistry.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "file:Code/View/Entities/Spawner.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "file:Code/View/Player/PlayerController.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "file:Code/View/Grid/DungeonTileMap.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "file:Code/View/Grid/FOV/FovTileMap.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "file:Code/View/UI/InventoryUI.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "file:Code/View/UI/ExperienceUI.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Main.cs",
+      "target": "file:Code/View/UI/MinimapController.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Player/InputMapper.cs",
+      "target": "class:Code/View/Player/InputMapper.cs:InputMapper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Player/InputMapper.cs",
+      "target": "class:Code/View/Player/InputMapper.cs:InputMapper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/Player/PlayerController.cs",
+      "target": "class:Code/View/Player/PlayerController.cs:PlayerController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Player/PlayerController.cs",
+      "target": "class:Code/View/Player/PlayerController.cs:PlayerController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Player/PlayerController.cs:PlayerController",
+      "target": "class:Code/View/Entities/ActorController.cs:ActorController",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:Code/View/Player/PlayerController.cs",
+      "target": "file:Code/View/Entities/NodeRegistry.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Player/PlayerController.cs",
+      "target": "file:Code/View/Main.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/Resources/LevelSettings.cs",
+      "target": "class:Code/View/Resources/LevelSettings.cs:LevelSettings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/Resources/LevelSettings.cs",
+      "target": "class:Code/View/Resources/LevelSettings.cs:LevelSettings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/UI/ExperienceUI.cs",
+      "target": "class:Code/View/UI/ExperienceUI.cs:ExperienceUI",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/UI/ExperienceUI.cs",
+      "target": "class:Code/View/UI/ExperienceUI.cs:ExperienceUI",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/UI/GameLogController.cs",
+      "target": "class:Code/View/UI/GameLogController.cs:GameLogController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/UI/GameLogController.cs",
+      "target": "class:Code/View/UI/GameLogController.cs:GameLogController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/UI/InventoryUI.cs",
+      "target": "class:Code/View/UI/InventoryUI.cs:InventoryUI",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/UI/InventoryUI.cs",
+      "target": "class:Code/View/UI/InventoryUI.cs:InventoryUI",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/UI/MinimapController.cs",
+      "target": "class:Code/View/UI/MinimapController.cs:MinimapController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/UI/MinimapController.cs",
+      "target": "class:Code/View/UI/MinimapController.cs:MinimapController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:Code/View/UI/MinimapController.cs",
+      "target": "file:Code/View/GridConversions.cs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:Code/View/World/StairsController.cs",
+      "target": "class:Code/View/World/StairsController.cs:StairsController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:Code/View/World/StairsController.cs",
+      "target": "class:Code/View/World/StairsController.cs:StairsController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:Resources/DefaultLevelSettings.tres",
+      "target": "file:Code/View/Resources/LevelSettings.cs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:Scenes/Archer.tscn",
+      "target": "file:Code/View/Enemies/ArcherController.cs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:Scenes/Enemy.tscn",
+      "target": "file:Code/View/Enemies/EnemyController.cs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:Scenes/GameLogUI.tscn",
+      "target": "file:Code/View/UI/GameLogController.cs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:project.godot",
+      "target": "file:Code/View/Main.cs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Scenes/HealingPotion.tscn",
+      "target": "file:Code/View/Items/Consumables/HealingPotion.cs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Scenes/InventoryUI.tscn",
+      "target": "file:Code/View/UI/InventoryUI.cs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Scenes/Main.tscn",
+      "target": "file:Code/View/Main.cs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Scenes/Main.tscn",
+      "target": "file:Code/View/Grid/DungeonTileMap.cs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Scenes/Main.tscn",
+      "target": "service:Scenes/Player.tscn",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Scenes/Main.tscn",
+      "target": "service:Scenes/InventoryUI.tscn",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Scenes/Main.tscn",
+      "target": "service:Scenes/UI/ExperienceUI.tscn",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Scenes/Main.tscn",
+      "target": "service:Scenes/MinimapUI.tscn",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:Scenes/MinimapUI.tscn",
+      "target": "file:Code/View/UI/MinimapController.cs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Scenes/Player.tscn",
+      "target": "file:Code/View/Player/PlayerController.cs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Scenes/StairsDown.tscn",
+      "target": "file:Code/View/World/StairsController.cs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Scenes/UI/ExperienceUI.tscn",
+      "target": "file:Code/View/UI/ExperienceUI.cs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "class:Code/View/Entities/Spawner.cs:Spawner",
+      "target": "class:Code/View/Enemies/EnemyController.cs:EnemyController",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Entities/Spawner.cs:Spawner",
+      "target": "class:Code/View/Enemies/ArcherController.cs:ArcherController",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Entities/Spawner.cs:Spawner",
+      "target": "class:Code/View/World/StairsController.cs:StairsController",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Main.cs:Main",
+      "target": "class:Code/View/Entities/Spawner.cs:Spawner",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Main.cs:Main",
+      "target": "class:Code/View/Grid/FOV/FovTileMap.cs:FovTileMap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Main.cs:Main",
+      "target": "class:Code/View/Grid/DungeonTileMap.cs:DungeonTileMap",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Player/PlayerController.cs:PlayerController",
+      "target": "class:Code/View/Player/InputMapper.cs:InputMapper",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:Code/View/Player/PlayerController.cs:PlayerController",
+      "target": "class:Code/View/Main.cs:Main",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:domain",
+      "name": "Domain (Game Rules)",
+      "description": "Pure C#, Godot-free game rules in Code/Domain — grid/FOV/pathfinding, actor registry and AI, combat/health, items/inventory, turn flow and progression, plus the immutable GridPos/Direction/Damage value objects all other layers build on.",
+      "nodeIds": [
+        "file:Code/Domain/Actors/ActorRegistry.cs",
+        "file:Code/Domain/Actors/ArcherAI.cs",
+        "file:Code/Domain/Actors/EnemyAI.cs",
+        "file:Code/Domain/Actors/GridMover.cs",
+        "file:Code/Domain/Actors/IActor.cs",
+        "file:Code/Domain/Combat/Damage.cs",
+        "file:Code/Domain/Combat/Health.cs",
+        "file:Code/Domain/Combat/ICombatant.cs",
+        "file:Code/Domain/Common/Direction.cs",
+        "file:Code/Domain/Common/GridPos.cs",
+        "file:Code/Domain/Common/GridRect.cs",
+        "file:Code/Domain/Flow/ExperienceSystem.cs",
+        "file:Code/Domain/Flow/GameLog.cs",
+        "file:Code/Domain/Flow/TurnManager.cs",
+        "file:Code/Domain/Flow/TurnState.cs",
+        "file:Code/Domain/Grid/CellType.cs",
+        "file:Code/Domain/Grid/DungeonGrid.cs",
+        "file:Code/Domain/Grid/DungeonGrid.Pathfinding.cs",
+        "file:Code/Domain/Grid/FOV/FovMap.cs",
+        "file:Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+        "file:Code/Domain/Grid/FOV/Raycaster.cs",
+        "file:Code/Domain/Grid/FOV/VisibilityState.cs",
+        "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+        "file:Code/Domain/Grid/Generators/BspNode.cs",
+        "file:Code/Domain/Items/FloorItems.cs",
+        "file:Code/Domain/Items/IItem.cs",
+        "file:Code/Domain/Items/Inventory.cs",
+        "config:Code/Domain/RogueLike.Domain.csproj"
+      ]
+    },
+    {
+      "id": "layer:view",
+      "name": "View (Godot Presentation)",
+      "description": "Godot Node2D controllers in Code/View that render and forward input — Main orchestrator, player/enemy/archer controllers, tilemaps, HUD/minimap, spawner, and the GridConversions bridge — delegating all rules to the Domain layer.",
+      "nodeIds": [
+        "file:Code/View/Enemies/ArcherController.cs",
+        "file:Code/View/Enemies/EnemyController.cs",
+        "file:Code/View/Entities/ActorController.cs",
+        "file:Code/View/Entities/NodeRegistry.cs",
+        "file:Code/View/Entities/Spawner.cs",
+        "file:Code/View/Grid/DungeonTileMap.cs",
+        "file:Code/View/Grid/FOV/FovTileMap.cs",
+        "file:Code/View/GridConversions.cs",
+        "file:Code/View/Items/Consumables/HealingPotion.cs",
+        "file:Code/View/Items/ItemController.cs",
+        "file:Code/View/Main.cs",
+        "file:Code/View/Player/InputMapper.cs",
+        "file:Code/View/Player/PlayerController.cs",
+        "file:Code/View/Resources/LevelSettings.cs",
+        "file:Code/View/UI/ExperienceUI.cs",
+        "file:Code/View/UI/GameLogController.cs",
+        "file:Code/View/UI/InventoryUI.cs",
+        "file:Code/View/UI/MinimapController.cs",
+        "file:Code/View/World/StairsController.cs"
+      ]
+    },
+    {
+      "id": "layer:scenes-resources",
+      "name": "Scenes & Resources",
+      "description": "Godot .tscn scenes wiring sprites and scripts to nodes (Main, Player, enemies, HUD overlays) and .tres resources (tileset, LevelSettings) that compose and tune the runnable game.",
+      "nodeIds": [
+        "config:Assets/Tiles/dungeon_tileset.tres",
+        "config:Resources/DefaultLevelSettings.tres",
+        "config:Scenes/Archer.tscn",
+        "config:Scenes/Enemy.tscn",
+        "config:Scenes/GameLogUI.tscn",
+        "service:Scenes/HealingPotion.tscn",
+        "service:Scenes/InventoryUI.tscn",
+        "service:Scenes/Main.tscn",
+        "service:Scenes/MinimapUI.tscn",
+        "service:Scenes/Player.tscn",
+        "service:Scenes/StairsDown.tscn",
+        "service:Scenes/UI/ExperienceUI.tscn"
+      ]
+    },
+    {
+      "id": "layer:tests",
+      "name": "Tests",
+      "description": "xUnit Godot-free domain unit tests (Code/Domain.Tests) and gdUnit4 headless-Godot view tests (Code/View.Tests) covering AI, combat, grid, items, flow, value objects, and the conversion bridge.",
+      "nodeIds": [
+        "file:Code/Domain.Tests/Actors/ArcherAITest.cs",
+        "file:Code/Domain.Tests/Actors/EnemyAITest.cs",
+        "file:Code/Domain.Tests/Actors/PlayerMovementTest.cs",
+        "file:Code/Domain.Tests/Combat/CombatantTest.cs",
+        "file:Code/Domain.Tests/Combat/DamageTest.cs",
+        "file:Code/Domain.Tests/Combat/HealthTest.cs",
+        "file:Code/Domain.Tests/Common/DirectionTest.cs",
+        "file:Code/Domain.Tests/Common/GridPosTest.cs",
+        "file:Code/Domain.Tests/Common/GridRectTest.cs",
+        "file:Code/Domain.Tests/Flow/ExperienceSystemTest.cs",
+        "file:Code/Domain.Tests/Flow/TurnManagerTest.cs",
+        "file:Code/Domain.Tests/Grid/DungeonGridPathfindingTest.cs",
+        "file:Code/Domain.Tests/Grid/FOV/RaycasterTest.cs",
+        "file:Code/Domain.Tests/Grid/Generators/BspDungeonGeneratorTest.cs",
+        "file:Code/Domain.Tests/Grid/GridMapTest.cs",
+        "file:Code/Domain.Tests/Grid/LineOfSightTest.cs",
+        "file:Code/Domain.Tests/Items/InventoryTest.cs",
+        "file:Code/Domain.Tests/Items/ItemPickupTest.cs",
+        "config:Code/Domain.Tests/RogueLike.Domain.Tests.csproj",
+        "file:Code/View.Tests/GridConversionsTest.cs",
+        "config:Code/View.Tests/RogueLike.View.Tests.csproj"
+      ]
+    },
+    {
+      "id": "layer:config",
+      "name": "Build & Config",
+      "description": "Solution/project files (RogueLike.sln, .csproj per layer), the Godot project manifest, test.runsettings, and .gitattributes that define the four-project layout and build/test pipeline.",
+      "nodeIds": [
+        "config:RogueLike.csproj",
+        "config:RogueLike.sln",
+        "file:.gitattributes",
+        "file:project.godot",
+        "config:test.runsettings"
+      ]
+    },
+    {
+      "id": "layer:documentation",
+      "name": "Documentation",
+      "description": "Project ledgers and guides — CLAUDE.md, SYSTEM_DESIGN, DDD review checklist, asset pipeline, features roadmap, and the refactoring log — documenting the DDD architecture and conventions.",
+      "nodeIds": [
+        "document:CLAUDE.md",
+        "document:REFACTORING_OPPORTUNITIES.md",
+        "document:features.md",
+        "document:docs/ASSET_PIPELINE.md",
+        "document:docs/DDD_REVIEW_CHECKLIST.md",
+        "document:docs/SYSTEM_DESIGN.md"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "The Architecture Contract",
+      "description": "Start here: CLAUDE.md is the authoritative ledger that explains the project's single most important idea. RogueLike is a turn-based Godot/C# roguelike built as a teaching example of rich-domain DDD layering: pure C# game rules (Code/Domain, completely Godot-free) hold all logic and are unit-tested in isolation, while thin Godot Node controllers (Code/View) only render and forward input. SYSTEM_DESIGN.md is the companion ledger that catalogs every core system and tracks the anemic-to-rich migration status; read both before touching code.",
+      "nodeIds": [
+        "document:CLAUDE.md",
+        "document:docs/SYSTEM_DESIGN.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Project Layout & Build",
+      "description": "Before reading code, see how the contract from Step 1 is enforced structurally. RogueLike.sln ties together four projects in two solution folders, and the two .csproj files draw the Godot-free wall: the Domain library uses a plain Microsoft.NET.Sdk with no Godot reference, while the game project uses Godot.NET.Sdk and references Domain one-way. This compile-time separation is what makes the 'rules can't depend on Godot' rule physically impossible to violate.",
+      "nodeIds": [
+        "config:RogueLike.sln",
+        "config:Code/Domain/RogueLike.Domain.csproj",
+        "config:RogueLike.csproj"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "The Value Object Vocabulary",
+      "description": "Every layer builds on these immutable value objects, and GridPos is the single most depended-upon type in the whole codebase (highest fan-in). GridPos is a grid coordinate with Manhattan/Chebyshev distance and Step helpers; Direction is the eight-way movement type with delta vectors and a FromDelta factory. Crucially, the domain never uses Godot's Vector2I — it speaks only in these VOs, which is what keeps the domain Godot-free.",
+      "nodeIds": [
+        "file:Code/Domain/Common/GridPos.cs",
+        "file:Code/Domain/Common/Direction.cs",
+        "file:Code/Domain/Common/GridRect.cs"
+      ],
+      "languageLesson": "These are immutable C# value objects: no setters, equality-by-value, and operations like Step return a new instance rather than mutating. The self-validating constructor makes invalid states unconstructable — a core DDD building block."
+    },
+    {
+      "order": 4,
+      "title": "The Dungeon Grid",
+      "description": "DungeonGrid is the core walkability data structure: it stores CellType per cell and answers bounds, walkability, line-of-sight, and step queries. Building on the GridPos vocabulary from Step 3, note the deliberate boundary — the grid holds NO map-generation logic. Pathfinding lives in a separate partial file that adds A* FindPath over walkable eight-way neighbors, keeping the data structure focused.",
+      "nodeIds": [
+        "file:Code/Domain/Grid/DungeonGrid.cs",
+        "file:Code/Domain/Grid/DungeonGrid.Pathfinding.cs",
+        "file:Code/Domain/Grid/CellType.cs"
+      ],
+      "languageLesson": "C# partial classes split one class across files. Here DungeonGrid.cs holds the data/queries and DungeonGrid.Pathfinding.cs adds the A* algorithm — same class, separated concerns, both compiled together."
+    },
+    {
+      "order": 5,
+      "title": "Building the Map: BSP Generation",
+      "description": "Per the architecture rule, map generation must NEVER live in DungeonGrid — it lives in standalone builders. BspDungeonGenerator partitions space into a BspNode tree, carves rooms into a fresh DungeonGrid, and connects them with tunnels. This is a clean example of a pure algorithm (high fan-out, consuming GridPos and GridRect) that operates on the grid without being part of it.",
+      "nodeIds": [
+        "file:Code/Domain/Grid/Generators/BspDungeonGenerator.cs",
+        "file:Code/Domain/Grid/Generators/BspNode.cs"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Field of View & Fog of War",
+      "description": "Field-of-view is modeled as a strategy pattern. IFovAlgorithm declares ComputeFov over a FovMap and DungeonGrid; Raycaster implements it by casting Bresenham rays in a 360-degree circle, stopping at walls. FovMap stores per-cell VisibilityState (unseen/explored/visible) and resets the visible layer each pass — this is what drives the fog of war the player sees.",
+      "nodeIds": [
+        "file:Code/Domain/Grid/FOV/IFovAlgorithm.cs",
+        "file:Code/Domain/Grid/FOV/Raycaster.cs",
+        "file:Code/Domain/Grid/FOV/FovMap.cs"
+      ],
+      "languageLesson": "IFovAlgorithm is an interface (strategy pattern): Raycaster is one implementation, but callers depend on the abstraction, so a different FOV algorithm could be swapped in without changing the consumers."
+    },
+    {
+      "order": 7,
+      "title": "The Turn Loop",
+      "description": "Roguelikes are turn-based, and TurnManager is the heartbeat: a Player-to-Enemy state machine whose EndPlayerTurn/EndEnemyTurn methods advance CurrentState (a TurnState enum) and raise OnTurnChanged. The event-based design means the view reacts to turn changes without the domain knowing anything about Godot — the recurring decoupling pattern across this codebase.",
+      "nodeIds": [
+        "file:Code/Domain/Flow/TurnManager.cs",
+        "file:Code/Domain/Flow/TurnState.cs"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Actors, Movement & AI",
+      "description": "Actors live on the grid through pure-C# rules. IActor exposes a GridPosition and whether it's the player; ActorRegistry keys all actors by GridPos and guards single-tile occupancy; GridMover validates each step against terrain and occupancy. On top of these, EnemyAI is a melee decision tree (chase a visible player, attack when adjacent) and ArcherAI adds ranged logic (shoot on clear line of sight and range, otherwise chase). All of this is testable with zero Godot.",
+      "nodeIds": [
+        "file:Code/Domain/Actors/ActorRegistry.cs",
+        "file:Code/Domain/Actors/GridMover.cs",
+        "file:Code/Domain/Actors/EnemyAI.cs",
+        "file:Code/Domain/Actors/ArcherAI.cs"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Rich Combat: Behavior With Data",
+      "description": "Combat is the clearest illustration of the rich-domain principle. Health is an immutable VO whose TakeDamage/Heal/WithIncreasedMax return new clamped instances; Damage self-validates against negatives. ICombatant doesn't hand state to an external service — its default-implemented TryAttack produces Damage, applies it, logs to the GameLog, and triggers OnKilled. The verb lives on the entity that owns the data, not in a static *System mutator.",
+      "nodeIds": [
+        "file:Code/Domain/Combat/ICombatant.cs",
+        "file:Code/Domain/Combat/Health.cs",
+        "file:Code/Domain/Combat/Damage.cs"
+      ],
+      "languageLesson": "C# default interface methods let ICombatant ship a complete TryAttack implementation in the interface itself, so every combatant shares the same attack flow without inheriting from a base class."
+    },
+    {
+      "order": 10,
+      "title": "Items, Inventory & Progression",
+      "description": "This cluster of tightly coupled domain types models loot. IItem's default TryPickup checks eligibility, adds itself to an Inventory, logs, and runs OnPickup; FloorItems registers items on the floor and delegates to TryPickup on actor arrival; Inventory is a slot-limited aggregate that removes consumables on use. ExperienceSystem tracks XP and level-ups, and GameLog is the singleton message bus all of these broadcast through — the same event-driven decoupling as the turn loop.",
+      "nodeIds": [
+        "file:Code/Domain/Items/IItem.cs",
+        "file:Code/Domain/Items/Inventory.cs",
+        "file:Code/Domain/Items/FloorItems.cs",
+        "file:Code/Domain/Flow/ExperienceSystem.cs"
+      ]
+    },
+    {
+      "order": 11,
+      "title": "The View Wrapper: Thin Controllers",
+      "description": "Now cross the wall into Godot. ActorController is the abstract Node2D base that owns a Health VO and exposes damage/heal/die; PlayerController handles input, movement, attacks and item use; EnemyController and ArcherController wrap the domain EnemyAI/ArcherAI and just sync sprite position and FOV visibility. The lesson: these controllers contain no game rules — they render and delegate downward to the domain types from Steps 8-10.",
+      "nodeIds": [
+        "file:Code/View/Entities/ActorController.cs",
+        "file:Code/View/Player/PlayerController.cs",
+        "file:Code/View/Enemies/EnemyController.cs",
+        "file:Code/View/Enemies/ArcherController.cs"
+      ]
+    },
+    {
+      "order": 12,
+      "title": "Orchestration & The Conversion Bridge",
+      "description": "Main.cs is the top-level orchestrator (highest fan-out in the View): it wires up the grid, registries, turn manager and FOV, generates a level via BSP, spawns entities via the Spawner, drives FOV recompute and enemy turns, and handles descent and restart-on-death. GridConversions is the single sanctioned bridge translating domain GridPos to Godot's Vector2I/Vector2 — Vector2I is confined to this view edge, which is exactly how the domain stays Godot-free.",
+      "nodeIds": [
+        "file:Code/View/Main.cs",
+        "file:Code/View/Entities/Spawner.cs",
+        "file:Code/View/GridConversions.cs"
+      ]
+    },
+    {
+      "order": 13,
+      "title": "Scenes & Resources: The Runnable Game",
+      "description": "Code becomes a game through Godot scenes. project.godot declares Main.tscn as the main scene and defines the input action map; Main.tscn instances the Player, dungeon tilemap and HUD overlays under the Main orchestrator node; Player.tscn binds the PlayerController script, sprite and camera. LevelSettings is a Godot Resource exposing inspector-tunable spawn knobs that the Spawner reads per level.",
+      "nodeIds": [
+        "file:project.godot",
+        "service:Scenes/Main.tscn",
+        "service:Scenes/Player.tscn",
+        "file:Code/View/Resources/LevelSettings.cs"
+      ],
+      "languageLesson": "Godot .tscn scene files wire scripts and assets onto a node tree, and project.godot's main_scene setting is the runtime entry point. Scenes compose the game declaratively; scripts (the controllers) supply behavior."
+    },
+    {
+      "order": 14,
+      "title": "The Two-Tier Test Strategy",
+      "description": "The tour closes where the architecture pays off: testing. The Godot-free domain is covered by fast xUnit tests (Domain.Tests, runnable with plain dotnet test and no Godot) — DungeonGridPathfindingTest, TurnManagerTest, HealthTest and friends exercise pure rules in isolation. The thin view layer needs headless Godot, so GridConversionsTest runs under gdUnit4 via test.runsettings. This split — fast logic tests vs. slow integration tests — is the entire point of keeping rules out of the nodes.",
+      "nodeIds": [
+        "file:Code/Domain.Tests/Flow/TurnManagerTest.cs",
+        "file:Code/Domain.Tests/Combat/HealthTest.cs",
+        "file:Code/View.Tests/GridConversionsTest.cs",
+        "config:test.runsettings"
+      ]
+    }
+  ]
+}

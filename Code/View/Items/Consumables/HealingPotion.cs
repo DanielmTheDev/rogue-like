@@ -11,7 +11,7 @@ namespace RogueLike.Code.View.Items.Consumables;
 /// </summary>
 public partial class HealingPotion : ItemController
 {
-    [Godot.Export] public int HealAmount { get; set; } = 5;
+    [Godot.Export] public int HealAmount { get; set; } = 8;
 
     public override void Initialize(FloorItems floorItems, GridPos position)
     {
