@@ -23,6 +23,29 @@ dotnet test --filter "FullyQualifiedName~TurnManagerTest.MethodName" # run one t
 - **Solution folders:** `Domain/` { RogueLike.Domain, RogueLike.Domain.Tests }, `View/` { RogueLike (game + view/scene tests) }.
 - Run the game from the Godot editor; main scene is `Scenes/Main.tscn`.
 
+## CI & GitHub workflow (PR-based — `main` is protected)
+
+**`main` is branch-protected: NO direct pushes. All changes land via PR.** Workflow for every change:
+work on a feature branch → push → open a PR → CI must go green → merge. Required passing checks
+(GitHub blocks merge otherwise): **`domain-tests`** and **`view-tests`**, with branches required
+up-to-date with `main` (strict). Solo self-merge is allowed (0 approvals required); admins are not
+force-enforced (escape hatch), but use the PR flow anyway. Never `git push origin main` directly.
+
+- **`.github/workflows/ci.yml`** runs on `pull_request` → `main` and `push` → `main`. Two jobs:
+  - `domain-tests` — `dotnet test Code/Domain.Tests/...` (Godot-free, fast).
+  - `view-tests` — installs Godot 4.6.2 **mono** via `chickensoft-games/setup-godot`, sets
+    `GODOT_BIN=$(which godot)` (the action exports `GODOT`/`GODOT4`, not `GODOT_BIN`), builds with
+    `-warnaserror`, then runs `--import` and `dotnet test RogueLike.csproj`. **Both the Godot
+    `--import` and the gdUnit4 `[RequireGodotRuntime]`/`ISceneRunner` tests run under `xvfb-run`** —
+    `--import` is editor mode and the runtime runner spawns a Godot instance; both init UI and
+    **segfault / "Connection timeout" without a display even with `--headless`**. If you add a CI
+    step that invokes `godot`, wrap it in `xvfb-run -a`.
+- **`@claude` in issues/PRs** — `.github/workflows/claude.yml` (`anthropics/claude-code-action@v1`,
+  auth via the `CLAUDE_CODE_OAUTH_TOKEN` repo secret). Mention `@claude` in a comment/issue body and
+  it acts. **Gotcha:** `issue_comment`/`issues` events always run the workflow file from the
+  **default branch (`main`)** — editing `claude.yml` on a feature branch has no effect until merged.
+- `.github/dependabot.yml` keeps NuGet + GitHub Actions deps updated weekly (those PRs also gate on CI).
+
 ## Big-picture architecture
 
 The core design split: **pure C# logic classes** hold all game rules and are unit-tested in isolation; **Godot `Node2D` controllers** are thin wrappers that handle visuals/input and delegate downward. Keep logic out of the Godot nodes.
