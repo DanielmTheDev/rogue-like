@@ -9,7 +9,7 @@ namespace RogueLike.Domain.Grid;
 /// No Godot Node dependency — easily testable.
 /// </summary>
 /// <remarks>
-/// This file holds the grid's data + topology queries (walkability, corner-cut, line-of-sight).
+/// This file holds the grid's data + topology queries (walkability, line-of-sight).
 /// All cell queries are <see cref="GridPos"/>-native and the grid is Godot-free: dimensions are
 /// plain <c>Width</c>/<c>Height</c> ints (a size, not a position) and there are no <c>Vector2I</c>
 /// overloads. Pixel↔grid conversion is no longer the grid's concern — it lives on the view side as
@@ -74,12 +74,12 @@ public partial class DungeonGrid
     }
 
     /// <summary>
-    /// The single traversability rule: a step is allowed when the target cell is walkable and the
-    /// step does not cut a wall corner. Terrain only — actor occupancy is the mover's concern.
+    /// The single traversability rule: a step is allowed when the target cell is walkable. Diagonals
+    /// may round wall corners freely. Terrain only — actor occupancy is the mover's concern.
     /// Reused by both pathfinding and movement (<c>GridMover</c>).
     /// </summary>
     public bool CanStep(GridPos from, Direction d)
-        => IsWalkable(from.Step(d)) && !IsDiagonalCornerCut(from, d);
+        => IsWalkable(from.Step(d));
 
     /// <summary>
     /// Sets the cell type at the given coordinate.
@@ -102,20 +102,6 @@ public partial class DungeonGrid
             return CellType.Wall;
 
         return _cells[coord.X, coord.Y];
-    }
-
-    /// <summary>
-    /// True if stepping <paramref name="d"/> from <paramref name="from"/> is a diagonal that cuts a
-    /// wall corner. A diagonal is only traversable when both orthogonally-adjacent cells are
-    /// walkable. Cardinal directions are never corner cuts.
-    /// </summary>
-    private bool IsDiagonalCornerCut(GridPos from, Direction d)
-    {
-        if (d.Dx == 0 || d.Dy == 0)
-            return false;
-
-        return !IsWalkable(from.Step(Direction.FromDelta(d.Dx, 0)))
-            || !IsWalkable(from.Step(Direction.FromDelta(0, d.Dy)));
     }
 
     /// <summary>

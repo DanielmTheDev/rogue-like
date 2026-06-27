@@ -127,13 +127,25 @@ public class PlayerMovementTest
     }
 
     [Fact]
-    public void TryMove_DiagonalCornerCut_ReturnsFalse()
+    public void TryMove_DiagonalPastWallCorner_Succeeds()
     {
         var grid = CreateTestGrid();
-        grid.SetCell(new GridPos(3, 2), CellType.Wall); // block one orthogonal side
+        grid.SetCell(new GridPos(3, 2), CellType.Wall); // wall on one orthogonal side
         var mover = CreateMover(grid, new GridPos(2, 2), out _);
 
-        // Down-right target (3,3) is floor, but it would cut the corner past wall (3,2).
+        // Down-right target (3,3) is floor; rounding the corner past wall (3,2) is allowed.
+        Assert.True(mover.TryMove(Direction.DownRight));
+        Assert.Equal(3, mover.GridPosition.X);
+        Assert.Equal(3, mover.GridPosition.Y);
+    }
+
+    [Fact]
+    public void TryMove_DiagonalIntoWall_ReturnsFalse()
+    {
+        var grid = CreateTestGrid();
+        grid.SetCell(new GridPos(3, 3), CellType.Wall); // the diagonal target itself is a wall
+        var mover = CreateMover(grid, new GridPos(2, 2), out _);
+
         Assert.False(mover.TryMove(Direction.DownRight));
         Assert.Equal(2, mover.GridPosition.X);
         Assert.Equal(2, mover.GridPosition.Y);

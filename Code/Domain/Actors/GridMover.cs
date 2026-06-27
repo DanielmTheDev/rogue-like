@@ -22,7 +22,7 @@ public class GridMover
     public GridPos GridPosition => _gridPosition;
 
     /// <summary>
-    /// Access to the underlying grid for wall/corner checks.
+    /// Access to the underlying grid for walkability checks.
     /// </summary>
     public DungeonGrid Grid => _grid;
 
@@ -42,7 +42,7 @@ public class GridMover
     {
         var target = _gridPosition.Step(direction);
 
-        // Terrain traversability (walkable + no diagonal corner-cut) is the grid's rule.
+        // Terrain traversability (target walkable) is the grid's rule.
         if (!_grid.CanStep(_gridPosition, direction))
             return false;
 

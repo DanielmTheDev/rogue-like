@@ -19,7 +19,7 @@ public partial class DungeonGrid
     /// </summary>
     public List<GridPos> FindPath(GridPos from, GridPos to) => new PathSearch(this).Run(from, to);
 
-    /// <summary>The walkable 8-neighbours of <paramref name="p"/> (corner-cuts excluded).</summary>
+    /// <summary>The walkable 8-neighbours of <paramref name="p"/>.</summary>
     private IEnumerable<GridPos> WalkableNeighbors(GridPos p)
         => Direction.AllEight.Where(d => CanStep(p, d)).Select(p.Step);
 

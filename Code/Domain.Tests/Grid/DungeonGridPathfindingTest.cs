@@ -5,7 +5,7 @@ using RogueLike.Domain.Grid;
 namespace RogueLike.Domain.Tests.Grid;
 
 /// <summary>
-/// Pathfinding is a query over the grid's own cells (walkability + corner-cuts), so it lives on
+/// Pathfinding is a query over the grid's own cells (walkability), so it lives on
 /// <see cref="DungeonGrid"/> (folded in from the deleted <c>Pathfinder</c> class, 2.3b). The A* work
 /// is done by a hidden per-search object; the only public surface is <see cref="DungeonGrid.FindPath"/>.
 /// <see cref="DungeonGrid.CanStep"/> is the shared traversability rule (also reused by movement).
@@ -32,13 +32,13 @@ public class DungeonGridPathfindingTest
     }
 
     [Fact]
-    public void CanStep_DiagonalThatCutsWallCorner_ReturnsFalse()
+    public void CanStep_DiagonalPastWallCorner_ReturnsTrue()
     {
         var grid = OpenGrid();
-        // Wall on one orthogonal side of the (1,1)->(2,2) diagonal.
+        // Wall on one orthogonal side of the (1,1)->(2,2) diagonal: rounding it is allowed.
         grid.SetCell(new GridPos(2, 1), CellType.Wall);
 
-        Assert.False(grid.CanStep(new GridPos(1, 1), Direction.DownRight));
+        Assert.True(grid.CanStep(new GridPos(1, 1), Direction.DownRight));
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class DungeonGridPathfindingTest
     }
 
     [Fact]
-    public void FindPath_DiagonalCornerCut_RoutesAround()
+    public void FindPath_DiagonalPastCorner_CutsDirectly()
     {
         var grid = OpenGrid();
         // Wall on one orthogonal side of the (1,1)->(2,2) diagonal.
@@ -100,10 +100,9 @@ public class DungeonGridPathfindingTest
         var path = grid.FindPath(new GridPos(1, 1), new GridPos(2, 2));
 
         Assert.NotNull(path);
-        // Cannot cut the corner; must step via (1,2) first.
-        Assert.Equal(2, path.Count);
-        Assert.Equal(new GridPos(1, 2), path[0]);
-        Assert.Equal(new GridPos(2, 2), path[1]);
+        // Corner-cutting allowed: one diagonal step straight to the target.
+        Assert.Single(path);
+        Assert.Equal(new GridPos(2, 2), path[0]);
     }
 
     [Fact]
