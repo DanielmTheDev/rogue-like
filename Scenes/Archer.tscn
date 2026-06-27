@@ -15,6 +15,7 @@ HealthBar = NodePath("ProgressBar")
 BaseHealth = 6
 BaseAttackDamage = 1
 XpReward = 50
+Range = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1102385037]
 texture = ExtResource("2_archer_tex")

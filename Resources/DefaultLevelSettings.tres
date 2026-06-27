@@ -4,4 +4,5 @@
 
 [resource]
 script = ExtResource("1_wl1xe")
+DifficultyScaling = 0.5
 metadata/_custom_type_script = "uid://8dvef1m4ebwu"

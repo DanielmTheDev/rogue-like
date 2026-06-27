@@ -28,7 +28,7 @@ public partial class PlayerController : ActorController
     public bool IsDead { get; private set; } = false;
 
     private int _turnsSinceLastHeal = 0;
-    private const int TurnsPerHeal = 5;
+    private const int TurnsPerHeal = 3;
 
     public override GridPos GridPosition => _mover.GridPosition;
     public override bool IsPlayer => true;

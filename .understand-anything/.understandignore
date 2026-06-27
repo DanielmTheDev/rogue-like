@@ -1,0 +1,27 @@
+# .understandignore — patterns for files/dirs to exclude from analysis
+# Syntax: same as .gitignore (globs, # comments, ! negation, trailing / for dirs)
+
+# --- Godot engine cruft + sidecars (no analysis value) ---
+.godot/
+*.uid
+*.import
+*.gdextension
+
+# --- Third-party addons (gdUnit4 test runner + native binaries) ---
+addons/
+*.so
+*.dll
+*.dylib
+*.exp
+*.lib
+
+# --- IDE / tool config noise ---
+*.user
+.understandignore
+
+# --- this tool's own output/scratch (not project source) ---
+.understand-anything/
+
+# --- Build output (also covered by defaults) ---
+**/bin/
+**/obj/

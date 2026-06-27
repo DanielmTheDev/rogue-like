@@ -31,7 +31,7 @@
   - **Shift Move:** Hold Shift + Direction to auto-move until seeing an enemy, hitting a wall, or encountering a corner.
   - **Wait Full Health:** Press Shift + `.` to rest repeatedly until health is fully restored.
     - **Safety:** The action stops automatically if an enemy is spotted, if the player takes damage, or after 200 turns.
-  - **Passive Healing:** Player now heals 1 HP every 5 turns automatically.
+  - **Passive Healing:** Player now heals 1 HP every 3 turns automatically.
   - Both actions consume multiple turns and integrate with FOV system for enemy detection.
 - **DungeonTileMap & FovTileMap:** Godot `TileMapLayer` nodes. They listen to the purely logical data grids to render specific visual sprites.
 - **Minimap:** Godot `Control` node (`MinimapController.cs`) that renders a compact 100×100px grid overview in the bottom-right corner. Data sources: `DungeonGrid` (cell types) and `FovMap` (visibility states). Coloring: Unexplored=hidden, Explored=dark gray, Visible=light gray, walls slightly darker, player=yellow dot. Updated via `Refresh()` which triggers `QueueRedraw()`, called from `Main.UpdateFov()` after each `ComputeFov()`.
