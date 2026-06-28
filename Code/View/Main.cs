@@ -10,8 +10,8 @@ using RogueLike.Code.View.Entities;
 using RogueLike.Domain.Grid.FOV;
 using RogueLike.Domain.Actors;
 using RogueLike.Code.View.Grid.FOV;
-using RogueLike.Domain.Equipment;
 using RogueLike.Domain.Items;
+using RogueLike.Domain.Loot;
 using RogueLike.Code.View.Resources;
 using System.Linq;
 
@@ -42,6 +42,11 @@ public partial class Main : Node2D
     private System.Collections.Generic.List<GridRect> _rooms;
     private int _dungeonLevel = 1;
 
+    // One loot RNG stream + table for the whole run (seeded from MapSeed); the table's
+    // randomness is an injected collaborator and advances continuously across floors.
+    private IRng _lootRng;
+    private WeaponLootTable _lootTable;
+
     public override void _Ready()
     {
         _gridMap = new DungeonGrid(GridWidth, GridHeight);
@@ -56,6 +61,7 @@ public partial class Main : Node2D
         var player = GetNode<PlayerController>("Player");
         player.Initialize(this, _turnManager, _floorItems);
 
+        InitLoot();
         SetupFovTileMap();
         SetupLevel();
 
@@ -93,27 +99,31 @@ public partial class Main : Node2D
         Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _actorRegistry, _dungeonLevel,
             LevelSettings);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _floorItems);
-        // TEMP (loot system bring-up): drop a Sword +1 and a Sword +2 right next to the
-        // player so equip / auto-upgrade is trivially testable. Replaced by proper loot later.
-        var swordSpots = WalkableNeighbours(_rooms[0].Center);
-        Spawner.SpawnWeapon(this, swordScene, _floorItems, swordSpots[0], new Weapon("Sword +1", 1));
-        if (swordSpots.Count > 1)
-            Spawner.SpawnWeapon(this, swordScene, _floorItems, swordSpots[1], new Weapon("Sword +2", 2));
+        // Per-floor weapon loot: deeper floors drop more, and skew to higher tiers.
+        Spawner.SpawnFloorLoot(this, swordScene, _rooms, _gridMap, _floorItems, _lootTable, _dungeonLevel, _lootRng);
         Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _nodeRegistry, _gridMap);
 
         // 4. Initial FOV Compute
         UpdateFov();
     }
 
-    private System.Collections.Generic.List<GridPos> WalkableNeighbours(GridPos origin)
+    private void InitLoot()
     {
-        GridPos[] neighbours =
-        [
-            new(origin.X + 1, origin.Y), new(origin.X - 1, origin.Y),
-            new(origin.X, origin.Y + 1), new(origin.X, origin.Y - 1)
-        ];
-        var walkable = neighbours.Where(_gridMap.IsWalkable).ToList();
-        return walkable.Count > 0 ? walkable : [origin];
+        int? seed = LevelSettings?.MapSeed >= 0 ? LevelSettings.MapSeed : null;
+        _lootRng = new SystemRng(seed);
+        _lootTable = new WeaponLootTable(BuildLootConfig(), _lootRng);
+    }
+
+    private LootTableConfig BuildLootConfig()
+    {
+        if (LevelSettings is null)
+            return LootTableConfig.Default;
+
+        return new LootTableConfig(
+            new Probability(LevelSettings.BaseDropChance), new Probability(LevelSettings.DropChancePerFloor),
+            new Probability(LevelSettings.MaxDropChance), new Probability(LevelSettings.UpgradeBaseChance),
+            new Probability(LevelSettings.UpgradePerFloor), new Probability(LevelSettings.MaxUpgradeChance),
+            LevelSettings.MaxWeaponTier);
     }
 
     private void SetupFovTileMap()
@@ -206,6 +216,7 @@ public partial class Main : Node2D
 
         var player = GetNode<PlayerController>("Player");
         player.Reset();
+        InitLoot(); // fresh loot stream so a restart with a fixed seed reproduces
 
         // Reset the UI to reflect the player's new state
         var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");
