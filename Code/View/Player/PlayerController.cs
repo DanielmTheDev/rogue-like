@@ -5,6 +5,7 @@ using RogueLike.Domain.Grid.FOV;
 using RogueLike.Code.View.Entities;
 using RogueLike.Domain.Actors;
 using RogueLike.Domain.Combat;
+using RogueLike.Domain.Equipment;
 using RogueLike.Domain.Flow;
 using RogueLike.Domain.Items;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace RogueLike.Code.View.Player;
 /// Handles player input and grid-based movement.
 /// Delegates movement logic to GridMover (pure C# / testable).
 /// </summary>
-public partial class PlayerController : ActorController
+public partial class PlayerController : ActorController, IEquipmentHolder
 {
     private GridMover _mover;
     private TurnManager _turnManager;
@@ -32,8 +33,9 @@ public partial class PlayerController : ActorController
 
     public override GridPos GridPosition => _mover.GridPosition;
     public override bool IsPlayer => true;
-    public override int AttackDamage => BaseAttackDamage;
+    public override int AttackDamage => BaseAttackDamage + Loadout.DamageBonus;
     public Inventory Inventory => _inventory;
+    public Loadout Loadout { get; } = new();
     public ExperienceSystem Experience { get; private set; }
 
     public void Initialize(Main main, TurnManager turnManager, FloorItems floorItems)
@@ -365,6 +367,7 @@ public partial class PlayerController : ActorController
 
         // Reset systems
         Inventory.Clear();
+        Loadout.Clear();
         Experience = new ExperienceSystem();
         Experience.OnLevelUp += HandleLevelUp;
     }

@@ -44,4 +44,17 @@ public partial class ItemController : Node2D, IItem
         GameLog.Instance.Log($"You use the {DisplayName}. Nothing happens.");
         return false;
     }
+
+    public virtual bool TryPickup(IActor actor, Inventory inventory)
+    {
+        if (!CanPickup(actor)) return false;
+        if (inventory == null) return false;
+        if (!inventory.AddItem(this))
+        {
+            GameLog.Instance.Log("[color=orange]Your inventory is full![/color]");
+            return false;
+        }
+        OnPickup(actor);
+        return true;
+    }
 }

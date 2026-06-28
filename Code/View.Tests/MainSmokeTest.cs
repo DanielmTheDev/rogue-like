@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GdUnit4;
 using RogueLike.Code.View.Enemies;
+using RogueLike.Code.View.Items;
 using RogueLike.Code.View.Player;
 using RogueLike.Code.View.World;
 using RogueLike.Domain.Common;
@@ -51,6 +52,25 @@ public class MainSmokeTest
 
         var hasStairs = main.GetChildren().Any(c => c is StairsController);
         AssertBool(hasStairs).OverrideFailureMessage("no stairs spawned into the level").IsTrue();
+    }
+
+    [TestCase]
+    public async Task Boots_SpawnsAtMostOneFloorWeapon()
+    {
+        using var runner = ISceneRunner.Load(MainScene, true);
+        await runner.AwaitIdleFrame();
+
+        // Loot is now a per-floor chance (was a fixed +1/+2 pair). At most one weapon
+        // drops per floor; any that drops must sit on a walkable, in-bounds tile.
+        var weapons = runner.Scene().GetChildren().OfType<WeaponItem>().ToList();
+        AssertInt(weapons.Count).IsLessEqual(1);
+        foreach (var w in weapons)
+        {
+            var p = w.GridPosition;
+            AssertBool(p.X is >= 0 and < GridSize && p.Y is >= 0 and < GridSize)
+                .OverrideFailureMessage($"dropped weapon out of bounds at ({p.X}, {p.Y})")
+                .IsTrue();
+        }
     }
 
     [TestCase]

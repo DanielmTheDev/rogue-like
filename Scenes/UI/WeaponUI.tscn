@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://c7w3e5bap0n2u"]
+
+[ext_resource type="Script" path="res://Code/View/UI/WeaponUI.cs" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_background"]
+bg_color = Color(0.1, 0.1, 0.1, 0.7)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="WeaponUI" type="CanvasLayer"]
+
+[node name="WeaponControl" type="Control" parent="." node_paths=PackedStringArray("WeaponLabel")]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 10.0
+offset_top = 65.0
+offset_right = 210.0
+offset_bottom = 95.0
+script = ExtResource("1_script")
+WeaponLabel = NodePath("Panel/WeaponLabel")
+
+[node name="Panel" type="Panel" parent="WeaponControl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_background")
+
+[node name="WeaponLabel" type="Label" parent="WeaponControl/Panel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 190.0
+offset_bottom = 28.0
+theme_override_font_sizes/font_size = 14
+text = "Weapon: Unarmed"

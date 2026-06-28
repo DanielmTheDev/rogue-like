@@ -6,7 +6,10 @@ using RogueLike.Domain.Grid;
 using RogueLike.Domain.Grid.FOV;
 using RogueLike.Domain.Actors;
 using RogueLike.Code.View.Player;
+using RogueLike.Domain.Equipment;
 using RogueLike.Domain.Items;
+using RogueLike.Domain.Loot;
+using RogueLike.Code.View.Items;
 using RogueLike.Code.View.Resources;
 using RogueLike.Code.View.World;
 
@@ -122,6 +125,39 @@ public static class Spawner
             var spawnPos = RandomFloorTile(room);
             SpawnHealingPotion(parentNode, potionScene, grid, floorItems, spawnPos);
         }
+    }
+
+    public static void SpawnWeapon(
+        Node parent, PackedScene weaponScene, FloorItems floorItems,
+        GridPos pos, Weapon weapon)
+    {
+        var item = weaponScene.Instantiate<WeaponItem>();
+        item.Configure(weapon);
+        parent.AddChild(item);
+        item.Initialize(floorItems, pos);
+    }
+
+    public static void SpawnFloorLoot(
+        Node parentNode, PackedScene weaponScene, List<GridRect> rooms,
+        DungeonGrid grid, FloorItems floorItems,
+        WeaponLootTable lootTable, int dungeonLevel, IRng rng)
+    {
+        if (lootTable.Roll(dungeonLevel) is not { } weapon)
+            return;
+
+        // Place in a random non-start room (skip rooms[0]) on a walkable tile, using the
+        // injected rng so placement is reproducible with the loot seed.
+        var room = rooms[rng.Next(1, rooms.Count)];
+        GridPos pos;
+        var attempts = 0;
+        do
+        {
+            pos = new GridPos(rng.Next(room.X, room.X + room.Width), rng.Next(room.Y, room.Y + room.Height));
+            attempts++;
+        } while (!grid.IsWalkable(pos) && attempts < 100);
+
+        if (attempts >= 100) return; // Failsafe for irregular rooms
+        SpawnWeapon(parentNode, weaponScene, floorItems, pos, weapon);
     }
 
     public static GridPos RandomFloorTile(GridRect room)

@@ -16,6 +16,7 @@ public class InventoryTest
 
         public bool CanPickup(IActor actor) => true;
         public void OnPickup(IActor actor) { }
+        public bool TryPickup(IActor actor, Inventory inventory) => false;
 
         public bool Use(IActor actor)
         {

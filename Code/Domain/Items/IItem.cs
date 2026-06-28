@@ -30,22 +30,12 @@ public interface IItem
     bool Use(Actors.IActor actor);
 
     /// <summary>
-    /// Attempts to pick this item up into the given inventory. Returns true if it was taken —
-    /// the caller then unregisters it from the floor. Returns false (item stays on the floor)
-    /// if it can't be picked up, there is no inventory, or the inventory is full.
+    /// Attempts to pick this item up. Returns true if it was taken — the caller then
+    /// unregisters it from the floor. Returns false to leave it on the floor.
+    /// The base item stores it in the inventory; specific items override (e.g. a weapon
+    /// equips instead of being stored).
     /// </summary>
     // TRANSITIONAL (DDD Phase 3): the item should not reach into the actor's inventory aggregate.
     // Target: Player.TryPickup(item) — the actor owns the acquire; the item keeps only CanPickup/OnPickup.
-    bool TryPickup(Actors.IActor actor, Inventory inventory)
-    {
-        if (!CanPickup(actor)) return false;
-        if (inventory == null) return false;
-        if (!inventory.AddItem(this))
-        {
-            Flow.GameLog.Instance.Log("[color=orange]Your inventory is full![/color]");
-            return false;
-        }
-        OnPickup(actor);
-        return true;
-    }
+    bool TryPickup(Actors.IActor actor, Inventory inventory);
 }

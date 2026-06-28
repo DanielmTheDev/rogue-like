@@ -26,4 +26,29 @@ public partial class LevelSettings : Resource
     // Fixed map seed for reproducible layouts (debugging/testing). -1 = random each generation.
     [Export]
     public int MapSeed { get; set; } = -1;
+
+    // Weapon loot drop tuning (per floor). Translated to a domain LootTableConfig in Main.
+    // Deeper floors raise both the drop chance and the per-step upgrade chance, so dropped
+    // weapons trend to higher tiers (Sword +1, +2, … up to MaxWeaponTier).
+    [ExportGroup("Weapon Loot")]
+    [Export(PropertyHint.Range, "0,1,0.01")]
+    public float BaseDropChance { get; set; } = 0.25f;
+
+    [Export(PropertyHint.Range, "0,1,0.01")]
+    public float DropChancePerFloor { get; set; } = 0.05f;
+
+    [Export(PropertyHint.Range, "0,1,0.01")]
+    public float MaxDropChance { get; set; } = 0.75f;
+
+    [Export(PropertyHint.Range, "0,1,0.01")]
+    public float UpgradeBaseChance { get; set; } = 0.30f;
+
+    [Export(PropertyHint.Range, "0,1,0.01")]
+    public float UpgradePerFloor { get; set; } = 0.05f;
+
+    [Export(PropertyHint.Range, "0,1,0.01")]
+    public float MaxUpgradeChance { get; set; } = 0.85f;
+
+    [Export(PropertyHint.Range, "1,20,1")]
+    public int MaxWeaponTier { get; set; } = 5;
 }

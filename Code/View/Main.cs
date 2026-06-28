@@ -11,6 +11,7 @@ using RogueLike.Domain.Grid.FOV;
 using RogueLike.Domain.Actors;
 using RogueLike.Code.View.Grid.FOV;
 using RogueLike.Domain.Items;
+using RogueLike.Domain.Loot;
 using RogueLike.Code.View.Resources;
 using System.Linq;
 
@@ -41,6 +42,11 @@ public partial class Main : Node2D
     private System.Collections.Generic.List<GridRect> _rooms;
     private int _dungeonLevel = 1;
 
+    // One loot RNG stream + table for the whole run (seeded from MapSeed); the table's
+    // randomness is an injected collaborator and advances continuously across floors.
+    private IRng _lootRng;
+    private WeaponLootTable _lootTable;
+
     public override void _Ready()
     {
         _gridMap = new DungeonGrid(GridWidth, GridHeight);
@@ -55,6 +61,7 @@ public partial class Main : Node2D
         var player = GetNode<PlayerController>("Player");
         player.Initialize(this, _turnManager, _floorItems);
 
+        InitLoot();
         SetupFovTileMap();
         SetupLevel();
 
@@ -63,6 +70,8 @@ public partial class Main : Node2D
         inventoryUI.Initialize(player.Inventory);
         var expUI = GetNode<UI.ExperienceUI>("ExperienceUI/ExperienceControl");
         expUI.Initialize(player.Experience);
+        var weaponUI = GetNode<UI.WeaponUI>("WeaponUI/WeaponControl");
+        weaponUI.Initialize(player.Loadout);
         _minimap = GetNode<UI.MinimapController>("MinimapUI/MinimapController");
         _minimap.Initialize(_gridMap, _fovMap, player);
     }
@@ -85,14 +94,36 @@ public partial class Main : Node2D
         var archerScene = GD.Load<PackedScene>("res://Scenes/Archer.tscn");
         var potionScene = GD.Load<PackedScene>("res://Scenes/HealingPotion.tscn");
         var stairsScene = GD.Load<PackedScene>("res://Scenes/StairsDown.tscn");
+        var swordScene = GD.Load<PackedScene>("res://Scenes/Sword.tscn");
 
         Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _actorRegistry, _dungeonLevel,
             LevelSettings);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _floorItems);
+        // Per-floor weapon loot: deeper floors drop more, and skew to higher tiers.
+        Spawner.SpawnFloorLoot(this, swordScene, _rooms, _gridMap, _floorItems, _lootTable, _dungeonLevel, _lootRng);
         Spawner.SpawnStairs(this, stairsScene, _rooms.Last(), _nodeRegistry, _gridMap);
 
         // 4. Initial FOV Compute
         UpdateFov();
+    }
+
+    private void InitLoot()
+    {
+        int? seed = LevelSettings?.MapSeed >= 0 ? LevelSettings.MapSeed : null;
+        _lootRng = new SystemRng(seed);
+        _lootTable = new WeaponLootTable(BuildLootConfig(), _lootRng);
+    }
+
+    private LootTableConfig BuildLootConfig()
+    {
+        if (LevelSettings is null)
+            return LootTableConfig.Default;
+
+        return new LootTableConfig(
+            new Probability(LevelSettings.BaseDropChance), new Probability(LevelSettings.DropChancePerFloor),
+            new Probability(LevelSettings.MaxDropChance), new Probability(LevelSettings.UpgradeBaseChance),
+            new Probability(LevelSettings.UpgradePerFloor), new Probability(LevelSettings.MaxUpgradeChance),
+            LevelSettings.MaxWeaponTier);
     }
 
     private void SetupFovTileMap()
@@ -185,6 +216,7 @@ public partial class Main : Node2D
 
         var player = GetNode<PlayerController>("Player");
         player.Reset();
+        InitLoot(); // fresh loot stream so a restart with a fixed seed reproduces
 
         // Reset the UI to reflect the player's new state
         var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");

@@ -23,6 +23,16 @@ convert path/to/input.png -scale 32x32 -fuzz 10% -transparent "#00FF00" path/to/
 - `-fuzz 10%`: Accounts for slight color variations in the AI output.
 - `-transparent "#00FF00"`: Strips the chromakey color.
 
+### Automated: the `godot-sprite-gen` skill
+The above generate→chromakey steps are wrapped in a repeatable skill at
+`.claude/skills/godot-sprite-gen/` (Gemini image API + ImageMagick). One command:
+```bash
+python3 .claude/skills/godot-sprite-gen/generate_sprite.py --name Sword --desc "a steel short sword, blade up"
+```
+It writes `Assets/<Name>/<name>.png` (32×32, transparent). Note: Gemini ignores the
+requested `#00FF00` and emits its own flat backdrop, so the script **auto-detects the
+real background from a corner pixel** and keys that (fuzz 20%). See the skill's `SKILL.md`.
+
 ## 3. Integration into Godot
 - Save the final `.png` into the `Assets/[EntityName]/` directory.
 - Create a corresponding `.tscn` in the `Scenes/` directory.
