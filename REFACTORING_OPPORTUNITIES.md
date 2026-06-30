@@ -16,3 +16,9 @@
 - **Issue:** `Sword +2` drops reuse `Assets/Sword/sword.png` (no distinct art).
 - **Solution:** generate a +2 sprite via the `godot-sprite-gen` skill; let `WeaponItem`/loot pick art per weapon (needs a weapon→sprite mapping, e.g. a small catalog).
 - **Priority:** low — cosmetic.
+
+## Per-enemy visibility instead of shared player-origin FOV
+
+- **Issue:** enemy AI reuses the single player-origin `FovMap` (radius 6, `Main.UpdateFov`) to decide if it "sees" the player — symmetric-but-not-true sight: an enemy reacts whenever the *player* can see the enemy's tile, not when the enemy could see the player. The shared map is threaded as a `TakeTurn(fovMap)` param (a degenerate `TurnContext`).
+- **Solution:** decide enemy sight from the enemy's own position — cheapest is a per-enemy `DungeonGrid.HasClearLine(enemy, player) + range` check (archers already use `HasClearLine`), removing the dependency on the shared player FOV for AI. Behavior change → own TDD + retuning of detection range.
+- **Priority:** medium — agreed next task after the anti-overrun balance pass.

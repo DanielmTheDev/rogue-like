@@ -12,7 +12,7 @@ bg_color = Color(0, 1, 0, 1)
 [node name="Player" type="Node2D" node_paths=PackedStringArray("HealthBar")]
 script = ExtResource("1_player_script")
 HealthBar = NodePath("ProgressBar")
-BaseHealth = 16
+BaseHealth = 24
 BaseAttackDamage = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
