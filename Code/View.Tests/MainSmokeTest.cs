@@ -1,7 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GdUnit4;
+using Godot;
 using RogueLike.Code.View.Enemies;
+using RogueLike.Code.View.Entities;
+using RogueLike.Code.View.Grid;
 using RogueLike.Code.View.Items;
 using RogueLike.Code.View.Player;
 using RogueLike.Code.View.World;
@@ -71,6 +75,36 @@ public class MainSmokeTest
                 .OverrideFailureMessage($"dropped weapon out of bounds at ({p.X}, {p.Y})")
                 .IsTrue();
         }
+    }
+
+    // DIAGNOSTIC (archer-in-wall report): across many random layouts, no enemy may sit on a tile
+    // the DungeonTileMap painted as Wall (atlas (2,0)). Reads the *rendered* tilemap — exactly what
+    // the player sees — so a pass means the "stuck in wall" look is NOT a placement bug.
+    [TestCase]
+    public async Task EnemiesNeverRenderOnAWallTile_AcrossManyLayouts()
+    {
+        var wallAtlas = new Vector2I(2, 0);
+        var offenders = new List<string>();
+
+        for (var run = 0; run < 12; run++)
+        {
+            using var runner = ISceneRunner.Load(MainScene, true);
+            await runner.AwaitIdleFrame();
+            var main = runner.Scene();
+            var tileMap = main.GetNode<DungeonTileMap>("DungeonTileMap");
+
+            foreach (var enemy in main.GetChildren().OfType<ActorController>().Where(a => !a.IsPlayer))
+            {
+                var p = enemy.GridPosition;
+                var atlas = tileMap.GetCellAtlasCoords(new Vector2I(p.X, p.Y));
+                if (atlas == wallAtlas)
+                    offenders.Add($"run {run}: {enemy.Name} at ({p.X},{p.Y}) on WALL");
+            }
+        }
+
+        AssertBool(offenders.Count == 0)
+            .OverrideFailureMessage($"enemies rendered on wall tiles:\n{string.Join("\n", offenders)}")
+            .IsTrue();
     }
 
     [TestCase]
