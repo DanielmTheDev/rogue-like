@@ -9,7 +9,7 @@ namespace RogueLike.Domain.Tests.Actors;
 
 public class ArcherAITest
 {
-    private class MockPlayer : IActor, ICombatant
+    private class MockPlayer : ICombatant
     {
         public GridPos GridPosition { get; set; }
         public bool IsPlayer => true;
@@ -28,7 +28,7 @@ public class ArcherAITest
         public void Heal(int amount) => Health = Health.Heal(amount);
     }
 
-    private class MockArcher : IActor, ICombatant
+    private class MockArcher : ICombatant
     {
         public GridPos GridPosition { get; set; }
         public bool IsPlayer => false;
@@ -107,5 +107,57 @@ public class ArcherAITest
         ai.TakeTurn(_fovMap);
 
         Assert.Equal(9, player.Health.Current); // archer AttackDamage == 1
+    }
+
+    [Fact]
+    public void TakeTurn_PlayerLeftFov_MovesTowardLastKnownPosition()
+    {
+        var player = new MockPlayer { GridPosition = new GridPos(1, 1), Health = new Health(10, 10) };
+        var archer = new MockArcher { GridPosition = new GridPos(1, 8), Health = new Health(10, 10) };
+
+        _actorRegistry.RegisterActor(player);
+        _actorRegistry.RegisterActor(archer);
+
+        var ai = new ArcherAI(archer, _grid, _actorRegistry, archer.GridPosition);
+
+        // Turn 1: visible but out of range (Manhattan 7 > 5) -> close the distance, record last-known.
+        _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
+        ai.TakeTurn(_fovMap);
+        Assert.Equal(new GridPos(1, 7), ai.GridPosition);
+
+        // Turn 2: player out of FOV -> keep advancing toward the remembered tile. No blind-fire.
+        _fovMap.SetVisibility(player.GridPosition, VisibilityState.Explored);
+        ai.TakeTurn(_fovMap);
+        Assert.Equal(new GridPos(1, 6), ai.GridPosition);
+        Assert.Equal(10, player.Health.Current);
+    }
+
+    [Fact]
+    public void TakeTurn_ReachedLastKnown_PlayerGone_Idles()
+    {
+        var player = new MockPlayer { GridPosition = new GridPos(1, 5), Health = new Health(10, 10) };
+        var archer = new MockArcher { GridPosition = new GridPos(1, 6), Health = new Health(10, 10) };
+
+        _actorRegistry.RegisterActor(player);
+        _actorRegistry.RegisterActor(archer);
+
+        var ai = new ArcherAI(archer, _grid, _actorRegistry, archer.GridPosition);
+
+        // Turn 1: in range + clear line -> shoot, record last-known (1,5), no move.
+        _fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
+        ai.TakeTurn(_fovMap);
+        Assert.Equal(new GridPos(1, 6), ai.GridPosition);
+
+        // Player slips away (frees its tile) and stays out of FOV.
+        _fovMap.SetVisibility(player.GridPosition, VisibilityState.Explored);
+        var gone = new GridPos(9, 9);
+        _actorRegistry.UpdateActorPosition(player, player.GridPosition, gone);
+        player.GridPosition = gone;
+
+        ai.TakeTurn(_fovMap); // step into last-known (1,5)
+        Assert.Equal(new GridPos(1, 5), ai.GridPosition);
+
+        ai.TakeTurn(_fovMap); // arrived, nobody there -> forget + idle
+        Assert.Equal(new GridPos(1, 5), ai.GridPosition);
     }
 }

@@ -21,7 +21,7 @@ public partial class LevelSettings : Resource
     public int BaseEnemyCountModifier { get; set; } = 0;
 
     [Export(PropertyHint.Range, "0,5,0.1")]
-    public float DifficultyScaling { get; set; } = 0.5f;
+    public float DifficultyScaling { get; set; } = 0.3f;
 
     // Fixed map seed for reproducible layouts (debugging/testing). -1 = random each generation.
     [Export]
