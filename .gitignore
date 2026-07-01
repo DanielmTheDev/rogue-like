@@ -9,3 +9,7 @@
 
 # gdUnit4 test adapter: auto-generated runtime-runner scene (regenerated on each test run)
 gdunit4_testadapter_v5/
+
+# godot-sound-gen skill: jsfxr installed on first run
+.claude/skills/godot-sound-gen/node_modules/
+.claude/skills/godot-sound-gen/package-lock.json

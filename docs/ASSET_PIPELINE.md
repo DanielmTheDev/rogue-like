@@ -39,3 +39,19 @@ real background from a corner pixel** and keys that (fuzz 20%). See the skill's 
 - Use `ActorController` as the base class for entities to inherit Health and Combat logic.
 - Bind the sprite to the `Sprite2D` node.
 - Configure the `[Export]` variables (HealthBar, BaseHealth, BaseAttackDamage) in the Godot Inspector.
+
+## 4. Sound Effects (jsfxr)
+
+Retro SFX are generated with **jsfxr** (a local, offline sfxr port — no API key/cost),
+wrapped in the `godot-sound-gen` skill. One command:
+```bash
+node .claude/skills/godot-sound-gen/generate_sound.mjs --preset pickupCoin --name pickup --seed 42
+```
+Writes `Assets/Sounds/<name>.wav` (8-bit PCM mono, 44.1 kHz) and prints a b58 param string.
+Presets: `pickupCoin`, `laserShoot`, `explosion`, `powerUp`, `hitHurt`, `jump`, `blipSelect`,
+`synth`, `tone`, `click`, `random`. `--seed` makes output byte-reproducible so committed audio
+regenerates from the command; `--params <b58>` reproduces/tweaks a saved sound. See the skill's
+`SKILL.md`. jsfxr installs into the skill dir on first run (gitignored).
+
+**Playback is not yet wired** — the game has no audio system (no `AudioStreamPlayer`/bus/autoload).
+This pipeline only produces the asset; Godot auto-imports the `.wav` as an `AudioStreamWav`.

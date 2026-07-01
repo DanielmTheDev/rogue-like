@@ -1,0 +1,9 @@
+{
+  "name": "godot-sound-gen",
+  "private": true,
+  "type": "module",
+  "description": "jsfxr wrapper: generate retro SFX .wav files for the roguelike",
+  "dependencies": {
+    "jsfxr": "^1.2.1"
+  }
+}

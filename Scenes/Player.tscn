@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://dptunjmwcwqqp"]
+[gd_scene load_steps=4 format=3 uid="uid://dptunjmwcwqqp"]
 
 [ext_resource type="Script" uid="uid://2qp4gwlwq7ue" path="res://Code/View/Player/PlayerController.cs" id="1_player_script"]
 [ext_resource type="Texture2D" uid="uid://dr5gsni1jbxlj" path="res://Assets/Player/player.png" id="2_player_tex"]
+[ext_resource type="AudioStream" uid="uid://cikokrfisvxie" path="res://Assets/Sounds/step.wav" id="3_step_snd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0.55, 0, 0, 1)
@@ -9,14 +10,18 @@ bg_color = Color(0.55, 0, 0, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fill"]
 bg_color = Color(0, 1, 0, 1)
 
-[node name="Player" type="Node2D" node_paths=PackedStringArray("HealthBar")]
+[node name="Player" type="Node2D" node_paths=PackedStringArray("HealthBar", "StepSound")]
 script = ExtResource("1_player_script")
 HealthBar = NodePath("ProgressBar")
+StepSound = NodePath("StepSound")
 BaseHealth = 24
 BaseAttackDamage = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_player_tex")
+
+[node name="StepSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_step_snd")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true

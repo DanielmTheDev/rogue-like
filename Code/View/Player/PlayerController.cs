@@ -38,6 +38,8 @@ public partial class PlayerController : ActorController, IEquipmentHolder
     public Loadout Loadout { get; } = new();
     public ExperienceSystem Experience { get; private set; }
 
+    [Export] public AudioStreamPlayer StepSound { get; set; }
+
     public void Initialize(Main main, TurnManager turnManager, FloorItems floorItems)
     {
         _main = main;
@@ -96,6 +98,7 @@ public partial class PlayerController : ActorController, IEquipmentHolder
             return false;
 
         SyncPosition();
+        StepSound?.Play();
 
         // CHECK FOR ITEMS (auto-pickup). Items are GridPos-native — no conversion needed.
         _floorItems?.CheckForPickup(GridPosition, this, _inventory);
