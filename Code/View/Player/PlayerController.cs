@@ -2,6 +2,7 @@ using Godot;
 using RogueLike.Domain.Common;
 using RogueLike.Domain.Grid;
 using RogueLike.Domain.Grid.FOV;
+using RogueLike.Code.View.Audio;
 using RogueLike.Code.View.Entities;
 using RogueLike.Domain.Actors;
 using RogueLike.Domain.Combat;
@@ -37,8 +38,6 @@ public partial class PlayerController : ActorController, IEquipmentHolder
     public Inventory Inventory => _inventory;
     public Loadout Loadout { get; } = new();
     public ExperienceSystem Experience { get; private set; }
-
-    [Export] public AudioStreamPlayer StepSound { get; set; }
 
     public void Initialize(Main main, TurnManager turnManager, FloorItems floorItems)
     {
@@ -98,7 +97,7 @@ public partial class PlayerController : ActorController, IEquipmentHolder
             return false;
 
         SyncPosition();
-        StepSound?.Play();
+        SfxPlayer.Instance?.Play(Sfx.Step);
 
         // CHECK FOR ITEMS (auto-pickup). Items are GridPos-native — no conversion needed.
         _floorItems?.CheckForPickup(GridPosition, this, _inventory);

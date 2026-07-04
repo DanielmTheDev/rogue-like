@@ -1,32 +1,32 @@
-[gd_scene load_steps=6 format=3 uid="uid://bgacm0vsedlkr"]
+[gd_scene format=3 uid="uid://bgacm0vsedlkr"]
 
 [ext_resource type="Script" uid="uid://bhemhhtah4hs3" path="res://Code/View/Main.cs" id="1_main_script"]
 [ext_resource type="Script" uid="uid://bv50eriaqtt0k" path="res://Code/View/Grid/DungeonTileMap.cs" id="2_tilemap_script"]
 [ext_resource type="TileSet" uid="uid://dwxypcwtmq8qo" path="res://Assets/Tiles/dungeon_tileset.tres" id="3_tileset"]
 [ext_resource type="PackedScene" uid="uid://dptunjmwcwqqp" path="res://Scenes/Player.tscn" id="4_player_scene"]
 [ext_resource type="PackedScene" uid="uid://b8k1m5n2p2q4u" path="res://Scenes/GameLogUI.tscn" id="5_gamelog_scene"]
-[ext_resource type="PackedScene" uid="uid://d8m3n5p7q9r2s" path="res://Scenes/InventoryUI.tscn" id="6_inventory_scene"]
+[ext_resource type="PackedScene" uid="uid://d7723sx62wb1" path="res://Scenes/InventoryUI.tscn" id="6_inventory_scene"]
 [ext_resource type="PackedScene" uid="uid://b1v2h3i4j5k6l" path="res://Scenes/UI/ExperienceUI.tscn" id="7_exp_ui_scene"]
 [ext_resource type="Resource" uid="uid://ck30u1q20435m" path="res://Resources/DefaultLevelSettings.tres" id="8_level_settings"]
 [ext_resource type="PackedScene" uid="uid://d1y3r25jmk0l4" path="res://Scenes/MinimapUI.tscn" id="9_minimap_scene"]
 [ext_resource type="PackedScene" uid="uid://c7w3e5bap0n2u" path="res://Scenes/UI/WeaponUI.tscn" id="10_weapon_ui_scene"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=1113738958]
 script = ExtResource("1_main_script")
 LevelSettings = ExtResource("8_level_settings")
 
-[node name="DungeonTileMap" type="TileMapLayer" parent="."]
+[node name="DungeonTileMap" type="TileMapLayer" parent="." unique_id=1083069438]
 tile_set = ExtResource("3_tileset")
 script = ExtResource("2_tilemap_script")
 
-[node name="Player" parent="." instance=ExtResource("4_player_scene")]
+[node name="Player" parent="." unique_id=1320854555 instance=ExtResource("4_player_scene")]
 
-[node name="GameLogUI" parent="." instance=ExtResource("5_gamelog_scene")]
+[node name="GameLogUI" parent="." unique_id=1004743381 instance=ExtResource("5_gamelog_scene")]
 
-[node name="InventoryUI" parent="." instance=ExtResource("6_inventory_scene")]
+[node name="InventoryUI" parent="." unique_id=362793375 instance=ExtResource("6_inventory_scene")]
 
-[node name="ExperienceUI" parent="." instance=ExtResource("7_exp_ui_scene")]
+[node name="ExperienceUI" parent="." unique_id=912639633 instance=ExtResource("7_exp_ui_scene")]
 
-[node name="MinimapUI" parent="." instance=ExtResource("9_minimap_scene")]
+[node name="MinimapUI" parent="." unique_id=1226855658 instance=ExtResource("9_minimap_scene")]
 
-[node name="WeaponUI" parent="." instance=ExtResource("10_weapon_ui_scene")]
+[node name="WeaponUI" parent="." unique_id=1306545901 instance=ExtResource("10_weapon_ui_scene")]

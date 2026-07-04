@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using RogueLike.Code.View.Audio;
 using RogueLike.Domain.Common;
 using RogueLike.Domain.Combat;
 using RogueLike.Domain.Actors;
@@ -49,6 +50,7 @@ public abstract partial class ActorController : Node2D, ICombatant
         Health = Health.TakeDamage(damage.Amount);
         OnHealthChanged?.Invoke(Health.Current, Health.Max);
         SyncHealthBar();
+        if (damage.Amount > 0) SfxPlayer.Instance?.Play(Sfx.Hit);
         if (Health.IsDead) Die();
     }
 
@@ -69,6 +71,7 @@ public abstract partial class ActorController : Node2D, ICombatant
 
     public virtual void Die()
     {
+        SfxPlayer.Instance?.Play(Sfx.Death);
         GameLog.Instance.LogDeath(DisplayName);
         _actorRegistry?.UnregisterActor(this);
         QueueFree();
