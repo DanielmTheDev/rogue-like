@@ -61,7 +61,7 @@ public class LevelResetTest
         registry.RegisterActor(player);
 
         var enemy = new EnemyDouble(new GridPos(5, 5));
-        enemy.Ai = new EnemyAI(enemy, grid, registry, new GridPos(5, 5));
+        enemy.Ai = new EnemyAI(enemy, grid, registry, new GridPos(5, 5), 7);
         registry.RegisterActor(enemy);
 
         floor.RegisterItem(new ItemDouble(new GridPos(3, 3)));

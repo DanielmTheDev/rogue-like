@@ -10,8 +10,8 @@ namespace RogueLike.Domain.Actors;
 /// </summary>
 public class EnemyAI : EnemyAIBase
 {
-    public EnemyAI(IActor owner, DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos)
-        : base(owner, grid, actorRegistry, startPos)
+    public EnemyAI(IActor owner, DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos, int sightRange)
+        : base(owner, grid, actorRegistry, startPos, sightRange)
     {
     }
 

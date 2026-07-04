@@ -13,8 +13,8 @@ public class ArcherAI : EnemyAIBase
 {
     private readonly int _range;
 
-    public ArcherAI(IActor owner, DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos, int range = 5)
-        : base(owner, grid, actorRegistry, startPos)
+    public ArcherAI(IActor owner, DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos, int range, int sightRange)
+        : base(owner, grid, actorRegistry, startPos, sightRange)
         => _range = range;
 
     protected override void ActOnVisible(IActor player)

@@ -17,8 +17,8 @@
 - **Solution:** generate a +2 sprite via the `godot-sprite-gen` skill; let `WeaponItem`/loot pick art per weapon (needs a weapon→sprite mapping, e.g. a small catalog).
 - **Priority:** low — cosmetic.
 
-## Per-enemy visibility instead of shared player-origin FOV
+## XpReward + SightRange sit on the all-actor base (wrong abstraction)
 
-- **Issue:** enemy AI reuses the single player-origin `FovMap` (radius 6, `Main.UpdateFov`) to decide if it "sees" the player — symmetric-but-not-true sight: an enemy reacts whenever the *player* can see the enemy's tile, not when the enemy could see the player. The shared map is threaded as a `TakeTurn(fovMap)` param (a degenerate `TurnContext`).
-- **Solution:** decide enemy sight from the enemy's own position — cheapest is a per-enemy `DungeonGrid.HasClearLine(enemy, player) + range` check (archers already use `HasClearLine`), removing the dependency on the shared player FOV for AI. Behavior change → own TDD + retuning of detection range.
-- **Priority:** medium — agreed next task after the anti-overrun balance pass.
+- **Issue:** `ActorController` (base of Player) + `ICombatant` carry `XpReward` — "XP granted when this dies" — so the Player is forced to implement a meaningless value. Enemy-only concept on the all-actor base (ISP/wrong-abstraction). `SightRange` was just added on the enemy controllers (correctly not on the base), but there's no shared enemy seam to hold enemy-only data.
+- **Solution:** introduce an enemy abstraction — e.g. `IXpProvider { int XpReward }` (enemies implement, Player does not); the kill hook casts `victim is IXpProvider`. Optionally a shared `EnemyControllerBase`/`IEnemy` holding `SightRange` + `XpReward`. Then (optional, later) group enemy stats into a Godot `Resource` (`EnemyStats`: health/damage/xp/sight), translated to domain like `LevelSettings`→`LootTableConfig` — keeps the Godot-free wall; excludes Player by construction.
+- **Priority:** medium — next AI/stats cleanup; keep separate from feature PRs (touches `ICombatant` + every actor `.tscn`).

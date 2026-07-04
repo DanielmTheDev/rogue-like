@@ -15,6 +15,7 @@ public partial class ArcherController : ActorController
     private ArcherAI _ai;
 
     [Export] public int Range { get; set; } = 5;
+    [Export] public int SightRange { get; set; } = 7;
 
     public override GridPos GridPosition => _ai?.GridPosition ?? GridPos.Origin;
     public override bool IsPlayer => false;
@@ -24,7 +25,7 @@ public partial class ArcherController : ActorController
     {
         InitializeBase(actorRegistry);
 
-        _ai = new ArcherAI(this, grid, actorRegistry, startPos, Range);
+        _ai = new ArcherAI(this, grid, actorRegistry, startPos, Range, SightRange);
         actorRegistry.RegisterActor(this);
         SyncPosition(grid, null);
     }
@@ -33,7 +34,7 @@ public partial class ArcherController : ActorController
     {
         if (_ai == null) return;
 
-        _ai.TakeTurn(fovMap);
+        _ai.TakeTurn();
         SyncPosition(grid, fovMap);
     }
 
