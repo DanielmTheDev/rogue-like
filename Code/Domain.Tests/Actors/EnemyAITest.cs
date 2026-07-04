@@ -28,7 +28,7 @@ public class EnemyAITest
         public void Heal(int amount) => Health = Health.Heal(amount);
     }
 
-    private class MockEnemy : IActor, ICombatant
+    private class MockEnemy : ICombatant
     {
         public GridPos GridPosition { get; set; }
         public bool IsPlayer => false;
@@ -178,5 +178,44 @@ public class EnemyAITest
         ai.TakeTurn(fovMap);
 
         Assert.Equal(new GridPos(2, 2), ai.GridPosition);
+    }
+
+    [Fact]
+    public void WhenWallBlocksLine_EnemyDoesNotSeePlayer()
+    {
+        var grid = new DungeonGrid(5, 5);
+        var actorRegistry = new ActorRegistry();
+
+        var player = new MockPlayer { GridPosition = new GridPos(4, 2) };
+        actorRegistry.RegisterActor(player);
+
+        var enemyActor = new MockEnemy { GridPosition = new GridPos(2, 2) };
+        actorRegistry.RegisterActor(enemyActor);
+        grid.SetCell(new GridPos(3, 2), CellType.Wall);
+
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
+
+        ai.TakeTurn();
+
+        Assert.Equal(new GridPos(2, 2), ai.GridPosition);
+    }
+
+    [Fact]
+    public void WhenNoWallBlocksLine_EnemyDoesSeePlayer()
+    {
+        var grid = new DungeonGrid(5, 5);
+        var actorRegistry = new ActorRegistry();
+
+        var player = new MockPlayer { GridPosition = new GridPos(4, 2) };
+        actorRegistry.RegisterActor(player);
+
+        var enemyActor = new MockEnemy { GridPosition = new GridPos(2, 2) };
+        actorRegistry.RegisterActor(enemyActor);
+
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
+
+        ai.TakeTurn();
+
+        Assert.Equal(new GridPos(3, 2), ai.GridPosition);
     }
 }
