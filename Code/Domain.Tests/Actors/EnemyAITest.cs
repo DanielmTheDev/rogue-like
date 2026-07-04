@@ -3,7 +3,6 @@ using RogueLike.Domain.Actors;
 using RogueLike.Domain.Common;
 using RogueLike.Domain.Combat;
 using RogueLike.Domain.Grid;
-using RogueLike.Domain.Grid.FOV;
 
 namespace RogueLike.Domain.Tests.Actors;
 
@@ -52,27 +51,19 @@ public class EnemyAITest
     {
         var grid = new DungeonGrid(5, 5);
         var actorRegistry = new ActorRegistry();
-        var fovMap = new FovMap(5, 5);
 
         var player = new MockPlayer { GridPosition = new GridPos(4, 2) };
         actorRegistry.RegisterActor(player);
 
         var enemyActor = new MockEnemy { GridPosition = new GridPos(2, 2) };
-        // The mock doesn't get automatically registered by an Initialize method, so do it here.
         actorRegistry.RegisterActor(enemyActor);
 
-        // Make the whole map visible for this test
-        for (var x = 0; x < 5; x++)
-            for (var y = 0; y < 5; y++)
-                fovMap.SetVisibility(new GridPos(x, y), VisibilityState.Visible);
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition, 7);
 
-        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
+        // Clear line, in sight range -> enemy sees the player and steps toward (3,2).
+        ai.TakeTurn();
 
-        // Enemy should find a path and move towards (3,2)
-        ai.TakeTurn(fovMap);
-
-        Assert.Equal(3, ai.GridPosition.X);
-        Assert.Equal(2, ai.GridPosition.Y);
+        Assert.Equal(new GridPos(3, 2), ai.GridPosition);
     }
 
     [Fact]
@@ -80,7 +71,6 @@ public class EnemyAITest
     {
         var grid = new DungeonGrid(5, 5);
         var actorRegistry = new ActorRegistry();
-        var fovMap = new FovMap(5, 5);
 
         var player = new MockPlayer { GridPosition = new GridPos(4, 2), Health = new Health(10, 10) };
         actorRegistry.RegisterActor(player);
@@ -89,26 +79,20 @@ public class EnemyAITest
         var enemyActor = new MockEnemy { GridPosition = new GridPos(3, 2), Health = new Health(10, 10) };
         actorRegistry.RegisterActor(enemyActor);
 
-        for (var x = 0; x < 5; x++)
-            for (var y = 0; y < 5; y++)
-                fovMap.SetVisibility(new GridPos(x, y), VisibilityState.Visible);
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition, 7);
 
-        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
-
-        ai.TakeTurn(fovMap);
+        ai.TakeTurn();
 
         // The AI drove the enemy's own TryAttack verb: player took the enemy's damage, enemy did not move.
         Assert.Equal(7, player.Health.Current);
-        Assert.Equal(3, ai.GridPosition.X);
-        Assert.Equal(2, ai.GridPosition.Y);
+        Assert.Equal(new GridPos(3, 2), ai.GridPosition);
     }
 
     [Fact]
-    public void TakeTurn_PlayerLeftFov_MovesTowardLastKnownPosition()
+    public void TakeTurn_PlayerLeftSight_MovesTowardLastKnownPosition()
     {
-        var grid = new DungeonGrid(7, 7);
+        var grid = new DungeonGrid(20, 20);
         var actorRegistry = new ActorRegistry();
-        var fovMap = new FovMap(7, 7);
 
         var player = new MockPlayer { GridPosition = new GridPos(5, 2) };
         actorRegistry.RegisterActor(player);
@@ -116,25 +100,25 @@ public class EnemyAITest
         var enemyActor = new MockEnemy { GridPosition = new GridPos(2, 2) };
         actorRegistry.RegisterActor(enemyActor);
 
-        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition, 7);
 
-        // Turn 1: player visible -> enemy steps toward (5,2) and records it as last-known.
-        fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
-        ai.TakeTurn(fovMap);
+        // Turn 1: player in sight -> enemy steps toward (5,2) and records it as last-known.
+        ai.TakeTurn();
         Assert.Equal(new GridPos(3, 2), ai.GridPosition);
 
-        // Turn 2: player tile now out of FOV -> enemy still advances toward the remembered (5,2).
-        fovMap.SetVisibility(player.GridPosition, VisibilityState.Explored);
-        ai.TakeTurn(fovMap);
+        // Turn 2: player slips far out of sight range -> enemy still advances toward remembered (5,2).
+        var gone = new GridPos(19, 19);
+        actorRegistry.UpdateActorPosition(player, player.GridPosition, gone);
+        player.GridPosition = gone;
+        ai.TakeTurn();
         Assert.Equal(new GridPos(4, 2), ai.GridPosition);
     }
 
     [Fact]
     public void TakeTurn_ReachedLastKnownPosition_PlayerGone_Idles()
     {
-        var grid = new DungeonGrid(7, 7);
+        var grid = new DungeonGrid(20, 20);
         var actorRegistry = new ActorRegistry();
-        var fovMap = new FovMap(7, 7);
 
         var player = new MockPlayer { GridPosition = new GridPos(4, 2), Health = new Health(10, 10) };
         actorRegistry.RegisterActor(player);
@@ -142,40 +126,37 @@ public class EnemyAITest
         var enemyActor = new MockEnemy { GridPosition = new GridPos(2, 2) };
         actorRegistry.RegisterActor(enemyActor);
 
-        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition, 7);
 
-        // See the player once at (4,2), then it slips out of FOV and relocates (freeing that tile).
-        fovMap.SetVisibility(player.GridPosition, VisibilityState.Visible);
-        ai.TakeTurn(fovMap); // -> (3,2)
-        fovMap.SetVisibility(player.GridPosition, VisibilityState.Explored);
-        var gone = new GridPos(0, 0);
+        // See the player once at (4,2), then it slips far out of sight (freeing that tile).
+        ai.TakeTurn(); // -> (3,2)
+        var gone = new GridPos(19, 19);
         actorRegistry.UpdateActorPosition(player, player.GridPosition, gone);
-        player.GridPosition = gone; // moved off, never seen again
+        player.GridPosition = gone;
 
-        ai.TakeTurn(fovMap); // walks into last-known (4,2), now empty
+        ai.TakeTurn(); // walks into last-known (4,2), now empty
         Assert.Equal(new GridPos(4, 2), ai.GridPosition);
 
         // Arrived at last-known with no player in sight -> memory cleared, now idle.
-        ai.TakeTurn(fovMap);
+        ai.TakeTurn();
         Assert.Equal(new GridPos(4, 2), ai.GridPosition);
     }
 
     [Fact]
     public void TakeTurn_NeverSawPlayer_Idles()
     {
-        var grid = new DungeonGrid(5, 5);
+        var grid = new DungeonGrid(20, 20);
         var actorRegistry = new ActorRegistry();
-        var fovMap = new FovMap(5, 5); // nothing set Visible
 
-        var player = new MockPlayer { GridPosition = new GridPos(4, 2) };
+        var player = new MockPlayer { GridPosition = new GridPos(19, 19) }; // far out of sight range
         actorRegistry.RegisterActor(player);
 
         var enemyActor = new MockEnemy { GridPosition = new GridPos(2, 2) };
         actorRegistry.RegisterActor(enemyActor);
 
-        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition, 7);
 
-        ai.TakeTurn(fovMap);
+        ai.TakeTurn();
 
         Assert.Equal(new GridPos(2, 2), ai.GridPosition);
     }
@@ -193,7 +174,7 @@ public class EnemyAITest
         actorRegistry.RegisterActor(enemyActor);
         grid.SetCell(new GridPos(3, 2), CellType.Wall);
 
-        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition, 7);
 
         ai.TakeTurn();
 
@@ -212,7 +193,7 @@ public class EnemyAITest
         var enemyActor = new MockEnemy { GridPosition = new GridPos(2, 2) };
         actorRegistry.RegisterActor(enemyActor);
 
-        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition);
+        var ai = new EnemyAI(enemyActor, grid, actorRegistry, enemyActor.GridPosition, 7);
 
         ai.TakeTurn();
 

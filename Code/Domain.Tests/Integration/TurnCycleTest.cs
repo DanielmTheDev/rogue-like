@@ -4,7 +4,6 @@ using RogueLike.Domain.Combat;
 using RogueLike.Domain.Common;
 using RogueLike.Domain.Flow;
 using RogueLike.Domain.Grid;
-using RogueLike.Domain.Grid.FOV;
 
 namespace RogueLike.Domain.Tests.Integration;
 
@@ -28,7 +27,7 @@ public class TurnCycleTest
         // One full cycle: player acts, enemy reacts, control returns to player.
         s.Turn.EndPlayerTurn();
         Assert.Equal(TurnState.Enemy, s.Turn.CurrentState);
-        s.Enemy.Ai.TakeTurn(s.Fov);
+        s.Enemy.Ai.TakeTurn();
         s.Turn.EndEnemyTurn();
 
         Assert.Equal(TurnState.Player, s.Turn.CurrentState);
@@ -47,7 +46,7 @@ public class TurnCycleTest
         var hpBefore = s.Player.Health.Current;
 
         s.Turn.EndPlayerTurn();
-        s.Enemy.Ai.TakeTurn(s.Fov); // player is on the adjacent tile -> attack, not move
+        s.Enemy.Ai.TakeTurn(); // player is on the adjacent tile -> attack, not move
         s.Turn.EndEnemyTurn();
 
         Assert.True(s.Player.Health.Current < hpBefore, "adjacent enemy should damage the player");
@@ -58,26 +57,23 @@ public class TurnCycleTest
     {
         var grid = new DungeonGrid(20, 20); // ctor fills with Floor -> open room, deterministic A*
         var registry = new ActorRegistry();
-        var fov = new FovMap(20, 20);
         var turn = new TurnManager();
 
         var player = new PlayerDouble(playerPos);
         registry.RegisterActor(player);
 
         var enemy = new EnemyDouble(enemyPos);
-        enemy.Ai = new EnemyAI(enemy, grid, registry, enemyPos);
+        enemy.Ai = new EnemyAI(enemy, grid, registry, enemyPos, 7);
         registry.RegisterActor(enemy);
 
-        // Player-centred FOV; EnemyAI only acts while the player's tile is Visible.
-        new Raycaster().ComputeFov(fov, grid, playerPos, 20);
-
-        return new Scenario(turn, registry, fov, grid, player, enemy);
+        // EnemyAI decides visibility from its own line-of-sight; the open floor grid keeps the
+        // player in sight, so the enemy closes in / attacks each turn.
+        return new Scenario(turn, registry, grid, player, enemy);
     }
 
     private sealed record Scenario(
         TurnManager Turn,
         ActorRegistry Registry,
-        FovMap Fov,
         DungeonGrid Grid,
         PlayerDouble Player,
         EnemyDouble Enemy);

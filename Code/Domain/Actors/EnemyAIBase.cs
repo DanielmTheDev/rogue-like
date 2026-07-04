@@ -1,7 +1,6 @@
 using System.Linq;
 using RogueLike.Domain.Common;
 using RogueLike.Domain.Grid;
-using RogueLike.Domain.Grid.FOV;
 
 namespace RogueLike.Domain.Actors;
 
@@ -23,26 +22,28 @@ public abstract class EnemyAIBase
     // Last tile the player was seen on. Drives pursuit after line-of-sight breaks; cleared once
     // reached (or the path is lost) so the enemy gives up instead of chasing omnisciently.
     private GridPos? _lastKnownPlayerPos;
+    private readonly int _sightRange;
 
     public GridPos GridPosition => Mover.GridPosition;
 
-    protected EnemyAIBase(IActor owner, DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos)
+    protected EnemyAIBase(IActor owner, DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos, int sightRange)
     {
         Owner = owner;
         Grid = grid;
         Actors = actorRegistry;
         Mover = new GridMover(owner, grid, actorRegistry, startPos);
+        _sightRange = sightRange;
     }
 
     /// <summary>
     /// Evaluates game state and makes a single move.
     /// </summary>
-    public void TakeTurn(FovMap fovMap)
+    public void TakeTurn()
     {
         var player = Actors.AllActors.FirstOrDefault(a => a.IsPlayer);
         if (player == null) return;
 
-        if (fovMap.GetVisibility(player.GridPosition) == VisibilityState.Visible)
+        if (CanSee(player))
         {
             _lastKnownPlayerPos = player.GridPosition;
             ActOnVisible(player);
@@ -72,6 +73,9 @@ public abstract class EnemyAIBase
 
         Mover.TryMove(Mover.GridPosition.DirectionTo(path[0]));
     }
+
+    private bool CanSee(IActor actor)
+        => Grid.HasClearLine(Mover.GridPosition, actor.GridPosition) && Mover.GridPosition.ChebyshevTo(actor.GridPosition) <= _sightRange;
 
     private void PursueLastKnown()
     {

@@ -1,3 +1,4 @@
+using Godot;
 using RogueLike.Domain.Common;
 using RogueLike.Code.View.Entities;
 using RogueLike.Domain.Actors;
@@ -11,6 +12,8 @@ public partial class EnemyController : ActorController
 {
     private EnemyAI _ai;
 
+    [Export] public int SightRange { get; set; } = 7;
+
     public override GridPos GridPosition => _ai?.GridPosition ?? GridPos.Origin;
     public override bool IsPlayer => false;
     public override int AttackDamage => BaseAttackDamage;
@@ -19,7 +22,7 @@ public partial class EnemyController : ActorController
     {
         InitializeBase(actorRegistry);
 
-        _ai = new EnemyAI(this, grid, actorRegistry, startPos);
+        _ai = new EnemyAI(this, grid, actorRegistry, startPos, SightRange);
         actorRegistry.RegisterActor(this);
         SyncPosition(grid, null);
     }
@@ -28,7 +31,7 @@ public partial class EnemyController : ActorController
     {
         if (_ai == null) return;
 
-        _ai.TakeTurn(fovMap);
+        _ai.TakeTurn();
         SyncPosition(grid, fovMap);
     }
 
