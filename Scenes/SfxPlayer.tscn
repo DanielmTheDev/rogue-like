@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bj641q58yuu1k"]
+
+[ext_resource type="Script" uid="uid://cx20y8ahv4njq" path="res://Code/View/Audio/SfxPlayer.cs" id="1_sfx"]
+[ext_resource type="Resource" path="res://Resources/SfxBank.tres" id="2_bank"]
+
+[node name="SfxPlayer" type="Node" unique_id=1313460568]
+script = ExtResource("1_sfx")
+Bank = ExtResource("2_bank")
