@@ -97,7 +97,7 @@ public partial class Main : Node2D
         var swordScene = GD.Load<PackedScene>("res://Scenes/Sword.tscn");
 
         Spawner.SpawnEnemies(this, goblinScene, archerScene, _rooms, _gridMap, _actorRegistry, _dungeonLevel,
-            LevelSettings);
+            LevelSettings, _fovMap);
         Spawner.SpawnPotions(this, potionScene, _rooms, _gridMap, _floorItems);
         // Per-floor weapon loot: deeper floors drop more, and skew to higher tiers.
         Spawner.SpawnFloorLoot(this, swordScene, _rooms, _gridMap, _floorItems, _lootTable, _dungeonLevel, _lootRng);
@@ -168,9 +168,9 @@ public partial class Main : Node2D
         foreach (var actor in _actorRegistry.AllActors.ToList())
         {
             if (actor is Enemies.EnemyController goblin)
-                goblin.TakeTurn(_gridMap, _fovMap);
+                goblin.TakeTurn();
             else if (actor is Enemies.ArcherController archer)
-                archer.TakeTurn(_gridMap, _fovMap);
+                archer.TakeTurn();
         }
 
         _turnManager.EndEnemyTurn();

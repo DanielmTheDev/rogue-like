@@ -3,6 +3,7 @@ using RogueLike.Domain.Common;
 using RogueLike.Code.View.Entities;
 using RogueLike.Domain.Actors;
 using RogueLike.Domain.Grid;
+using RogueLike.Domain.Grid.FOV;
 
 namespace RogueLike.Code.View.Enemies;
 
@@ -15,6 +16,10 @@ namespace RogueLike.Code.View.Enemies;
 public abstract partial class EnemyControllerBase : ActorController, IEnemy
 {
     private EnemyAIBase _ai;
+    // Per-level view context, captured once at Initialize (stable for the enemy's lifetime): the
+    // grid for world-space projection, the FovMap for sprite fog-of-war. Neither feeds AI decisions.
+    private DungeonGrid _grid;
+    private FovMap _fovMap;
 
     [Export] public int XpReward { get; private set; } = 35;
     [Export] public int SightRange { get; set; } = 7;
@@ -23,34 +28,35 @@ public abstract partial class EnemyControllerBase : ActorController, IEnemy
     public override bool IsPlayer => false;
     public override int AttackDamage => BaseAttackDamage;
 
-    public void Initialize(DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos)
+    public void Initialize(DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos, FovMap fovMap)
     {
         InitializeBase(actorRegistry);
 
+        _grid = grid;
+        _fovMap = fovMap;
         _ai = CreateAi(grid, actorRegistry, startPos);
         actorRegistry.RegisterActor(this);
-        SyncPosition(grid, null);
+        SyncWorldPosition(); // position only at spawn; Main.UpdateFov applies initial sprite visibility
     }
 
-    public void TakeTurn(DungeonGrid grid, Domain.Grid.FOV.FovMap fovMap)
+    public void TakeTurn()
     {
         if (_ai == null) return;
 
         _ai.TakeTurn();
-        SyncPosition(grid, fovMap);
+        SyncPosition();
     }
 
     /// <summary>Builds the concrete AI (melee/ranged) for this enemy type.</summary>
     protected abstract EnemyAIBase CreateAi(DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos);
 
-    private void SyncPosition(DungeonGrid grid, Domain.Grid.FOV.FovMap fovMap)
+    private void SyncPosition()
     {
-        Position = GridPosition.ToWorldCenter(grid.TileSize);
-
-        if (fovMap != null)
-        {
-            var vis = fovMap.GetVisibility(GridPosition);
-            Visible = vis == Domain.Grid.FOV.VisibilityState.Visible;
-        }
+        SyncWorldPosition();
+        // Post-move: refresh this sprite's fog-of-war for the tile it just stepped to (player FOV is
+        // static during enemy turns, so a mover can step in/out of view).
+        Visible = _fovMap.GetVisibility(GridPosition) == VisibilityState.Visible;
     }
+
+    private void SyncWorldPosition() => Position = GridPosition.ToWorldCenter(_grid.TileSize);
 }
