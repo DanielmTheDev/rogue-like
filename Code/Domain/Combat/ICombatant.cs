@@ -11,7 +11,6 @@ public interface ICombatant : IActor
     string DisplayName { get; }
     Health Health { get; }
     int AttackDamage { get; }
-    int XpReward { get; }
 
     /// <summary>
     /// Invoked when the entity dies, allowing the logic layer to instruct the engine to erase the node.

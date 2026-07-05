@@ -41,7 +41,8 @@ public static class Spawner
         DungeonGrid grid,
         ActorRegistry actorRegistry,
         int dungeonLevel,
-        LevelSettings levelSettings)
+        LevelSettings levelSettings,
+        FovMap fovMap)
     {
         for (var i = 1; i < rooms.Count; i++)
         {
@@ -74,31 +75,31 @@ public static class Spawner
 
                 // Alternate enemy types
                 if (j % 2 == 0)
-                    SpawnGoblin(parentNode, goblinScene, grid, actorRegistry, spawnPos, i * 10 + j);
+                    SpawnGoblin(parentNode, goblinScene, grid, actorRegistry, spawnPos, i * 10 + j, fovMap);
                 else
-                    SpawnArcher(parentNode, archerScene, grid, actorRegistry, spawnPos, i * 10 + j);
+                    SpawnArcher(parentNode, archerScene, grid, actorRegistry, spawnPos, i * 10 + j, fovMap);
             }
         }
     }
 
     public static void SpawnGoblin(
         Node parent, PackedScene scene, DungeonGrid grid,
-        ActorRegistry actorRegistry, GridPos pos, int index)
+        ActorRegistry actorRegistry, GridPos pos, int index, FovMap fovMap)
     {
         var enemy = scene.Instantiate<EnemyController>();
         enemy.Name = $"Goblin_{index}";
         parent.AddChild(enemy);
-        enemy.Initialize(grid, actorRegistry, pos);
+        enemy.Initialize(grid, actorRegistry, pos, fovMap);
     }
 
     public static void SpawnArcher(
         Node parent, PackedScene scene, DungeonGrid grid,
-        ActorRegistry actorRegistry, GridPos pos, int index)
+        ActorRegistry actorRegistry, GridPos pos, int index, FovMap fovMap)
     {
         var archer = scene.Instantiate<ArcherController>();
         archer.Name = $"Archer_{index}";
         parent.AddChild(archer);
-        archer.Initialize(grid, actorRegistry, pos);
+        archer.Initialize(grid, actorRegistry, pos, fovMap);
     }
 
     public static void SpawnHealingPotion(

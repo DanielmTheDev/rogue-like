@@ -33,7 +33,6 @@ public abstract partial class ActorController : Node2D, ICombatant
     [Export] public ProgressBar HealthBar { get; set; }
     [Export] public int BaseHealth { get; set; } = 10;
     [Export] public int BaseAttackDamage { get; set; } = 2;
-    [Export] public int XpReward { get; private set; } = 35;
 
     /// <summary>
     /// Base initialization. Sets up health and UI mapping.

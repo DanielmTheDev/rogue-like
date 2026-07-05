@@ -15,7 +15,6 @@ public class EnemyAITest
         public string DisplayName => "Mock Player";
         public Health Health { get; set; }
         public int AttackDamage => 0;
-        public int XpReward => 0;
         public void Die() { }
 
         public void ReceiveDamage(Damage damage)
@@ -34,7 +33,6 @@ public class EnemyAITest
         public string DisplayName => "Mock Enemy";
         public Health Health { get; set; }
         public int AttackDamage => 3;
-        public int XpReward => 10;
         public void Die() { }
 
         public void ReceiveDamage(Damage damage)

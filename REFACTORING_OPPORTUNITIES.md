@@ -17,8 +17,9 @@
 - **Solution:** generate a +2 sprite via the `godot-sprite-gen` skill; let `WeaponItem`/loot pick art per weapon (needs a weapon→sprite mapping, e.g. a small catalog).
 - **Priority:** low — cosmetic.
 
-## XpReward + SightRange sit on the all-actor base (wrong abstraction)
+## EnemyStats Godot Resource (group enemy stat exports)
 
-- **Issue:** `ActorController` (base of Player) + `ICombatant` carry `XpReward` — "XP granted when this dies" — so the Player is forced to implement a meaningless value. Enemy-only concept on the all-actor base (ISP/wrong-abstraction). `SightRange` was just added on the enemy controllers (correctly not on the base), but there's no shared enemy seam to hold enemy-only data.
-- **Solution:** introduce an enemy abstraction — e.g. `IXpProvider { int XpReward }` (enemies implement, Player does not); the kill hook casts `victim is IXpProvider`. Optionally a shared `EnemyControllerBase`/`IEnemy` holding `SightRange` + `XpReward`. Then (optional, later) group enemy stats into a Godot `Resource` (`EnemyStats`: health/damage/xp/sight), translated to domain like `LevelSettings`→`LootTableConfig` — keeps the Godot-free wall; excludes Player by construction.
-- **Priority:** medium — next AI/stats cleanup; keep separate from feature PRs (touches `ICombatant` + every actor `.tscn`).
+- **Issue:** enemy stats are scattered across `[Export]`s on `EnemyControllerBase`/`ArcherController` + per-scene `.tscn` values (`BaseHealth`, `BaseAttackDamage`, `XpReward`, `SightRange`, `Range`). No reusable stat presets.
+- **Solution:** group them into a `[GlobalClass] EnemyStats : Resource` authored as `.tres` per enemy type, translated to a Godot-free domain record at the view edge (mirror `LevelSettings`→`LootTableConfig` in `Main.BuildLootConfig`). Excludes Player by construction.
+- **Priority:** low-medium — polish; touches every enemy `.tscn` + `Spawner` plumbing. Keep as its own PR.
+- **Resolved (2026-07-05):** the wrong-abstraction half is done — `XpReward` moved off `ICombatant`/`ActorController` onto `IEnemy` (Player no longer carries it); `SightRange` + the controller duplication moved onto the new `EnemyControllerBase`. Only the optional `EnemyStats` resource grouping (above) remains.

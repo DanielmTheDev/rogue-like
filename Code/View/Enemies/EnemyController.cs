@@ -1,48 +1,15 @@
-using Godot;
 using RogueLike.Domain.Common;
-using RogueLike.Code.View.Entities;
 using RogueLike.Domain.Actors;
 using RogueLike.Domain.Grid;
 
 namespace RogueLike.Code.View.Enemies;
+
 /// <summary>
-/// Godot node representing the enemy visually.
+/// Godot node for the melee Goblin. All shared plumbing lives in <see cref="EnemyControllerBase"/>;
+/// this only wires up the concrete <see cref="EnemyAI"/>.
 /// </summary>
-public partial class EnemyController : ActorController
+public partial class EnemyController : EnemyControllerBase
 {
-    private EnemyAI _ai;
-
-    [Export] public int SightRange { get; set; } = 7;
-
-    public override GridPos GridPosition => _ai?.GridPosition ?? GridPos.Origin;
-    public override bool IsPlayer => false;
-    public override int AttackDamage => BaseAttackDamage;
-
-    public void Initialize(DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos)
-    {
-        InitializeBase(actorRegistry);
-
-        _ai = new EnemyAI(this, grid, actorRegistry, startPos, SightRange);
-        actorRegistry.RegisterActor(this);
-        SyncPosition(grid, null);
-    }
-
-    public void TakeTurn(DungeonGrid grid, Domain.Grid.FOV.FovMap fovMap)
-    {
-        if (_ai == null) return;
-
-        _ai.TakeTurn();
-        SyncPosition(grid, fovMap);
-    }
-
-    private void SyncPosition(DungeonGrid grid, Domain.Grid.FOV.FovMap fovMap)
-    {
-        Position = GridPosition.ToWorldCenter(grid.TileSize);
-
-        if (fovMap != null)
-        {
-            var vis = fovMap.GetVisibility(GridPosition);
-            Visible = vis == Domain.Grid.FOV.VisibilityState.Visible;
-        }
-    }
+    protected override EnemyAIBase CreateAi(DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos)
+        => new EnemyAI(this, grid, actorRegistry, startPos, SightRange);
 }
