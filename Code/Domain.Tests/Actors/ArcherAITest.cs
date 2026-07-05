@@ -15,7 +15,6 @@ public class ArcherAITest
         public Health Health { get; set; }
         public int AttackDamage => 0;
         public string DisplayName => "Mock Player";
-        public int XpReward => 0;
         public void Die() { }
 
         public void ReceiveDamage(Damage damage)
@@ -34,7 +33,6 @@ public class ArcherAITest
         public int AttackDamage => 1;
         public string DisplayName => "Mock Archer";
         public Health Health { get; set; }
-        public int XpReward => 10;
         public void Die() { }
 
         public void ReceiveDamage(Damage damage)

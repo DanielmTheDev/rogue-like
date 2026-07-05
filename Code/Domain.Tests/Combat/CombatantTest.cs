@@ -1,4 +1,5 @@
 using Xunit;
+using RogueLike.Domain.Actors;
 using RogueLike.Domain.Common;
 using RogueLike.Domain.Combat;
 
@@ -61,7 +62,32 @@ public class CombatantTest
         Assert.Equal(0, ((MockCombatant)attacker).CapturedKillXp);
     }
 
-    private class MockCombatant : ICombatant
+    [Fact]
+    public void TryAttack_KillsNonEnemy_GrantsNoXp()
+    {
+        ICombatant attacker = new MockCombatant(10, 10); // lethal
+        var defender = new NonEnemyCombatant(5); // not an IEnemy -> no reward
+
+        attacker.TryAttack(defender);
+
+        Assert.True(defender.Health.IsDead);
+        Assert.Equal(0, ((MockCombatant)attacker).CapturedKillXp);
+    }
+
+    // A killable combatant that is NOT an IEnemy (e.g. player-like) — killing it yields no XP.
+    private sealed class NonEnemyCombatant(int hp) : ICombatant
+    {
+        public string DisplayName => "NonEnemy";
+        public Health Health { get; private set; } = new(hp, hp);
+        public int AttackDamage => 0;
+        public GridPos GridPosition => GridPos.Origin;
+        public bool IsPlayer => true;
+        public void Die() { }
+        public void ReceiveDamage(Damage damage) => Health = Health.TakeDamage(damage.Amount);
+        public void Heal(int amount) => Health = Health.Heal(amount);
+    }
+
+    private class MockCombatant : IEnemy
     {
         public string DisplayName { get; set; } = "Mock";
         public Health Health { get; private set; }
@@ -96,7 +122,7 @@ public class CombatantTest
 
         public void OnKilled(ICombatant victim)
         {
-            CapturedKillXp += victim.XpReward;
+            if (victim is IEnemy enemy) CapturedKillXp += enemy.XpReward;
         }
     }
 }

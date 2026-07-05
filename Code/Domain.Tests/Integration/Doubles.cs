@@ -16,7 +16,6 @@ internal sealed class PlayerDouble(GridPos pos) : ICombatant
     public string DisplayName => "Player";
     public Health Health { get; private set; } = new(20, 20);
     public int AttackDamage => 5;
-    public int XpReward => 0;
     public void Die() { }
     public void ReceiveDamage(Damage damage) => Health = Health.TakeDamage(damage.Amount);
     public void Heal(int amount) => Health = Health.Heal(amount);
@@ -32,7 +31,6 @@ internal sealed class EnemyDouble(GridPos start) : ICombatant
     public string DisplayName => "Goblin";
     public Health Health { get; private set; } = new(10, 10);
     public int AttackDamage => 3;
-    public int XpReward => 5;
     public void Die() { }
     public void ReceiveDamage(Damage damage) => Health = Health.TakeDamage(damage.Amount);
     public void Heal(int amount) => Health = Health.Heal(amount);

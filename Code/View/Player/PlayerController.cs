@@ -122,8 +122,9 @@ public partial class PlayerController : ActorController, IEquipmentHolder
     // pure Player aggregate (which will own ExperienceTrack) when the controller becomes a View.
     public void OnKilled(ICombatant victim)
     {
-        Experience.AddXP(victim.XpReward);
-        GameLog.Instance.Log($"[color=yellow]You gained {victim.XpReward} XP![/color]");
+        if (victim is not IEnemy enemy) return;
+        Experience.AddXP(enemy.XpReward);
+        GameLog.Instance.Log($"[color=yellow]You gained {enemy.XpReward} XP![/color]");
     }
 
     public override void _UnhandledInput(InputEvent @event)
