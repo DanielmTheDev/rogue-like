@@ -35,6 +35,6 @@ public class ArcherAI : EnemyAIBase
     private void Shoot(IActor player)
     {
         if (Owner is ICombatant attacker && player is ICombatant defender)
-            attacker.TryAttack(defender);
+            attacker.Attack(defender);
     }
 }

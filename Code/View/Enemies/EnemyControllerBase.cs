@@ -15,6 +15,7 @@ namespace RogueLike.Code.View.Enemies;
 /// </summary>
 public abstract partial class EnemyControllerBase : ActorController, IEnemy
 {
+    private Enemy _enemy;
     private EnemyAIBase _ai;
     // Per-level view context, captured once at Initialize (stable for the enemy's lifetime): the
     // grid for world-space projection, the FovMap for sprite fog-of-war. Neither feeds AI decisions.
@@ -24,13 +25,17 @@ public abstract partial class EnemyControllerBase : ActorController, IEnemy
     [Export] public int XpReward { get; private set; } = 35;
     [Export] public int SightRange { get; set; } = 7;
 
+    protected override Actor Actor => _enemy;
+
     public override GridPos GridPosition => _ai?.GridPosition ?? GridPos.Origin;
     public override bool IsPlayer => false;
-    public override int AttackDamage => BaseAttackDamage;
 
     public void Initialize(DungeonGrid grid, ActorRegistry actorRegistry, GridPos startPos, FovMap fovMap)
     {
         InitializeBase(actorRegistry);
+
+        _enemy = new Enemy(Name.ToString(), BaseHealth, BaseAttackDamage);
+        ObserveActor();
 
         _grid = grid;
         _fovMap = fovMap;

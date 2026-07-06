@@ -10,6 +10,8 @@ using RogueLike.Domain.Equipment;
 using RogueLike.Domain.Flow;
 using RogueLike.Domain.Items;
 using System.Linq;
+// Disambiguate the domain aggregate from this view namespace (RogueLike.Code.View.Player).
+using PlayerActor = RogueLike.Domain.Actors.Player;
 
 namespace RogueLike.Code.View.Player;
 
@@ -19,6 +21,7 @@ namespace RogueLike.Code.View.Player;
 /// </summary>
 public partial class PlayerController : ActorController, IEquipmentHolder
 {
+    private PlayerActor _player;
     private GridMover _mover;
     private TurnManager _turnManager;
     private FloorItems _floorItems;
@@ -27,16 +30,17 @@ public partial class PlayerController : ActorController, IEquipmentHolder
     private NodeRegistry _nodeRegistry;
     private Main _main; // Reference to Main to trigger level changes
 
-    public bool IsDead { get; private set; } = false;
+    public bool IsDead { get; private set; }
 
-    private int _turnsSinceLastHeal = 0;
+    private int _turnsSinceLastHeal;
     private const int TurnsPerHeal = 3;
+
+    protected override Actor Actor => Player;
 
     public override GridPos GridPosition => _mover.GridPosition;
     public override bool IsPlayer => true;
-    public override int AttackDamage => BaseAttackDamage + Loadout.DamageBonus;
     public Inventory Inventory => _inventory;
-    public Loadout Loadout { get; } = new();
+    public Loadout Loadout => Player.Loadout;
     public ExperienceSystem Experience { get; private set; }
 
     public void Initialize(Main main, TurnManager turnManager, FloorItems floorItems)
@@ -44,6 +48,9 @@ public partial class PlayerController : ActorController, IEquipmentHolder
         _main = main;
         _turnManager = turnManager;
         _floorItems = floorItems;
+
+        Player.OnKilledCombatant += OnKilled;
+        ObserveActor();
 
         _inventory = new Inventory(maxSlots: 10);
         Experience = new ExperienceSystem();
@@ -53,6 +60,7 @@ public partial class PlayerController : ActorController, IEquipmentHolder
     public void PlaceOnLevel(DungeonGrid gridMap, ActorRegistry actorRegistry, FovMap fovMap, NodeRegistry nodeRegistry, GridPos startPos)
     {
         InitializeBase(actorRegistry);
+        _player.ResetHealth(BaseHealth); // full HP on each level (matches prior InitializeHealth)
         _mover = new GridMover(this, gridMap, actorRegistry, startPos);
         _fovMap = fovMap;
         _nodeRegistry = nodeRegistry;
@@ -85,9 +93,7 @@ public partial class PlayerController : ActorController, IEquipmentHolder
             var targetActor = _actorRegistry.GetActorAt(target);
             if (targetActor is ICombatant targetCombatant)
             {
-                // TRANSITIONAL (DDD Phase 3): cast needed because TryAttack is a default interface
-                // method; disappears when the pure Actor aggregate exposes Attack() directly.
-                ((ICombatant)this).TryAttack(targetCombatant);
+                _player.Attack(targetCombatant);
                 return true; // Successfully consumed turn with an attack
             }
         }
@@ -115,8 +121,8 @@ public partial class PlayerController : ActorController, IEquipmentHolder
     }
 
     /// <summary>
-    /// The player gains XP when its attack kills a combatant (rich-domain kill reaction;
-    /// see <see cref="ICombatant.OnKilled"/>).
+    /// The player gains XP when its attack kills a combatant. Wired to the domain
+    /// <see cref="PlayerActor.OnKilledCombatant"/> kill-reaction event.
     /// </summary>
     // TRANSITIONAL (DDD Phase 3): this XP rule lives on the Godot controller; moves onto the
     // pure Player aggregate (which will own ExperienceTrack) when the controller becomes a View.
@@ -332,7 +338,7 @@ public partial class PlayerController : ActorController, IEquipmentHolder
     private void HandleLevelUp(int newLevel)
     {
         // Increase stats
-        BaseAttackDamage++;
+        _player.IncreaseAttack();
         IncreaseMaxHp(5); // Heal to full on level up as a bonus
 
         GameLog.Instance.Log($"[color=purple]You reached Level {newLevel}![/color]");
@@ -366,12 +372,16 @@ public partial class PlayerController : ActorController, IEquipmentHolder
         BaseAttackDamage = defaultPlayer.BaseAttackDamage;
         BaseHealth = defaultPlayer.BaseHealth;
 
-        InitializeHealth();
+        // Reset the aggregate: base attack, empty loadout (same instance -> UI ref stays valid), full HP.
+        _player.ResetForNewGame(BaseHealth, BaseAttackDamage);
 
         // Reset systems
         Inventory.Clear();
-        Loadout.Clear();
         Experience = new ExperienceSystem();
         Experience.OnLevelUp += HandleLevelUp;
     }
+
+    // The domain aggregate, created on demand from the exported seed stats so the controller is
+    // usable before full Initialize (Initialize is the first access in the live scene).
+    private PlayerActor Player => _player ??= new PlayerActor(BaseHealth, BaseAttackDamage);
 }

@@ -1,10 +1,11 @@
 using RogueLike.Domain.Actors;
-using RogueLike.Domain.Flow;
 
 namespace RogueLike.Domain.Combat;
 
 /// <summary>
 /// A dynamic entity that has a physical presence on the board and can participate in combat.
+/// The combat behavior itself lives on the pure <see cref="Actor"/> aggregate; this interface is the
+/// polymorphic contract the registry/AI use to reach an actor (as attacker or defender).
 /// </summary>
 public interface ICombatant : IActor
 {
@@ -24,27 +25,9 @@ public interface ICombatant : IActor
     void Heal(int amount);
 
     /// <summary>
-    /// This combatant attacks the defender: deals its damage, logs the action, and—if the
-    /// defender dies—invokes <see cref="OnKilled"/> on this attacker. Behavior lives with the
-    /// data it mutates (rich domain). Returns false if there is no defender.
+    /// This combatant attacks the defender (deals its damage, logs, fires its own kill reaction on
+    /// death). Returns false if there is no defender. The real behavior lives on <see cref="Actor"/>;
+    /// implementers delegate to their owned actor.
     /// </summary>
-    // TRANSITIONAL (DDD Phase 3): implemented as a default interface method so it's shared and
-    // unit-testable without Godot while controllers still ARE the combatants. Target: a real
-    // Attack() method on the pure Actor aggregate (no DIM, no interface-cast at call sites).
-    bool TryAttack(ICombatant defender)
-    {
-        if (defender == null) return false;
-        var damage = new Damage(AttackDamage);
-        defender.ReceiveDamage(damage);
-        GameLog.Instance.LogCombat(DisplayName, defender.DisplayName, damage.Amount);
-        if (defender.Health.IsDead) OnKilled(defender);
-        return true;
-    }
-
-    /// <summary>
-    /// Reaction hook invoked on this combatant when its attack kills <paramref name="victim"/>.
-    /// Default: no reaction. The player overrides this to gain XP — combat no longer needs to
-    /// know who the attacker is (replaces the old `attacker is PlayerController` cast).
-    /// </summary>
-    void OnKilled(ICombatant victim) { }
+    bool Attack(ICombatant defender);
 }

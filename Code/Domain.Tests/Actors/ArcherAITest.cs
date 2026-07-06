@@ -24,6 +24,7 @@ public class ArcherAITest
         }
 
         public void Heal(int amount) => Health = Health.Heal(amount);
+        public bool Attack(ICombatant defender) => false;
     }
 
     private class MockArcher : ICombatant
@@ -42,6 +43,13 @@ public class ArcherAITest
         }
 
         public void Heal(int amount) => Health = Health.Heal(amount);
+
+        public bool Attack(ICombatant defender)
+        {
+            if (defender == null) return false;
+            defender.ReceiveDamage(new Damage(AttackDamage));
+            return true;
+        }
     }
 
     private readonly DungeonGrid _grid;
