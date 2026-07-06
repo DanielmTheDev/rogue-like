@@ -3,8 +3,10 @@ using RogueLike.Domain.Common;
 namespace RogueLike.Domain.Items;
 
 /// <summary>
-/// Interface for all floor items.
-/// Phase 2: Items can now be picked up and stored in inventory.
+/// Interface for all floor items. The acquire (equip vs store) is owned by the picker
+/// (see <see cref="IItemPicker.TryPickup"/>); an item only says whether it can be taken
+/// (<see cref="CanPickup"/>) and reacts once it is (<see cref="OnPickup"/>). A weapon opts into
+/// equipping by also implementing <see cref="Equipment.IEquippable"/>.
 /// </summary>
 public interface IItem
 {
@@ -12,30 +14,15 @@ public interface IItem
     GridPos GridPosition { get; }
     bool IsConsumable { get; } // Should item disappear after use?
 
-    /// <summary>
-    /// Can this item be picked up by the given actor?
-    /// </summary>
-    bool CanPickup(Actors.IActor actor);
+    /// <summary>Can this item be picked up right now?</summary>
+    bool CanPickup();
 
-    /// <summary>
-    /// Called when the item is successfully picked up.
-    /// Use for logging or effects.
-    /// </summary>
-    void OnPickup(Actors.IActor actor);
+    /// <summary>Called when the item is successfully picked up. Use for logging or effects.</summary>
+    void OnPickup();
 
     /// <summary>
     /// Use the item from inventory.
     /// Returns true if the item was successfully used.
     /// </summary>
     bool Use(Actors.IActor actor);
-
-    /// <summary>
-    /// Attempts to pick this item up. Returns true if it was taken — the caller then
-    /// unregisters it from the floor. Returns false to leave it on the floor.
-    /// The base item stores it in the inventory; specific items override (e.g. a weapon
-    /// equips instead of being stored).
-    /// </summary>
-    // TRANSITIONAL (DDD Phase 3): the item should not reach into the actor's inventory aggregate.
-    // Target: Player.TryPickup(item) — the actor owns the acquire; the item keeps only CanPickup/OnPickup.
-    bool TryPickup(Actors.IActor actor, Inventory inventory);
 }

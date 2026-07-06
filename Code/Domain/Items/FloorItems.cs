@@ -31,16 +31,16 @@ public class FloorItems
     }
 
     /// <summary>
-    /// If there is an item at the given position, delegates the pickup decision to the item
-    /// (see <see cref="IItem.TryPickup"/>) and unregisters it from the floor if it was taken.
+    /// If there is an item at the given position, delegates the acquire to the picker
+    /// (see <see cref="IItemPicker.TryPickup"/>) and unregisters it from the floor if it was taken.
     /// </summary>
-    public void CheckForPickup(GridPos position, Actors.IActor actor, Inventory inventory)
+    public void CheckForPickup(GridPos position, IItemPicker picker)
     {
         var item = _items.FirstOrDefault(i => i.GridPosition == position);
         if (item == null)
             return;
 
-        if (item.TryPickup(actor, inventory))
+        if (picker.TryPickup(item))
             UnregisterItem(item);
     }
 }

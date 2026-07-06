@@ -26,12 +26,12 @@ public partial class ItemController : Node2D, IItem
         _floorItems.RegisterItem(this);
     }
 
-    public virtual bool CanPickup(IActor actor)
+    public virtual bool CanPickup()
     {
         return true; // By default, all items can be picked up
     }
 
-    public virtual void OnPickup(IActor actor)
+    public virtual void OnPickup()
     {
         GameLog.Instance.Log($"You pick up the {DisplayName}.");
         // The visual node removes itself once collected (view-side lifecycle).
@@ -43,18 +43,5 @@ public partial class ItemController : Node2D, IItem
         // Default behavior: items do nothing when used
         GameLog.Instance.Log($"You use the {DisplayName}. Nothing happens.");
         return false;
-    }
-
-    public virtual bool TryPickup(IActor actor, Inventory inventory)
-    {
-        if (!CanPickup(actor)) return false;
-        if (inventory == null) return false;
-        if (!inventory.AddItem(this))
-        {
-            GameLog.Instance.Log("[color=orange]Your inventory is full![/color]");
-            return false;
-        }
-        OnPickup(actor);
-        return true;
     }
 }

@@ -3,12 +3,14 @@ using RogueLike.Domain.Actors;
 using RogueLike.Domain.Combat;
 using RogueLike.Domain.Common;
 using RogueLike.Domain.Equipment;
+using RogueLike.Domain.Items;
 
 namespace RogueLike.Domain.Tests.Actors;
 
 /// <summary>
-/// The Player aggregate owns its Loadout (so attack includes the weapon bonus) and reacts to its own
-/// kills by raising <see cref="Player.OnKilledCombatant"/> (the transitional XP bridge to the View).
+/// The Player aggregate owns its Loadout (so attack includes the weapon bonus) and its
+/// <see cref="Player.Experience"/>: killing an <see cref="IEnemy"/> awards XP directly, and its own
+/// level-up reaction raises attack and max HP.
 /// </summary>
 public class PlayerTest
 {
@@ -41,17 +43,40 @@ public class PlayerTest
     }
 
     [Fact]
-    public void Attack_KillsVictim_RaisesOnKilledCombatant()
+    public void Attack_KillsEnemy_AwardsXp()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 10);
+        var enemy = new EnemyMock(hp: 5, xpReward: 35);
+
+        player.Attack(enemy);
+
+        Assert.True(enemy.Health.IsDead);
+        Assert.Equal(35, player.Experience.CurrentXP);
+    }
+
+    [Fact]
+    public void Attack_KillsNonEnemyCombatant_AwardsNoXp()
     {
         var player = new Player(maxHealth: 20, baseAttack: 10);
         var victim = new VictimMock(5);
-        ICombatant killed = null;
-        player.OnKilledCombatant += v => killed = v;
 
         player.Attack(victim);
 
         Assert.True(victim.Health.IsDead);
-        Assert.Same(victim, killed);
+        Assert.Equal(0, player.Experience.CurrentXP);
+    }
+
+    [Fact]
+    public void LevelUp_IncreasesAttackAndMaxHp()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 10);
+        var enemy = new EnemyMock(hp: 5, xpReward: 100); // exactly one level's worth
+
+        player.Attack(enemy);
+
+        Assert.Equal(2, player.Experience.CurrentLevel);
+        Assert.Equal(11, player.AttackDamage); // base +1
+        Assert.Equal(25, player.Health.Max);   // +5, healed to full
     }
 
     [Fact]
@@ -69,7 +94,100 @@ public class PlayerTest
         Assert.Equal(20, player.Health.Current);
     }
 
-    private sealed class VictimMock(int hp) : ICombatant
+    [Fact]
+    public void ResetForNewGame_ResetsExperienceToLevel1()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 10);
+        player.Attack(new EnemyMock(hp: 5, xpReward: 150)); // -> level 2, 50 XP
+
+        player.ResetForNewGame(maxHealth: 20, baseAttack: 10);
+
+        Assert.Equal(1, player.Experience.CurrentLevel);
+        Assert.Equal(0, player.Experience.CurrentXP);
+        Assert.Equal(100, player.Experience.XPForNextLevel);
+    }
+
+    [Fact]
+    public void TryPickup_StorableItem_AddsToInventory_AndCallsOnPickup()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        var item = new FakeItem();
+
+        var taken = player.TryPickup(item);
+
+        Assert.True(taken);
+        Assert.Equal(1, player.Inventory.Count);
+        Assert.True(item.PickedUp);
+    }
+
+    [Fact]
+    public void TryPickup_Equippable_EquipsWeapon_NotStored()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        var item = new FakeWeaponItem(new Weapon("Axe", 2));
+
+        var taken = player.TryPickup(item);
+
+        Assert.True(taken);
+        Assert.Equal(5, player.AttackDamage); // 3 base + 2 bonus
+        Assert.Equal(0, player.Inventory.Count);
+        Assert.True(item.PickedUp);
+    }
+
+    [Fact]
+    public void TryPickup_EquippableNotBetter_ReturnsFalse_AndNotPickedUp()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        player.Loadout.TryEquip(new Weapon("Sword +2", 2));
+        var item = new FakeWeaponItem(new Weapon("Sword +1", 1));
+
+        var taken = player.TryPickup(item);
+
+        Assert.False(taken);
+        Assert.False(item.PickedUp);
+        Assert.Equal(2, player.Loadout.DamageBonus);
+    }
+
+    [Fact]
+    public void TryPickup_CannotPickup_ReturnsFalse()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        var item = new FakeItem { Pickable = false };
+
+        var taken = player.TryPickup(item);
+
+        Assert.False(taken);
+        Assert.Equal(0, player.Inventory.Count);
+        Assert.False(item.PickedUp);
+    }
+
+    [Fact]
+    public void TryPickup_InventoryFull_ReturnsFalse()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        for (var i = 0; i < player.Inventory.MaxSlots; i++)
+            player.TryPickup(new FakeItem());
+
+        var overflow = new FakeItem();
+        var taken = player.TryPickup(overflow);
+
+        Assert.False(taken);
+        Assert.False(overflow.PickedUp);
+        Assert.Equal(player.Inventory.MaxSlots, player.Inventory.Count);
+    }
+
+    [Fact]
+    public void ResetForNewGame_ClearsInventory()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        player.TryPickup(new FakeItem());
+
+        player.ResetForNewGame(maxHealth: 20, baseAttack: 3);
+
+        Assert.Equal(0, player.Inventory.Count);
+    }
+
+    private class VictimMock(int hp) : ICombatant
     {
         public string DisplayName => "Victim";
         public Health Health { get; private set; } = new(hp, hp);
@@ -80,5 +198,34 @@ public class PlayerTest
         public void ReceiveDamage(Damage damage) => Health = Health.TakeDamage(damage.Amount);
         public void Heal(int amount) => Health = Health.Heal(amount);
         public bool Attack(ICombatant defender) => false;
+    }
+
+    private sealed class EnemyMock(int hp, int xpReward) : VictimMock(hp), IEnemy
+    {
+        public int XpReward => xpReward;
+    }
+
+    private sealed class FakeItem : IItem
+    {
+        public bool PickedUp { get; private set; }
+        public bool Pickable { get; init; } = true;
+        public string DisplayName => "Fake";
+        public GridPos GridPosition => GridPos.Origin;
+        public bool IsConsumable => true;
+        public bool CanPickup() => Pickable;
+        public void OnPickup() => PickedUp = true;
+        public bool Use(IActor actor) => true;
+    }
+
+    private sealed class FakeWeaponItem(Weapon weapon) : IItem, IEquippable
+    {
+        public bool PickedUp { get; private set; }
+        public Weapon Weapon => weapon;
+        public string DisplayName => weapon.Name;
+        public GridPos GridPosition => GridPos.Origin;
+        public bool IsConsumable => false;
+        public bool CanPickup() => true;
+        public void OnPickup() => PickedUp = true;
+        public bool Use(IActor actor) => false;
     }
 }
