@@ -53,8 +53,7 @@ internal sealed class ItemDouble(GridPos pos) : IItem
     public string DisplayName => "Potion";
     public GridPos GridPosition { get; } = pos;
     public bool IsConsumable => true;
-    public bool CanPickup(IActor actor) => true;
-    public void OnPickup(IActor actor) { }
+    public bool CanPickup() => true;
+    public void OnPickup() { }
     public bool Use(IActor actor) => true;
-    public bool TryPickup(IActor actor, Inventory inventory) => false;
 }

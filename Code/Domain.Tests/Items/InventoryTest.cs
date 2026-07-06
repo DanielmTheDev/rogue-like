@@ -14,9 +14,8 @@ public class InventoryTest
         public bool IsConsumable { get; set; } = true;
         public bool UseWasCalled { get; private set; } = false;
 
-        public bool CanPickup(IActor actor) => true;
-        public void OnPickup(IActor actor) { }
-        public bool TryPickup(IActor actor, Inventory inventory) => false;
+        public bool CanPickup() => true;
+        public void OnPickup() { }
 
         public bool Use(IActor actor)
         {

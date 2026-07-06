@@ -6,10 +6,9 @@ using RogueLike.Domain.Actors;
 namespace RogueLike.Domain.Tests.Items;
 
 /// <summary>
-/// FloorItems registry behaviour: it locates the item under the actor, delegates the
-/// pickup decision to that item, and unregisters it only when the item reports it was
-/// taken. The pickup orchestration itself lives on the item (ItemController) and is
-/// covered by the view tests.
+/// FloorItems registry behaviour: it locates the item under the picker, delegates the acquire to the
+/// picker (<see cref="IItemPicker.TryPickup"/>), and unregisters it only when the picker reports it was
+/// taken. The acquire decision (equip vs store) lives on the Player aggregate (covered by PlayerTest).
 /// </summary>
 public class ItemPickupTest
 {
@@ -18,12 +17,13 @@ public class ItemPickupTest
     {
         var manager = new FloorItems();
         var pos = new GridPos(3, 4);
-        var item = new MockItem { GridPosition = pos, TryPickupResult = true };
+        var item = new MockItem { GridPosition = pos };
         manager.RegisterItem(item);
+        var picker = new MockPicker { Result = true };
 
-        manager.CheckForPickup(pos, new MockActor(), new Inventory(maxSlots: 5));
+        manager.CheckForPickup(pos, picker);
 
-        Assert.True(item.TryPickupCalled);
+        Assert.Same(item, picker.PickedItem);
         Assert.Empty(manager.AllItems);
     }
 
@@ -32,12 +32,13 @@ public class ItemPickupTest
     {
         var manager = new FloorItems();
         var pos = new GridPos(3, 4);
-        var item = new MockItem { GridPosition = pos, TryPickupResult = false };
+        var item = new MockItem { GridPosition = pos };
         manager.RegisterItem(item);
+        var picker = new MockPicker { Result = false };
 
-        manager.CheckForPickup(pos, new MockActor(), new Inventory(maxSlots: 5));
+        manager.CheckForPickup(pos, picker);
 
-        Assert.True(item.TryPickupCalled);
+        Assert.Same(item, picker.PickedItem);
         Assert.Single(manager.AllItems);
     }
 
@@ -47,10 +48,11 @@ public class ItemPickupTest
         var manager = new FloorItems();
         var item = new MockItem { GridPosition = new GridPos(3, 4) };
         manager.RegisterItem(item);
+        var picker = new MockPicker();
 
-        manager.CheckForPickup(new GridPos(0, 0), new MockActor(), new Inventory(maxSlots: 5));
+        manager.CheckForPickup(new GridPos(0, 0), picker);
 
-        Assert.False(item.TryPickupCalled);
+        Assert.Null(picker.PickedItem);
         Assert.Single(manager.AllItems);
     }
 
@@ -59,23 +61,21 @@ public class ItemPickupTest
         public string DisplayName { get; set; } = "MockItem";
         public GridPos GridPosition { get; set; }
         public bool IsConsumable { get; set; } = true;
-        public bool TryPickupResult { get; set; } = true;
-        public bool TryPickupCalled { get; private set; }
 
-        public bool CanPickup(IActor actor) => true;
-        public void OnPickup(IActor actor) { }
+        public bool CanPickup() => true;
+        public void OnPickup() { }
         public bool Use(IActor actor) => true;
-
-        public bool TryPickup(IActor actor, Inventory inventory)
-        {
-            TryPickupCalled = true;
-            return TryPickupResult;
-        }
     }
 
-    private class MockActor : IActor
+    private class MockPicker : IItemPicker
     {
-        public GridPos GridPosition { get; set; }
-        public bool IsPlayer { get; set; }
+        public bool Result { get; init; } = true;
+        public IItem PickedItem { get; private set; }
+
+        public bool TryPickup(IItem item)
+        {
+            PickedItem = item;
+            return Result;
+        }
     }
 }

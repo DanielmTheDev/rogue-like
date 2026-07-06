@@ -19,13 +19,12 @@ namespace RogueLike.Code.View.Player;
 /// Handles player input and grid-based movement.
 /// Delegates movement logic to GridMover (pure C# / testable).
 /// </summary>
-public partial class PlayerController : ActorController, IEquipmentHolder
+public partial class PlayerController : ActorController
 {
     private PlayerActor _player;
     private GridMover _mover;
     private TurnManager _turnManager;
     private FloorItems _floorItems;
-    private Inventory _inventory;
     private FovMap _fovMap;
     private NodeRegistry _nodeRegistry;
     private Main _main; // Reference to Main to trigger level changes
@@ -39,7 +38,7 @@ public partial class PlayerController : ActorController, IEquipmentHolder
 
     public override GridPos GridPosition => _mover.GridPosition;
     public override bool IsPlayer => true;
-    public Inventory Inventory => _inventory;
+    public Inventory Inventory => Player.Inventory;
     public Loadout Loadout => Player.Loadout;
     public ExperienceSystem Experience => Player.Experience;
 
@@ -50,8 +49,6 @@ public partial class PlayerController : ActorController, IEquipmentHolder
         _floorItems = floorItems;
 
         ObserveActor();
-
-        _inventory = new Inventory(maxSlots: 10);
     }
 
     public void PlaceOnLevel(DungeonGrid gridMap, ActorRegistry actorRegistry, FovMap fovMap, NodeRegistry nodeRegistry, GridPos startPos)
@@ -103,7 +100,8 @@ public partial class PlayerController : ActorController, IEquipmentHolder
         SfxPlayer.Instance?.Play(Sfx.Step);
 
         // CHECK FOR ITEMS (auto-pickup). Items are GridPos-native — no conversion needed.
-        _floorItems?.CheckForPickup(GridPosition, this, _inventory);
+        // Player owns the acquire (equip vs store); the controller just supplies the tile + picker.
+        _floorItems?.CheckForPickup(GridPosition, Player);
 
         return true;
     }
@@ -160,7 +158,7 @@ public partial class PlayerController : ActorController, IEquipmentHolder
         if (keyEvent.Keycode < Key.Key1 || keyEvent.Keycode > Key.Key9) return false;
 
         var groupSlot = (int)keyEvent.Keycode - (int)Key.Key1;
-        if (_inventory.UseItemByGroup(groupSlot, this))
+        if (Inventory.UseItemByGroup(groupSlot, this))
         {
             _turnManager.EndPlayerTurn();
         }

@@ -3,6 +3,7 @@ using RogueLike.Domain.Actors;
 using RogueLike.Domain.Combat;
 using RogueLike.Domain.Common;
 using RogueLike.Domain.Equipment;
+using RogueLike.Domain.Items;
 
 namespace RogueLike.Domain.Tests.Actors;
 
@@ -106,6 +107,86 @@ public class PlayerTest
         Assert.Equal(100, player.Experience.XPForNextLevel);
     }
 
+    [Fact]
+    public void TryPickup_StorableItem_AddsToInventory_AndCallsOnPickup()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        var item = new FakeItem();
+
+        var taken = player.TryPickup(item);
+
+        Assert.True(taken);
+        Assert.Equal(1, player.Inventory.Count);
+        Assert.True(item.PickedUp);
+    }
+
+    [Fact]
+    public void TryPickup_Equippable_EquipsWeapon_NotStored()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        var item = new FakeWeaponItem(new Weapon("Axe", 2));
+
+        var taken = player.TryPickup(item);
+
+        Assert.True(taken);
+        Assert.Equal(5, player.AttackDamage); // 3 base + 2 bonus
+        Assert.Equal(0, player.Inventory.Count);
+        Assert.True(item.PickedUp);
+    }
+
+    [Fact]
+    public void TryPickup_EquippableNotBetter_ReturnsFalse_AndNotPickedUp()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        player.Loadout.TryEquip(new Weapon("Sword +2", 2));
+        var item = new FakeWeaponItem(new Weapon("Sword +1", 1));
+
+        var taken = player.TryPickup(item);
+
+        Assert.False(taken);
+        Assert.False(item.PickedUp);
+        Assert.Equal(2, player.Loadout.DamageBonus);
+    }
+
+    [Fact]
+    public void TryPickup_CannotPickup_ReturnsFalse()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        var item = new FakeItem { Pickable = false };
+
+        var taken = player.TryPickup(item);
+
+        Assert.False(taken);
+        Assert.Equal(0, player.Inventory.Count);
+        Assert.False(item.PickedUp);
+    }
+
+    [Fact]
+    public void TryPickup_InventoryFull_ReturnsFalse()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        for (var i = 0; i < player.Inventory.MaxSlots; i++)
+            player.TryPickup(new FakeItem());
+
+        var overflow = new FakeItem();
+        var taken = player.TryPickup(overflow);
+
+        Assert.False(taken);
+        Assert.False(overflow.PickedUp);
+        Assert.Equal(player.Inventory.MaxSlots, player.Inventory.Count);
+    }
+
+    [Fact]
+    public void ResetForNewGame_ClearsInventory()
+    {
+        var player = new Player(maxHealth: 20, baseAttack: 3);
+        player.TryPickup(new FakeItem());
+
+        player.ResetForNewGame(maxHealth: 20, baseAttack: 3);
+
+        Assert.Equal(0, player.Inventory.Count);
+    }
+
     private class VictimMock(int hp) : ICombatant
     {
         public string DisplayName => "Victim";
@@ -122,5 +203,29 @@ public class PlayerTest
     private sealed class EnemyMock(int hp, int xpReward) : VictimMock(hp), IEnemy
     {
         public int XpReward => xpReward;
+    }
+
+    private sealed class FakeItem : IItem
+    {
+        public bool PickedUp { get; private set; }
+        public bool Pickable { get; init; } = true;
+        public string DisplayName => "Fake";
+        public GridPos GridPosition => GridPos.Origin;
+        public bool IsConsumable => true;
+        public bool CanPickup() => Pickable;
+        public void OnPickup() => PickedUp = true;
+        public bool Use(IActor actor) => true;
+    }
+
+    private sealed class FakeWeaponItem(Weapon weapon) : IItem, IEquippable
+    {
+        public bool PickedUp { get; private set; }
+        public Weapon Weapon => weapon;
+        public string DisplayName => weapon.Name;
+        public GridPos GridPosition => GridPos.Origin;
+        public bool IsConsumable => false;
+        public bool CanPickup() => true;
+        public void OnPickup() => PickedUp = true;
+        public bool Use(IActor actor) => false;
     }
 }
