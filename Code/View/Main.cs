@@ -218,11 +218,11 @@ public partial class Main : Node2D
         player.Reset();
         InitLoot(); // fresh loot stream so a restart with a fixed seed reproduces
 
-        // Reset the UI to reflect the player's new state
+        // Reset the UI to reflect the player's new state. Experience is a stable instance whose
+        // subscription (wired at startup) survives the reset — Experience.Reset() fires OnXPChanged,
+        // so the XP bar refreshes without re-Initialize (which would double-subscribe).
         var inventoryUI = GetNode<UI.InventoryUI>("InventoryUI/InventoryControl");
         inventoryUI.Initialize(player.Inventory);
-        var expUI = GetNode<UI.ExperienceUI>("ExperienceUI/ExperienceControl");
-        expUI.Initialize(player.Experience);
 
         _dungeonLevel = 0; // DescendLevel will increment this to 1
         DescendLevel();

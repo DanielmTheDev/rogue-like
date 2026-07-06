@@ -41,7 +41,7 @@ public partial class PlayerController : ActorController, IEquipmentHolder
     public override bool IsPlayer => true;
     public Inventory Inventory => _inventory;
     public Loadout Loadout => Player.Loadout;
-    public ExperienceSystem Experience { get; private set; }
+    public ExperienceSystem Experience => Player.Experience;
 
     public void Initialize(Main main, TurnManager turnManager, FloorItems floorItems)
     {
@@ -49,12 +49,9 @@ public partial class PlayerController : ActorController, IEquipmentHolder
         _turnManager = turnManager;
         _floorItems = floorItems;
 
-        Player.OnKilledCombatant += OnKilled;
         ObserveActor();
 
         _inventory = new Inventory(maxSlots: 10);
-        Experience = new ExperienceSystem();
-        Experience.OnLevelUp += HandleLevelUp;
     }
 
     public void PlaceOnLevel(DungeonGrid gridMap, ActorRegistry actorRegistry, FovMap fovMap, NodeRegistry nodeRegistry, GridPos startPos)
@@ -118,19 +115,6 @@ public partial class PlayerController : ActorController, IEquipmentHolder
         IsDead = true;
         // The visible player node will be colored red or replaced with a corpse later.
         GameLog.Instance.Log("[color=red]You have died. Press [Enter] to restart.[/color]");
-    }
-
-    /// <summary>
-    /// The player gains XP when its attack kills a combatant. Wired to the domain
-    /// <see cref="PlayerActor.OnKilledCombatant"/> kill-reaction event.
-    /// </summary>
-    // TRANSITIONAL (DDD Phase 3): this XP rule lives on the Godot controller; moves onto the
-    // pure Player aggregate (which will own ExperienceTrack) when the controller becomes a View.
-    public void OnKilled(ICombatant victim)
-    {
-        if (victim is not IEnemy enemy) return;
-        Experience.AddXP(enemy.XpReward);
-        GameLog.Instance.Log($"[color=yellow]You gained {enemy.XpReward} XP![/color]");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -250,11 +234,6 @@ public partial class PlayerController : ActorController, IEquipmentHolder
     /// Auto-move in a direction until:
     /// - An enemy becomes visible
     /// - A wall is hit
-    /// - A corner is detected (change in adjacent wall count)
-    /// <summary>
-    /// Auto-move in a direction until:
-    /// - An enemy becomes visible
-    /// - A wall is hit
     /// - The "path" changes (orthogonal walkability changes)
     /// </summary>
     private void ShiftMove(Direction direction)
@@ -335,16 +314,6 @@ public partial class PlayerController : ActorController, IEquipmentHolder
             .Any(actor => _fovMap.GetVisibility(actor.GridPosition) == VisibilityState.Visible);
     }
 
-    private void HandleLevelUp(int newLevel)
-    {
-        // Increase stats
-        _player.IncreaseAttack();
-        IncreaseMaxHp(5); // Heal to full on level up as a bonus
-
-        GameLog.Instance.Log($"[color=purple]You reached Level {newLevel}![/color]");
-        GameLog.Instance.Log("[color=green]Your Max HP and Attack Damage increase![/color]");
-    }
-
     private void ProcessTurnAction(bool logHeal = true)
     {
         _turnsSinceLastHeal++;
@@ -372,13 +341,11 @@ public partial class PlayerController : ActorController, IEquipmentHolder
         BaseAttackDamage = defaultPlayer.BaseAttackDamage;
         BaseHealth = defaultPlayer.BaseHealth;
 
-        // Reset the aggregate: base attack, empty loadout (same instance -> UI ref stays valid), full HP.
+        // Reset the aggregate: base attack, empty loadout, full HP, and XP/level (same instances ->
+        // UI refs and event subscriptions stay valid).
         _player.ResetForNewGame(BaseHealth, BaseAttackDamage);
 
-        // Reset systems
         Inventory.Clear();
-        Experience = new ExperienceSystem();
-        Experience.OnLevelUp += HandleLevelUp;
     }
 
     // The domain aggregate, created on demand from the exported seed stats so the controller is

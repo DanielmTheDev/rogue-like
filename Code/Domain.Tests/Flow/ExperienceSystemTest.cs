@@ -88,4 +88,25 @@ public class ExperienceSystemTest
 
         Assert.Equal(2, receivedNewLevel);
     }
+
+    [Fact]
+    public void Reset_ReturnsToInitialState_FiresXpChanged()
+    {
+        _exp.AddXP(350); // -> level 3, 50 XP
+        var receivedCurrentXP = -1;
+        var receivedXPForNext = -1;
+        _exp.OnXPChanged += (current, next) =>
+        {
+            receivedCurrentXP = current;
+            receivedXPForNext = next;
+        };
+
+        _exp.Reset();
+
+        Assert.Equal(1, _exp.CurrentLevel);
+        Assert.Equal(0, _exp.CurrentXP);
+        Assert.Equal(100, _exp.XPForNextLevel);
+        Assert.Equal(0, receivedCurrentXP);
+        Assert.Equal(100, receivedXPForNext);
+    }
 }
