@@ -23,7 +23,7 @@ public class EnemyAI : EnemyAIBase
         var direction = Mover.GridPosition.DirectionTo(path[0]);
         var next = Mover.GridPosition.Step(direction);
         if (Actors.IsOccupied(next) && Actors.GetActorAt(next) is { IsPlayer: true } and ICombatant defender && Owner is ICombatant attacker)
-            attacker.TryAttack(defender);
+            attacker.Attack(defender);
         else
             Mover.TryMove(direction);
     }

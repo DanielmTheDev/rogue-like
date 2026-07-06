@@ -19,6 +19,12 @@ internal sealed class PlayerDouble(GridPos pos) : ICombatant
     public void Die() { }
     public void ReceiveDamage(Damage damage) => Health = Health.TakeDamage(damage.Amount);
     public void Heal(int amount) => Health = Health.Heal(amount);
+    public bool Attack(ICombatant defender)
+    {
+        if (defender == null) return false;
+        defender.ReceiveDamage(new Damage(AttackDamage));
+        return true;
+    }
 }
 
 internal sealed class EnemyDouble(GridPos start) : ICombatant
@@ -34,6 +40,12 @@ internal sealed class EnemyDouble(GridPos start) : ICombatant
     public void Die() { }
     public void ReceiveDamage(Damage damage) => Health = Health.TakeDamage(damage.Amount);
     public void Heal(int amount) => Health = Health.Heal(amount);
+    public bool Attack(ICombatant defender)
+    {
+        if (defender == null) return false;
+        defender.ReceiveDamage(new Damage(AttackDamage));
+        return true;
+    }
 }
 
 internal sealed class ItemDouble(GridPos pos) : IItem
